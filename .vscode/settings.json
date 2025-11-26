@@ -1,0 +1,11 @@
+{
+    "microprofile.tools.validation.unknown.excluded": [
+        "*/mp-rest/providers/*/priority",
+        "mp.openapi.schema.*",
+        "kafka-streams.*",
+        "camel.*",
+        "quarkus.datasource.*",
+        "quarkus.hibernate-orm.database.generation"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
