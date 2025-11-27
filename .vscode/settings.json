@@ -5,7 +5,9 @@
         "kafka-streams.*",
         "camel.*",
         "quarkus.datasource.*",
-        "quarkus.hibernate-orm.database.generation"
+        "quarkus.hibernate-orm.database.generation",
+        "quarkus.http.auth.*",
+        "quarkus.oidc.*"
     ],
     "java.configuration.updateBuildConfiguration": "interactive"
 }
