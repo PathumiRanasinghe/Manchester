@@ -12,8 +12,8 @@ public class Enrollment extends PanacheEntity {
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id")
-    private Subject subject;
+    @JoinColumn(name = "module_id")
+    private Module module;
 
     private LocalDate enrolledDate;
 
@@ -25,12 +25,12 @@ public class Enrollment extends PanacheEntity {
         this.student = student;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public Module getModule() {
+        return module;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public LocalDate getEnrolledDate() {

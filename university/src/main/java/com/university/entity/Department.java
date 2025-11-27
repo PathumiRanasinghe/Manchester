@@ -5,26 +5,26 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class Course extends PanacheEntity {
+public class Department extends PanacheEntity {
 
-    private String courseName;
+    private String departmentName;
     private String description;
 
-    @OneToMany(mappedBy = "course")
-    private List<Subject> subjects;
+    @OneToMany(mappedBy = "department")
+    private List<Module> modules;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "department")
     private List<Student> students;
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "department")
     private List<Lecturer> lecturers;
 
-    public String getCourseName() {
-        return courseName;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getDescription() {
@@ -35,12 +35,12 @@ public class Course extends PanacheEntity {
         this.description = description;
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
+    public List<Module> getModules() {
+        return modules;
     }
 
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
     }
 
     public List<Student> getStudents() {

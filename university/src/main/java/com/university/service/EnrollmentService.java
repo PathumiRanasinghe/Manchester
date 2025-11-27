@@ -32,7 +32,7 @@ public class EnrollmentService {
 		Enrollment enrollment = enrollmentRepository.findById(id);
 		if (enrollment != null) {
 			enrollment.setStudent(updatedEnrollment.getStudent());
-			enrollment.setSubject(updatedEnrollment.getSubject());
+			enrollment.setModule(updatedEnrollment.getModule());
 			enrollment.setEnrolledDate(updatedEnrollment.getEnrolledDate());
 			enrollmentRepository.persist(enrollment);
 		}

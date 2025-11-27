@@ -14,11 +14,11 @@ public class Lecturer extends PanacheEntity {
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @OneToMany(mappedBy = "lecturer")
-    private List<Subject> subjects;
+    private List<Module> modules;
 
     public String getFirstName() {
         return firstName;
@@ -44,19 +44,19 @@ public class Lecturer extends PanacheEntity {
         this.email = email;
     }
 
-    public Course getCourse() {
-        return course;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
+    public List<Module> getModules() {
+        return modules;
     }
 
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
     }
 }

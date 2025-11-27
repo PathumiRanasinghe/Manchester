@@ -6,5 +6,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class LecturerRepository implements PanacheRepository<Lecturer> {
-    // Custom queries can be added here
+    
 }

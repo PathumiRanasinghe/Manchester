@@ -4,8 +4,8 @@ package com.university.controller;
 
 import java.util.List;
 
-import com.university.entity.Course;
-import com.university.service.CourseService;
+import com.university.entity.Module;
+import com.university.service.ModuleService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -18,45 +18,45 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/courses")
+@Path("/modules")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class CourseController {
+public class ModuleController {
 
     @Inject
-    CourseService courseService;
+    ModuleService moduleService;
 
     @GET
-    public List<Course> getCourses() {
-        return courseService.getAllCourses();
+    public List<Module> getModules() {
+        return moduleService.getAllModules();
     }
 
     @GET
     @Path("/{id}")
-    public Course getCourse(@PathParam("id") Long id) {
-        return courseService.getCourseById(id);
+    public Module getModule(@PathParam("id") Long id) {
+        return moduleService.getModuleById(id);
     }
 
     @POST
-    public Response createCourse(Course course) {
-        Course created = courseService.createCourse(course);
+    public Response createModule(Module module) {
+        Module created = moduleService.createModule(module);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response updateCourse(@PathParam("id") Long id, Course updatedCourse) {
-        Course course = courseService.updateCourse(id, updatedCourse);
-        if (course == null) {
+    public Response updateModule(@PathParam("id") Long id, Module updatedModule) {
+        Module module = moduleService.updateModule(id, updatedModule);
+        if (module == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(course).build();
+        return Response.ok(module).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteCourse(@PathParam("id") Long id) {
-        boolean deleted = courseService.deleteCourse(id);
+    public Response deleteModule(@PathParam("id") Long id) {
+        boolean deleted = moduleService.deleteModule(id);
         if (deleted) {
             return Response.noContent().build();
         } else {
