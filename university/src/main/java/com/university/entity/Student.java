@@ -1,32 +1,41 @@
 package com.university.entity;
 
-import java.util.List;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+
+
+import jakarta.persistence.*;
 
 @Entity
-public class Student extends PanacheEntity {
+@Table(name = "Student")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "StudentID")
+    private Integer studentId;
 
+    @Column(name = "FirstName", length = 10)
     private String firstName;
+
+    @Column(name = "LastName", length = 10)
     private String lastName;
 
-    @Column(unique = true)
+    @Column(name = "Email", length = 25, unique = true)
     private String email;
 
+    @Column(name = "PhoneNumber", length = 10)
     private String phoneNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private Department department;
+    @Column(name = "DepartmentID")
+    private Integer departmentId;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<Enrollment> enrollments;
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -60,19 +69,11 @@ public class Student extends PanacheEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public Department getDepartment() {
-        return department;
+    public Integer getDepartmentId() {
+        return departmentId;
     }
 
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public List<Enrollment> getEnrollments() {
-        return enrollments;
-    }
-
-    public void setEnrollments(List<Enrollment> enrollments) {
-        this.enrollments = enrollments;
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 }

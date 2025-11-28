@@ -33,9 +33,6 @@ public class DepartmentService {
 		if (department != null) {
 			department.setDepartmentName(updatedDepartment.getDepartmentName());
 			department.setDescription(updatedDepartment.getDescription());
-			department.setModules(updatedDepartment.getModules());
-			department.setStudents(updatedDepartment.getStudents());
-			department.setLecturers(updatedDepartment.getLecturers());
 			deparmentRepository.persist(department);
 		}
 		return department;

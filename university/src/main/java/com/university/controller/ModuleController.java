@@ -36,7 +36,11 @@ public class ModuleController {
     public Module getModule(@PathParam("id") Long id) {
         return moduleService.getModuleById(id);
     }
-
+        @GET
+        @Path("/{id}/students")
+        public List<com.university.entity.Student> getStudentsForModule(@PathParam("id") Integer id) {
+            return moduleService.getStudentsForModule(id);
+        }
     @POST
     public Response createModule(Module module) {
         Module created = moduleService.createModule(module);

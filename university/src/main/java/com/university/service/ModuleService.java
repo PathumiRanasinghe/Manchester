@@ -9,6 +9,22 @@ import java.util.List;
 
 @ApplicationScoped
 public class ModuleService {
+	@Inject
+	com.university.repository.EnrollmentRepository enrollmentRepository;
+	@Inject
+	com.university.repository.StudentRepository studentRepository;
+
+	public List<com.university.entity.Student> getStudentsForModule(Integer moduleId) {
+		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("moduleId", moduleId).list();
+		List<com.university.entity.Student> students = new java.util.ArrayList<>();
+		for (com.university.entity.Enrollment enrollment : enrollments) {
+			com.university.entity.Student student = studentRepository.findById(enrollment.getStudentId().longValue());
+			if (student != null) {
+				students.add(student);
+			}
+		}
+		return students;
+	}
 
 	@Inject
 	ModuleRepository moduleRepository;
@@ -31,11 +47,10 @@ public class ModuleService {
 	public Module updateModule(Long id, Module updatedModule) {
 		Module module = moduleRepository.findById(id);
 		if (module != null) {
-			module.setName(updatedModule.getName());
+			module.setModuleName(updatedModule.getModuleName());
 			module.setCredits(updatedModule.getCredits());
-			module.setDepartment(updatedModule.getDepartment());
-			module.setLecturer(updatedModule.getLecturer());
-			module.setEnrollments(updatedModule.getEnrollments());
+			module.setLecturerId(updatedModule.getLecturerId());
+			module.setDepartmentId(updatedModule.getDepartmentId());
 			moduleRepository.persist(module);
 		}
 		return module;

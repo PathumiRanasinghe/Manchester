@@ -1,16 +1,10 @@
-
 package com.university.controller;
 
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.university.entity.Enrollment;
 import com.university.entity.Student;
-import com.university.service.EnrollmentService;
-import com.university.service.ModuleService;
 import com.university.service.StudentService;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -32,15 +26,15 @@ public class StudentController {
     @Inject
     StudentService studentService;
 
-    @Inject
-    ModuleService moduleService;
-
-    @Inject
-    EnrollmentService enrollmentService;
-
     @GET
     public List<Student> getStudents() {
         return studentService.getAllStudents();
+    }
+
+    @GET
+    @Path("/{id}/modules")
+    public List<com.university.entity.Module> getModulesForStudent(@PathParam("id") Integer id) {
+        return studentService.getModulesForStudent(id);
     }
 
     @GET
@@ -55,33 +49,6 @@ public class StudentController {
         Student created = studentService.createStudent(student);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
-
-    // @POST
-    // @Path("/{studentId}/enroll")
-    // @Transactional
-    // public Response enrollModules(@PathParam("studentId") Long studentId, List<Long> moduleIds) {
-    //     Student student = studentService.getStudentById(studentId);
-    //     if(student==null){
-    //         return Response.status(Response.Status.NOT_FOUND).build();
-    //     }
-
-        // List<Enrollment> enrollments = new ArrayList<>();
-        // for (Long moduleId : moduleIds){
-        //     Module module = moduleService.getModuleById(moduleId);
-        //     if(module==null){
-        //         return Response.status(Response.Status.NOT_FOUND).build();
-        //     }
-
-        //     Enrollment enrollment = new Enrollment();
-        //     enrollment.setStudent(student);
-        //     enrollment.setModule(module);   
-        //     enrollment.setEnrolledDate(LocalDate.now());
-        //     enrollmentService.createEnrollment(enrollment);
-        //     enrollments.add(enrollment);
-
-        // }
-        // return Response.status(Response.Status.CREATED).entity(enrollments).build();
-    // }
 
 
     @PUT
@@ -106,4 +73,5 @@ public class StudentController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+
 }

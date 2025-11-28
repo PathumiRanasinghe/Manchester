@@ -23,6 +23,10 @@ public class EnrollmentService {
 
 	@Transactional
 	public Enrollment createEnrollment(Enrollment enrollment) {
+		boolean exists = enrollmentRepository.find("studentId = ?1 and moduleId = ?2", enrollment.getStudentId(), enrollment.getModuleId()).firstResult() != null;
+		if (exists) {
+			throw new IllegalArgumentException("Student is already enrolled in this module.");
+		}
 		enrollmentRepository.persist(enrollment);
 		return enrollment;
 	}
@@ -31,9 +35,9 @@ public class EnrollmentService {
 	public Enrollment updateEnrollment(Long id, Enrollment updatedEnrollment) {
 		Enrollment enrollment = enrollmentRepository.findById(id);
 		if (enrollment != null) {
-			enrollment.setStudent(updatedEnrollment.getStudent());
-			enrollment.setModule(updatedEnrollment.getModule());
-			enrollment.setEnrolledDate(updatedEnrollment.getEnrolledDate());
+			enrollment.setStudentId(updatedEnrollment.getStudentId());
+			enrollment.setModuleId(updatedEnrollment.getModuleId());
+			enrollment.setEnrollmentDate(updatedEnrollment.getEnrollmentDate());
 			enrollmentRepository.persist(enrollment);
 		}
 		return enrollment;

@@ -1,4 +1,0 @@
-quarkus.datasource.db-kind=postgresql
-quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5433/university_db
-quarkus.datasource.username=YOUR_DB_USERNAME
-quarkus.datasource.password=YOUR_DB_PASSWORD
