@@ -2,6 +2,7 @@ package com.university.service;
 
 import com.university.entity.Lecturer;
 import com.university.repository.LecturerRepository;
+import com.university.exception.UserNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,11 @@ public class LecturerService {
 	}
 
 	public Lecturer getLecturerById(Long id) {
-		return lecturerRepository.findById(id);
+		Lecturer lecturer = lecturerRepository.findById(id);
+		if (lecturer == null) {
+			throw new UserNotFoundException("Lecturer with id " + id + " not found");
+		}
+		return lecturer;
 	}
 
 	@Transactional
@@ -30,14 +35,15 @@ public class LecturerService {
 	@Transactional
 	public Lecturer updateLecturer(Long id, Lecturer updatedLecturer) {
 		Lecturer lecturer = lecturerRepository.findById(id);
-		if (lecturer != null) {
-			lecturer.setFirstName(updatedLecturer.getFirstName());
-			lecturer.setLastName(updatedLecturer.getLastName());
-			lecturer.setEmail(updatedLecturer.getEmail());
-			lecturer.setCourse(updatedLecturer.getCourse());
-			lecturer.setSubjects(updatedLecturer.getSubjects());
-			lecturerRepository.persist(lecturer);
+		if (lecturer == null) {
+			throw new UserNotFoundException("Lecturer with id " + id + " not found");
 		}
+		lecturer.setFirstName(updatedLecturer.getFirstName());
+		lecturer.setLastName(updatedLecturer.getLastName());
+		lecturer.setEmail(updatedLecturer.getEmail());
+		lecturer.setDepartment(updatedLecturer.getDepartment());
+		lecturer.setModules(updatedLecturer.getModules());
+		lecturerRepository.persist(lecturer);
 		return lecturer;
 	}
 

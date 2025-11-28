@@ -22,8 +22,8 @@ public class Student extends PanacheEntity {
     private String phoneNumber;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments;
@@ -60,12 +60,12 @@ public class Student extends PanacheEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public Course getCourse() {
-        return course;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public List<Enrollment> getEnrollments() {

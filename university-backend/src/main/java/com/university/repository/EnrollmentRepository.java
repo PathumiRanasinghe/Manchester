@@ -6,5 +6,5 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class EnrollmentRepository implements PanacheRepository<Enrollment> {
-    // Custom queries can be added here
+   
 }

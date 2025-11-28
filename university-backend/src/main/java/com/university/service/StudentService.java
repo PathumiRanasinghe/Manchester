@@ -2,6 +2,7 @@ package com.university.service;
 
 import com.university.entity.Student;
 import com.university.repository.StudentRepository;
+import com.university.exception.UserNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,11 @@ public class StudentService {
 	}
 
 	public Student getStudentById(Long id) {
-		return studentRepository.findById(id);
+		Student student = studentRepository.findById(id);
+		if (student == null) {
+			throw new UserNotFoundException("Student with id " + id + " not found");
+		}
+		return student;
 	}
 
 	@Transactional
@@ -30,15 +35,16 @@ public class StudentService {
 	@Transactional
 	public Student updateStudent(Long id, Student updatedStudent) {
 		Student student = studentRepository.findById(id);
-		if (student != null) {
-			student.setFirstName(updatedStudent.getFirstName());
-			student.setLastName(updatedStudent.getLastName());
-			student.setEmail(updatedStudent.getEmail());
-			student.setPhoneNumber(updatedStudent.getPhoneNumber());
-			student.setCourse(updatedStudent.getCourse());
-			student.setEnrollments(updatedStudent.getEnrollments());
-			studentRepository.persist(student);
+		if (student == null) {
+			throw new UserNotFoundException("Student with id " + id + " not found");
 		}
+		student.setFirstName(updatedStudent.getFirstName());
+		student.setLastName(updatedStudent.getLastName());
+		student.setEmail(updatedStudent.getEmail());
+		student.setPhoneNumber(updatedStudent.getPhoneNumber());
+		student.setDepartment(updatedStudent.getDepartment());
+		student.setEnrollments(updatedStudent.getEnrollments());
+		studentRepository.persist(student);
 		return student;
 	}
 

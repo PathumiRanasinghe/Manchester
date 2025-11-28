@@ -5,21 +5,20 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class Subject extends PanacheEntity {
+public class Module extends PanacheEntity {
 
     private String name;
-
     private int credits;
 
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @ManyToOne
     @JoinColumn(name = "lecturer_id")
     private Lecturer lecturer;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
     private List<Enrollment> enrollments;
 
     public String getName() {
@@ -38,12 +37,12 @@ public class Subject extends PanacheEntity {
         this.credits = credits;
     }
 
-    public Course getCourse() {
-        return course;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public Lecturer getLecturer() {

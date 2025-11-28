@@ -4,8 +4,8 @@ package com.university.controller;
 
 import java.util.List;
 
-import com.university.entity.Subject;
-import com.university.service.SubjectService;
+import com.university.entity.Department;
+import com.university.service.DepartmentService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -18,45 +18,45 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/subjects")
+@Path("/departments")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class SubjectController {
+public class DepartmentController {
 
     @Inject
-    SubjectService subjectService;
+    DepartmentService departmentService;
 
     @GET
-    public List<Subject> getSubjects() {
-        return subjectService.getAllSubjects();
+    public List<Department> getDepartments() {
+        return departmentService.getAllDepartments();
     }
 
     @GET
     @Path("/{id}")
-    public Subject getSubject(@PathParam("id") Long id) {
-        return subjectService.getSubjectById(id);
+    public Department getDepartment(@PathParam("id") Long id) {
+        return departmentService.getDepartmentById(id);
     }
 
     @POST
-    public Response createSubject(Subject subject) {
-        Subject created = subjectService.createSubject(subject);
+    public Response createDepartment(Department department) {
+        Department created = departmentService.createDepartment(department);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response updateSubject(@PathParam("id") Long id, Subject updatedSubject) {
-        Subject subject = subjectService.updateSubject(id, updatedSubject);
-        if (subject == null) {
+    public Response updateDepartment(@PathParam("id") Long id, Department updatedDepartment) {
+        Department department = departmentService.updateDepartment(id, updatedDepartment);
+        if (department == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(subject).build();
+        return Response.ok(department).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteSubject(@PathParam("id") Long id) {
-        boolean deleted = subjectService.deleteSubject(id);
+    public Response deleteDepartment(@PathParam("id") Long id) {
+        boolean deleted = departmentService.deleteDepartment(id);
         if (deleted) {
             return Response.noContent().build();
         } else {
