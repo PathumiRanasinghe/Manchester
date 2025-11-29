@@ -8,20 +8,26 @@ import jakarta.persistence.*;
 public class Module {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ModuleID")
     private Integer moduleId;
 
-    @Column(name = "ModuleName", length = 10)
+    @Column(length = 30)
     private String moduleName;
 
-    @Column(name = "Credits")
     private Integer credits;
 
-    @Column(name = "LecturerID")
     private Integer lecturerId;
 
-    @Column(name = "DepartmentID")
     private Integer departmentId;
+
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Integer getModuleId() {
         return moduleId;

@@ -1,3 +1,4 @@
+
 package com.university.service;
 
 import com.university.entity.Module;
@@ -14,6 +15,10 @@ public class ModuleService {
 	@Inject
 	com.university.repository.StudentRepository studentRepository;
 
+	@Inject
+	ModuleRepository moduleRepository;
+
+
 	public List<com.university.entity.Student> getStudentsForModule(Integer moduleId) {
 		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("moduleId", moduleId).list();
 		List<com.university.entity.Student> students = new java.util.ArrayList<>();
@@ -26,9 +31,23 @@ public class ModuleService {
 		return students;
 	}
 
-	@Inject
-	ModuleRepository moduleRepository;
+	public List<Module> getModulesByStudentId(Integer studentId) {
+		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("studentId", studentId).list();
+		List<Module> modules = new java.util.ArrayList<>();
+		for (com.university.entity.Enrollment enrollment : enrollments) {
+			Module module = moduleRepository.findById(enrollment.getModuleId().longValue());
+			if (module != null) {
+				modules.add(module);
+			}
+		}
+		return modules;
+	}
 
+		public List<Module> getModulesByDepartmentId(Integer departmentId) {
+		return moduleRepository.find("departmentId", departmentId).list();
+	}
+
+	
 	public List<Module> getAllModules() {
 		return moduleRepository.listAll();
 	}
@@ -60,4 +79,5 @@ public class ModuleService {
 	public boolean deleteModule(Long id) {
 		return moduleRepository.deleteById(id);
 	}
+
 }

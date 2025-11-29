@@ -8,19 +8,17 @@ import jakarta.persistence.*;
 public class Lecturer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LecturerID")
     private Integer lecturerId;
 
-    @Column(name = "FirstName", length = 10)
+    @Column(length = 10)
     private String firstName;
 
-    @Column(name = "LastName", length = 10)
+    @Column(length = 10)
     private String lastName;
 
-    @Column(name = "Email", length = 25, unique = true)
+    @Column(length = 25, unique = true)
     private String email;
 
-    @Column(name = "DepartmentID")
     private Integer departmentId;
 
     public Integer getLecturerId() {

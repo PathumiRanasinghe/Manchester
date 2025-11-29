@@ -9,16 +9,12 @@ import java.time.LocalDateTime;
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "EnrollmentID")
     private Integer enrollmentId;
 
-    @Column(name = "StudentID")
     private Integer studentId;
 
-    @Column(name = "ModuleID")
     private Integer moduleId;
 
-    @Column(name = "EnrollmentDate")
     private LocalDateTime enrollmentDate;
 
     public Integer getEnrollmentId() {

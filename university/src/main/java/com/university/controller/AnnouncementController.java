@@ -1,0 +1,30 @@
+package com.university.controller;
+
+import com.university.entity.Announcement;
+import com.university.service.AnnouncementService;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.inject.Inject;
+import java.util.List;
+
+@Path("/announcements")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class AnnouncementController {
+	@Inject
+	AnnouncementService announcementService;
+
+	@GET
+	public List<Announcement> getAllAnnouncements() {
+		return announcementService.getAllAnnouncements();
+	}
+
+	@POST
+	public void postAnnouncement(Announcement announcement) {
+		announcementService.postAnnouncement(announcement);
+	}
+}

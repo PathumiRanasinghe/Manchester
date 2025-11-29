@@ -8,13 +8,12 @@ import jakarta.persistence.*;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "DepartmentID")
     private Integer departmentId;
 
-    @Column(name = "DepartmentName", length = 10)
+    @Column(length = 10)
     private String departmentName;
 
-    @Column(name = "Description", length = 50)
+    @Column(length = 50)
     private String description;
 
     public Integer getDepartmentId() {

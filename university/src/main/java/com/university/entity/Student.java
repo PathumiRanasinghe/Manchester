@@ -11,22 +11,20 @@ import jakarta.persistence.*;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "StudentID")
     private Integer studentId;
 
-    @Column(name = "FirstName", length = 10)
+    @Column(length = 10)
     private String firstName;
 
-    @Column(name = "LastName", length = 10)
+    @Column(length = 10)
     private String lastName;
 
-    @Column(name = "Email", length = 25, unique = true)
+    @Column(length = 30, unique = true)
     private String email;
 
-    @Column(name = "PhoneNumber", length = 10)
+    @Column(length = 10)
     private String phoneNumber;
 
-    @Column(name = "DepartmentID")
     private Integer departmentId;
 
     public Integer getStudentId() {

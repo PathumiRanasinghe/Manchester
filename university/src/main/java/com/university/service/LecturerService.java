@@ -28,7 +28,11 @@ public class LecturerService {
 
 	@Transactional
 	public Lecturer createLecturer(Lecturer lecturer) {
-		lecturerRepository.persist(lecturer);
+		if (lecturer.getLecturerId() != null) {
+			lecturerRepository.getEntityManager().merge(lecturer);
+		} else {
+			lecturerRepository.persist(lecturer);
+		}
 		return lecturer;
 	}
 
