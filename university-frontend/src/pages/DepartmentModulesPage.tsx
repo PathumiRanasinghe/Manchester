@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getModulesByDepartmentId, getModulesByStudentId, Module } from '../services/moduleService';
+import { getModulesByDepartmentId, getModulesByStudentId } from '../services/moduleService';
 import { getStudentById } from '../services/studentService';
 import { enrollModule } from '../services/enrollmentService';
+import { Module } from '../types/Module';
 
 const studentId = 1;
 
@@ -18,7 +19,7 @@ const DepartmentModulesPage: React.FC = () => {
     let departmentId: number;
     getStudentById(studentId)
       .then(student => {
-        departmentId = student.departmentId;
+        departmentId = student.department.departmentId;
         return Promise.all([
           getModulesByDepartmentId(departmentId),
           getModulesByStudentId(studentId)
@@ -74,7 +75,7 @@ const DepartmentModulesPage: React.FC = () => {
               <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
               <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
               <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
-              <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturerId}</div>
+              <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.lecturerId}</div>
               <button
                 className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-orange-400 text-white hover:bg-orange-500'}`}
                 disabled={isEnrolled}

@@ -1,9 +1,5 @@
 import axios from 'axios';
-
-export interface Department {
-  departmentId: number;
-  departmentName: string;
-}
+import { Department } from '../types/Department';
 
 export const getDepartmentById = async (departmentId: number): Promise<Department> => {
   const response = await axios.get(`/departments/${departmentId}`);

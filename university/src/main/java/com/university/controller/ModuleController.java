@@ -38,6 +38,12 @@ public class ModuleController {
     }
 
     @GET
+    @Path("/lecturer/{lecturerId}")
+    public List<Module> getModulesByLecturerId(@PathParam("lecturerId") Integer lecturerId) {
+        return moduleService.getModulesByLecturerId(lecturerId);
+    }
+
+    @GET
     @Path("/department/{departmentId}")
     public List<Module> getModulesByDepartmentId(@PathParam("departmentId") Integer departmentId) {
         return moduleService.getModulesByDepartmentId(departmentId);

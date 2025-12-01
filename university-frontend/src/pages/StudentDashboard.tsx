@@ -3,7 +3,8 @@ import { BookOpenIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import { getAnnouncements} from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
-import { getStudentById, Student } from '../services/studentService';
+import { getStudentById } from '../services/studentService';
+import { Student } from '../types/Student';
 
 export default function StudentDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
