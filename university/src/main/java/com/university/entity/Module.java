@@ -15,10 +15,15 @@ public class Module {
 
     private Integer credits;
 
-    private Integer lecturerId;
+    @ManyToOne
+    @JoinColumn(name = "lecturerId", referencedColumnName = "lecturerId")
+    private Lecturer lecturer;
 
-    private Integer departmentId;
+    @ManyToOne
+    @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
+    private Department department;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     public String getDescription() {
@@ -53,19 +58,19 @@ public class Module {
         this.credits = credits;
     }
 
-    public Integer getLecturerId() {
-        return lecturerId;
+    public Lecturer getLecturer() {
+        return lecturer;
     }
 
-    public void setLecturerId(Integer lecturerId) {
-        this.lecturerId = lecturerId;
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

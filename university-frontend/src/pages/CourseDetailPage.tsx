@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Module } from '../types/Module';
 import { useParams } from 'react-router-dom';
-import { Module, getModulesByDepartmentId } from '../services/moduleService';
-import { getLecturerById, Lecturer } from '../services/lecturerService';
-import { getDepartmentById, Department } from '../services/departmentService';
+import { getModuleById } from '../services/moduleService';
+import { Lecturer } from '../types/Lecturer';
+import { Department } from '../types/Department';
+import { getLecturerById } from '../services/lecturerService';
+import { getDepartmentById} from '../services/departmentService';
 
 const CourseDetailPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
@@ -13,14 +16,13 @@ const CourseDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-      getModulesByDepartmentId(1)
-        .then(modules => {
-          const found = modules.find(m => m.moduleId === Number(moduleId));
+      getModuleById(Number(moduleId))
+        .then(found => {
           setModule(found || null);
           if (found) {
             Promise.all([
-              getLecturerById(found.lecturerId),
-              getDepartmentById(found.departmentId)
+              getLecturerById(found.lecturer.lecturerId),
+              getDepartmentById(found.department.departmentId)
             ]).then(([lecturerData, departmentData]) => {
               setLecturer(lecturerData);
               setDepartment(departmentData);
@@ -54,8 +56,8 @@ const CourseDetailPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{module.moduleName}</h1>
            
               <ul className="text-s text-gray-500 mb-2 list-disc pl-5">
-                <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturerId}</li>
-                <li>Department: {department ? department.departmentName : module.departmentId}</li>
+                <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturer.lecturerId}</li>
+                <li>Department: {department ? department.departmentName : module.department.departmentId}</li>
                 <li>Module ID: {module.moduleId}</li>
               </ul>
               <div className="flex gap-4 mt-4 text-s">

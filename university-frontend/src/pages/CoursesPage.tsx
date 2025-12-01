@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getModulesByStudentId } from '../services/moduleService';
 import { useNavigate } from 'react-router-dom';
+import { Module } from '../types/Module';
 
-export interface Module {
-  moduleId: number;
-  moduleName: string;
-  credits: number;
-  lecturerId: number;
-  departmentId: number;
-}
-
-const studentId = 1; 
+const studentId = 1;
 
 const CoursesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);

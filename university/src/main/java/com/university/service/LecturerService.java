@@ -45,7 +45,7 @@ public class LecturerService {
 		lecturer.setFirstName(updatedLecturer.getFirstName());
 		lecturer.setLastName(updatedLecturer.getLastName());
 		lecturer.setEmail(updatedLecturer.getEmail());
-		lecturer.setDepartmentId(updatedLecturer.getDepartmentId());
+		lecturer.setDepartment(updatedLecturer.getDepartment());
 		lecturerRepository.persist(lecturer);
 		return lecturer;
 	}

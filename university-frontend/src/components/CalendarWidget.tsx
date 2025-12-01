@@ -1,5 +1,3 @@
-import React from 'react';
-
 const daysOfWeek = ['MO','TU','WE','TH','FR','SA','SU'];
 
 function getMonthDays(year: number, month: number) {
@@ -41,7 +39,7 @@ export default function CalendarWidget() {
           return (
             <div
               key={d}
-              className={`text-center py-1 rounded ${isToday ? 'bg-orange-400 text-white' : 'bg-indigo-800'}`}
+              className={`text-center py-1 rounded ${isToday ? 'bg-indigo-400 text-white' : 'bg-indigo-800'}`}
             >
               {d}
             </div>

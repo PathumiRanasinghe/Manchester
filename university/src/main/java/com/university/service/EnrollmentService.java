@@ -1,7 +1,12 @@
 package com.university.service;
 
 import com.university.entity.Enrollment;
+import com.university.entity.Student;
+import com.university.entity.Module;
 import com.university.repository.EnrollmentRepository;
+import com.university.repository.ModuleRepository;
+import com.university.repository.StudentRepository;
+
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -13,6 +18,12 @@ public class EnrollmentService {
 	@Inject
 	EnrollmentRepository enrollmentRepository;
 
+	@Inject
+	StudentRepository studentRepository;
+
+	@Inject
+	ModuleRepository moduleRepository;
+
 	public List<Enrollment> getAllEnrollments() {
 		return enrollmentRepository.listAll();
 	}
@@ -21,22 +32,46 @@ public class EnrollmentService {
 		return enrollmentRepository.findById(id);
 	}
 
+	/**
+	 * Enroll a student to a module by their IDs. This method expects an Enrollment object
+	 * with only studentId and moduleId set, or you can refactor your controller to accept those IDs directly.
+	 */
 	@Transactional
 	public Enrollment createEnrollment(Enrollment enrollment) {
-		boolean exists = enrollmentRepository.find("studentId = ?1 and moduleId = ?2", enrollment.getStudentId(), enrollment.getModuleId()).firstResult() != null;
+		// Defensive: Accept only studentId and moduleId, ignore other fields
+		Integer studentId = (enrollment.getStudent() != null) ? enrollment.getStudent().getStudentId() : null;
+		Integer moduleId = (enrollment.getModule() != null) ? enrollment.getModule().getModuleId() : null;
+
+		if (studentId == null || moduleId == null) {
+			throw new IllegalArgumentException("StudentId and ModuleId must be provided.");
+		}
+
+		Student managedStudent = studentRepository.findById(studentId.longValue());
+		Module managedModule = moduleRepository.findById(moduleId.longValue());
+
+		if (managedStudent == null || managedModule == null) {
+			throw new IllegalArgumentException("Student or Module not found.");
+		}
+
+		boolean exists = enrollmentRepository.find("student = ?1 and module = ?2", managedStudent, managedModule).firstResult() != null;
 		if (exists) {
 			throw new IllegalArgumentException("Student is already enrolled in this module.");
 		}
-		enrollmentRepository.persist(enrollment);
-		return enrollment;
+
+		Enrollment newEnrollment = new Enrollment();
+		newEnrollment.setStudent(managedStudent);
+		newEnrollment.setModule(managedModule);
+		newEnrollment.setEnrollmentDate(java.time.LocalDateTime.now());
+		enrollmentRepository.persist(newEnrollment);
+		return newEnrollment;
 	}
 
 	@Transactional
 	public Enrollment updateEnrollment(Long id, Enrollment updatedEnrollment) {
 		Enrollment enrollment = enrollmentRepository.findById(id);
 		if (enrollment != null) {
-			enrollment.setStudentId(updatedEnrollment.getStudentId());
-			enrollment.setModuleId(updatedEnrollment.getModuleId());
+			enrollment.setStudent(updatedEnrollment.getStudent());
+			enrollment.setModule(updatedEnrollment.getModule());
 			enrollment.setEnrollmentDate(updatedEnrollment.getEnrollmentDate());
 			enrollmentRepository.persist(enrollment);
 		}

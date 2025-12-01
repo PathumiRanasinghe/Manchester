@@ -6,7 +6,7 @@ export default function LogoutPage() {
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   }, [navigate]);
   return null;
 }

@@ -6,8 +6,8 @@ export async function unenrollModule(enrollmentId: number): Promise<void> {
 
 export async function enrollModule(studentId: number, moduleId: number): Promise<void> {
   await axios.post('/enrollments', {
-    studentId,
-    moduleId,
+    student: { studentId },
+    module: { moduleId },
     enrollmentDate: new Date().toISOString()
   });
 }

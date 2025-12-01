@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getModulesByStudentId, Module } from '../services/moduleService';
-import { getEnrollmentsByStudentId } from '../services/studentEnrollmentService';
+import { getModulesByStudentId} from '../services/moduleService';
+import { getEnrollmentsByStudentId } from '../services/studentService';
 import { unenrollModule } from '../services/enrollmentService';
 import { Enrollment } from '../types/Enrollment';
+import { Module } from '../types/Module';
 
 const studentId = 1;
 
@@ -65,14 +66,14 @@ const UnenrollModulePage: React.FC = () => {
           <div className="col-span-3 text-gray-400">You are not enrolled in any modules.</div>
         ) : (
           enrollments.map(enrollment => {
-            const module = modules.find(m => m.moduleId === enrollment.moduleId);
+            const module = modules.find(m => m.moduleId === enrollment.module.moduleId);
             if (!module) return null;
             return (
               <div key={enrollment.enrollmentId} className="rounded-xl shadow-lg bg-white p-6 flex flex-col">
                 <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
                 <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
                 <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
-                <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturerId}</div>
+                <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.lecturerId}</div>
                 <button
                   className="mt-4 px-4 py-1 rounded font-semibold bg-red-400 text-white hover:bg-red-500"
                   onClick={() => handleUnenrollClick(enrollment)}

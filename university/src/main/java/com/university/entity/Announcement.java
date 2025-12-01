@@ -17,7 +17,10 @@ public class Announcement {
     private String content;
     
     private LocalDateTime postedAt;
-    private Long lecturerId;
+
+    @ManyToOne
+    @JoinColumn(name = "lecturerId", referencedColumnName = "lecturerId")
+    private Lecturer lecturer;
 
     public Long getId() {
         return id;
@@ -51,11 +54,11 @@ public class Announcement {
         this.postedAt = postedAt;
     }
 
-    public Long getLecturerId() {
-        return lecturerId;
+    public Lecturer getLecturer() {
+        return lecturer;
     }
 
-    public void setLecturerId(Long lecturerId) {
-        this.lecturerId = lecturerId;
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
     }
 }

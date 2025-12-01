@@ -16,10 +16,10 @@ public class StudentService {
 	com.university.repository.ModuleRepository moduleRepository;
 
 	public List<com.university.entity.Module> getModulesForStudent(Integer studentId) {
-		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("studentId", studentId).list();
+		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
 		List<com.university.entity.Module> modules = new java.util.ArrayList<>();
 		for (com.university.entity.Enrollment enrollment : enrollments) {
-			com.university.entity.Module module = moduleRepository.findById(enrollment.getModuleId().longValue());
+			com.university.entity.Module module = moduleRepository.findById(enrollment.getModule().getModuleId().longValue());
 			if (module != null) {
 				modules.add(module);
 			}
@@ -58,7 +58,7 @@ public class StudentService {
 		student.setLastName(updatedStudent.getLastName());
 		student.setEmail(updatedStudent.getEmail());
 		student.setPhoneNumber(updatedStudent.getPhoneNumber());
-		student.setDepartmentId(updatedStudent.getDepartmentId());
+		student.setDepartment(updatedStudent.getDepartment());
 		studentRepository.persist(student);
 		return student;
 	}

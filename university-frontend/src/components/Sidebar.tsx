@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCurrentPath from '../hooks/useCurrentPath';
 import {
@@ -7,7 +7,8 @@ import {
   UserIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
-import { getStudentById, Student } from '../services/studentService';
+import { getStudentById} from '../services/studentService';
+import { Student } from '../types/Student';
 
 const navItems = [
   { label: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
@@ -49,7 +50,7 @@ export default function Sidebar() {
                 <li key={item.label}>
                   {item.label === 'Log out' ? (
                     <button
-                      onClick={() => navigate('/logout')}
+                      onClick={() => navigate('/')}
                       className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-gray-700 w-full text-left ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
                     >
                       <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />

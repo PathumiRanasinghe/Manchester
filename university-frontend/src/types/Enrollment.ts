@@ -1,6 +1,9 @@
+import { Student } from './Student';
+import { Module } from './Module';
+
 export interface Enrollment {
   enrollmentId: number;
-  studentId: number;
-  moduleId: number;
-  enrollmentDate: string;
+  student: Student;
+  module: Module;
+  enrollmentDate: Date;
 }

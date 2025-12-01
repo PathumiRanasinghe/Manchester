@@ -19,7 +19,9 @@ public class Lecturer {
     @Column(length = 25, unique = true)
     private String email;
 
-    private Integer departmentId;
+    @ManyToOne
+    @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
+    private Department department;
 
     public Integer getLecturerId() {
         return lecturerId;
@@ -53,11 +55,11 @@ public class Lecturer {
         this.email = email;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

@@ -18,11 +18,11 @@ export default function LoginPage() {
           <p className="mb-8 text-lg text-gray-500">Please enter your details.</p>
           <form className="space-y-8">
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Login With Your ID</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Login With Your Username</label>
               <input
                 type="text"
                 className="w-full px-5 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-300 bg-gray-50 text-lg"
-                placeholder="Please enter your student ID"
+                placeholder="Please enter your username"
                 value={id}
                 onChange={e => setId(e.target.value)}
               />
@@ -60,7 +60,7 @@ export default function LoginPage() {
           </form>
           <div className="mt-6 text-center">
             <button type="button" className="text-base text-orange-500 hover:underline bg-transparent border-none p-0 cursor-pointer">
-              Forget Password
+              Dont have an account? Sign Up
             </button>
           </div>
           <div className="mt-10 text-sm text-gray-400 text-center">

@@ -25,7 +25,9 @@ public class Student {
     @Column(length = 10)
     private String phoneNumber;
 
-    private Integer departmentId;
+    @ManyToOne
+    @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
+    private Department department;
 
     public Integer getStudentId() {
         return studentId;
@@ -67,11 +69,11 @@ public class Student {
         this.phoneNumber = phoneNumber;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

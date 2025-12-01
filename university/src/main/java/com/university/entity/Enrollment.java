@@ -11,9 +11,13 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer enrollmentId;
 
-    private Integer studentId;
+    @ManyToOne
+    @JoinColumn(name = "studentId", referencedColumnName = "studentId")
+    private Student student;
 
-    private Integer moduleId;
+    @ManyToOne
+    @JoinColumn(name = "moduleId", referencedColumnName = "moduleId")
+    private Module module;
 
     private LocalDateTime enrollmentDate;
 
@@ -25,20 +29,20 @@ public class Enrollment {
         this.enrollmentId = enrollmentId;
     }
 
-    public Integer getStudentId() {
-        return studentId;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setStudentId(Integer studentId) {
-        this.studentId = studentId;
+    public void setStudent(Student student) {
+        this.student = student;
     }
 
-    public Integer getModuleId() {
-        return moduleId;
+    public Module getModule() {
+        return module;
     }
 
-    public void setModuleId(Integer moduleId) {
-        this.moduleId = moduleId;
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public LocalDateTime getEnrollmentDate() {
