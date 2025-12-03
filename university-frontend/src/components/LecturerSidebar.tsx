@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Lecturer } from '../types/Lecturer';
 import { getLecturerById } from '../services/lecturerService';
+import useCurrentPath from '../hooks/useCurrentPath';
 
 const navItems = [
   { label: 'Dashboard', icon: HomeIcon, path: '/lecturer/dashboard' },
@@ -20,8 +21,9 @@ const navItems = [
 
 export default function LecturerSidebar() {
   const navigate = useNavigate();
-
+  const currentPath = useCurrentPath();
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
+
   useEffect(() => {
     getLecturerById(2)
         .then((data: Lecturer) => setLecturer(data))
@@ -29,44 +31,45 @@ export default function LecturerSidebar() {
   }, []);
 
   return (
-    <aside className="bg-white h-screen w-64 shadow flex flex-col justify-between p-4">
-      <div>
-        <div className="mt-4 mb-8 flex justify-center w-full">
-          <span className="text-2xl font-bold text-blue-400">MANCHESTER</span>
+    <aside className="bg-white h-screen w-64 shadow flex flex-col p-4">
+      <div className="mb-6 flex justify-center w-full">
+        <span className="text-2xl font-bold text-blue-400">MANCHESTER</span>
+      </div>
+      <div className="mb-8 flex flex-col items-center">
+        <img src="/lecturer.png" alt="Lecturer" className="w-16 h-16 rounded-full mb-2 object-cover" />
+        <div className="text-center">
+          <div className="font-semibold text-blue-500">{lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : ''}</div>
+          <div className="text-xs text-gray-500">{lecturer ? lecturer.email : ''}</div>
         </div>
-        <div className="mt-8 mb-8 flex flex-col items-center">
-          <img src="/lecturer.png" alt="Lecturer" className="w-16 h-16 rounded-full mb-2 object-cover" />
-          <div className="text-center">
-            <div className="font-semibold text-blue-500">{lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : ''}</div>
-            <div className="text-xs text-gray-500">{lecturer ? lecturer.email : ''}</div>
-          </div>
-        </div>
-        <nav>
-          <ul className="space-y-2">
-            {navItems.map(item => (
+      </div>
+    <nav>
+        <ul className="space-y-2">
+          {navItems.map(item => {
+            const isActive = currentPath === item.path;
+            return (
               <li key={item.label}>
                 {item.label === 'Log out' ? (
                   <button
                     onClick={() => navigate('/')}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 text-gray-700 w-full text-left`}
+                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 text-gray-700 w-full text-left ${isActive ? 'bg-blue-100 font-bold text-blue-600' : ''}`}
                   >
-                    <item.icon className="h-6 w-6 text-blue-400" />
+                    <item.icon className={`h-6 w-6 ${isActive ? 'text-blue-600' : 'text-blue-400'}`} />
                     <span className="font-medium">{item.label}</span>
                   </button>
                 ) : (
                   <a
                     href={item.path}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 text-gray-700`}
+                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 text-gray-700 ${isActive ? 'bg-blue-100 font-bold text-blue-600' : ''}`}
                   >
-                    <item.icon className="h-6 w-6 text-blue-400" />
+                    <item.icon className={`h-6 w-6 ${isActive ? 'text-blue-600' : 'text-blue-400'}`} />
                     <span className="font-medium">{item.label}</span>
                   </a>
                 )}
               </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+            );
+          })}
+        </ul>
+      </nav>
     </aside>
   );
 }

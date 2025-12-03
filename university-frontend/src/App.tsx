@@ -15,6 +15,17 @@ import LecturerCourseDetailPage from "./pages/LecturerCourseDetailPage";
 import LecturerStudentsPage from "./pages/LecturerStudentsPage";
 import SignupPage from "./pages/SignupPage";
 import LecturerProfile from "./pages/LecturerProfile";
+import PostAnnouncement from "./pages/PostAnnouncementPage";
+import CreateModule from "./pages/CreateModule";
+import CreateAssigment from "./pages/CreateAssigment";
+import NotFoundPage from "./pages/NotFoundPage";
+import AdminLayout from "./layouts/AdminLayout";
+import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminStudentsPage } from "./pages/AdminStudentsPage";
+import { AdminLecturerPage } from "./pages/AdminLecturerPage";
+import { AdminDepartmentPage } from "./pages/AdminDepartmentPage";
+import AdminProfilePage from "./pages/AdminProfilePage";
+import { AdminModulesPage } from "./pages/AdminModulesPage";
 
 export default function App() {
   return (
@@ -23,17 +34,33 @@ export default function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path= "/signup" element={<SignupPage />} />
         <Route path="/logout" element={<LogoutPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+
+         {/* Student Routes  */}
         <Route path="/dashboard" element={<StudentLayout><StudentDashboard /></StudentLayout>} />
         <Route path="/courses" element={<StudentLayout><CoursesPage /></StudentLayout>} />
         <Route path="/profile" element={<StudentLayout><ProfilePage /></StudentLayout>} />
         <Route path="/department-modules" element={<StudentLayout><DepartmentModulesPage /></StudentLayout>} />
         <Route path="/unenroll-module" element={<StudentLayout><UnenrollModulePage /></StudentLayout>} />
         <Route path="/courses/:moduleId" element={<StudentLayout><CourseDetailPage /></StudentLayout>} />
+
+        {/* Lecturer Routes  */}
         <Route path="/lecturer/dashboard" element={<LecturerLayout><LecturerDashboard /></LecturerLayout>} />
         <Route path="/lecturer/modules" element={<LecturerLayout><LecturerModulesPage /></LecturerLayout>} />
         <Route path="/lecturer/modules/:moduleId" element={<LecturerLayout><LecturerCourseDetailPage /></LecturerLayout>} />
         <Route path="/lecturer/students" element={<LecturerLayout><LecturerStudentsPage /></LecturerLayout>} />
         <Route path="/lecturer/profile" element={<LecturerLayout><LecturerProfile /></LecturerLayout>} />
+        <Route path="/create-announcement" element={<LecturerLayout><PostAnnouncement/></LecturerLayout>} />
+        <Route path='/create-module' element={<LecturerLayout><CreateModule/></LecturerLayout>} />
+        <Route path='/create-assignment' element={<LecturerLayout><CreateAssigment/></LecturerLayout>} />
+
+        {/* Admin Routes  */}
+        <Route path= '/admins/dashboard' element={<AdminLayout><AdminDashboard/></AdminLayout>} />
+        <Route path='/admins/students' element={<AdminLayout><AdminStudentsPage/></AdminLayout>} />
+        <Route path= '/admins/lecturers' element={<AdminLayout> <AdminLecturerPage/></AdminLayout>} /> 
+        <Route path= '/admins/departments' element={<AdminLayout><AdminDepartmentPage/></AdminLayout>} /> 
+        <Route path= '/admins/profile' element={<AdminLayout><AdminProfilePage/></AdminLayout>} />
+        <Route path= '/admins/modules' element={<AdminLayout><AdminModulesPage/></AdminLayout>} />
       </Routes>
     </Router>
   );

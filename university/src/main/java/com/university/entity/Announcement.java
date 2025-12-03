@@ -13,7 +13,7 @@ public class Announcement {
     @Column(length = 20)
     private String title;
 
-    @Column(length = 100)
+    @Column(columnDefinition = "TEXT")
     private String content;
     
     private LocalDateTime postedAt;

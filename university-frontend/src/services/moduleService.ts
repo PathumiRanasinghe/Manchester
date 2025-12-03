@@ -16,3 +16,13 @@ export const getModuleById = async (moduleId: number): Promise<Module> => {
   const response = await axios.get(`/modules/${moduleId}`);
   return response.data as Module;
 };
+
+export const createModule = async (moduleData: Partial<Module>): Promise<Module> => {
+  const response = await axios.post('/modules', moduleData);
+  return response.data as Module;
+};
+
+export const getModules = async (): Promise<Module[]> => {
+  const response = await axios.get('/modules');
+  return response.data as Module[];
+};

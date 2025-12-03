@@ -1,4 +1,3 @@
-import CalendarWidget from '../components/CalendarWidget';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import { getAnnouncements} from '../services/announcementService';
@@ -56,8 +55,16 @@ export default function StudentDashboard() {
           )}
         </div>
         <div className="bg-white rounded-xl shadow p-6">
-          <div className="font-semibold mb-4 text-gray-700">Calendar</div>
-          <CalendarWidget />
+              <div className="bg-white rounded-xl shadow p-6">
+            <div className="font-semibold text-lg text-stone-700 mb-4">Calendar</div>
+            <iframe
+              src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FColombo"
+              style={{ border: 0 }}
+              width="100%"
+              height="300"
+              scrolling="no"
+            ></iframe>
+          </div>
         </div>
       </div>
         <div className="grid grid-cols-2 gap-8 mb-8">

@@ -31,6 +31,7 @@ public class StudentController {
         return studentService.getAllStudents();
     }
 
+    /// there is a duplicate like this in the module also, so check it!!!!!
     @GET
     @Path("/{id}/modules")
     public List<com.university.entity.Module> getModulesForStudent(@PathParam("id") Integer id) {

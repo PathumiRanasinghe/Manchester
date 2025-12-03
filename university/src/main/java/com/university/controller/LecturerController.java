@@ -1,11 +1,9 @@
 package com.university.controller;
 
 import java.util.List;
-
 import com.university.entity.Lecturer;
 import com.university.service.LecturerService;
 import jakarta.inject.Inject;
-
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;

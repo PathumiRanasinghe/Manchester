@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react";
-import CalendarWidget from "../components/CalendarWidget";
 import { getAnnouncements } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
 import { Lecturer } from "../types/Lecturer";
@@ -33,7 +32,7 @@ export default function LecturerDashboard() {
         <div className="mb-6 text-gray-500">Welcome back {lecturer ? `, ${lecturer.firstName}` : ''}!</div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="font-semibold text-lg text-sky-700 mb-2">Announcements</div>
+            <div className="font-semibold text-lg  mb-2">Announcements</div>
             <div className="mb-4">
               {loading ? (
                 <div>Loading...</div>
@@ -43,30 +42,45 @@ export default function LecturerDashboard() {
                 announcements.map(a => (
                   <div key={a.id} className="mb-4">
                     <div className="text-sky-600 font-bold">{a.title}</div>
-                    <div className="text-gray-700">{a.content}</div>
+                    <div className="text-gray-700 text-sm">{a.content}</div>
                     <div className="text-xs text-gray-400">Posted at: {new Date(a.postedAt).toLocaleString()}</div>
                   </div>
                 ))
               )}
             </div>
-            <button className="mt-2 px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Post Announcement</button>
+            <button className="mt-2 px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600"
+            onClick={()=> window.location.href='/create-announcement'}
+            >Post Announcement</button>
           </div>
           <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold mb-4 text-gray-700">Calendar</div>
-            <CalendarWidget />
+                <div className="bg-white rounded-xl shadow p-6">
+            <div className="font-semibold text-lg text-stone-700 mb-4">Calendar</div>
+            <iframe
+              src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FColombo"
+              style={{ border: 0 }}
+              width="100%"
+              height="300"
+              scrolling="no"
+            ></iframe>
+          </div>
+            
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <div className="font-semibold text-lg text-sky-700 mb-2">Create Module</div>
             <div className="mb-4 text-center text-gray-600">Add a new module to your department.</div>
-            <button className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Create Module</button>
+            <button className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600"
+            onClick={()=> window.location.href='/create-module'}
+            >Create Module</button>
           </div>
-          <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
+          {/* <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <div className="font-semibold text-lg text-sky-700 mb-2">Create Assignment</div>
             <div className="mb-4 text-center text-gray-600">Assign coursework to your students.</div>
-            <button className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">Create Assignment</button>
-          </div>
+            <button className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600"
+            onClick={()=> window.location.href='/create-assignment'}
+            >Create Assignment</button>
+          </div> */}
         </div>
       </main>
     </div>

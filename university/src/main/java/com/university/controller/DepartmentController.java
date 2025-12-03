@@ -3,7 +3,6 @@ package com.university.controller;
 
 
 import java.util.List;
-
 import com.university.entity.Department;
 import com.university.service.DepartmentService;
 import jakarta.inject.Inject;
