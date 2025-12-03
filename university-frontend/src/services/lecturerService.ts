@@ -3,6 +3,10 @@ import { Student } from '../types/Student';
 import { Module } from '../types/Module';
 import { Lecturer } from '../types/Lecturer';
 
+export const getLecturers = async (): Promise<Lecturer[]> => {
+  const response = await axios.get('/lecturers');
+  return response.data as Lecturer[];
+};
 
 export const getLecturerById = async (lecturerId: number): Promise<Lecturer> => {
   const response = await axios.get(`/lecturers/${lecturerId}`);

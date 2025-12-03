@@ -1,9 +1,7 @@
 
 package com.university.controller;
 
-
 import java.util.List;
-
 import com.university.entity.Enrollment;
 import com.university.service.EnrollmentService;
 import jakarta.inject.Inject;

@@ -1,6 +1,8 @@
 package com.university.service;
 
 import com.university.entity.Student;
+import com.university.repository.EnrollmentRepository;
+import com.university.repository.ModuleRepository;
 import com.university.repository.StudentRepository;
 import com.university.exception.UserNotFoundException;
 import jakarta.inject.Inject;
@@ -11,9 +13,11 @@ import java.util.List;
 @ApplicationScoped
 public class StudentService {
 	@Inject
-	com.university.repository.EnrollmentRepository enrollmentRepository;
+	EnrollmentRepository enrollmentRepository;
 	@Inject
-	com.university.repository.ModuleRepository moduleRepository;
+	ModuleRepository moduleRepository;
+	@Inject
+	StudentRepository studentRepository;
 
 	public List<com.university.entity.Module> getModulesForStudent(Integer studentId) {
 		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
@@ -26,9 +30,6 @@ public class StudentService {
 		}
 		return modules;
 	}
-
-	@Inject
-	StudentRepository studentRepository;
 
 	public List<Student> getAllStudents() {
 		return studentRepository.listAll();

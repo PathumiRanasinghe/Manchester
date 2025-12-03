@@ -1,9 +1,7 @@
 
 package com.university.controller;
 
-
 import java.util.List;
-
 import com.university.entity.Module;
 import com.university.service.ModuleService;
 import jakarta.inject.Inject;
@@ -54,11 +52,13 @@ public class ModuleController {
     public Module getModule(@PathParam("id") Long id) {
         return moduleService.getModuleById(id);
     }
-        @GET
-        @Path("/{id}/students")
-        public List<com.university.entity.Student> getStudentsForModule(@PathParam("id") Integer id) {
-            return moduleService.getStudentsForModule(id);
-        }
+
+    @GET
+    @Path("/{id}/students")
+    public List<com.university.entity.Student> getStudentsForModule(@PathParam("id") Integer id) {
+        return moduleService.getStudentsForModule(id);
+    }
+
     @POST
     public Response createModule(Module module) {
         Module created = moduleService.createModule(module);
