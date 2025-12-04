@@ -1,11 +1,15 @@
-package com.university.controller;
+package com.university.rest;
 
 import java.util.List;
+
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import com.university.entity.Admin;
 import com.university.entity.Lecturer;
 import com.university.entity.Student;
 import com.university.service.AdminService;
+
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -18,10 +22,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/admins")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AdminController {
+public class AdminResource {
 
     @Inject 
     AdminService adminService;
+
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     @Path("/students")

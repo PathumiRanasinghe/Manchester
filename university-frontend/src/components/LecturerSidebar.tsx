@@ -16,7 +16,7 @@ const navItems = [
   { label: 'My Modules', icon: BookOpenIcon, path: '/lecturer/modules' },
   { label: 'Students', icon: UsersIcon, path: '/lecturer/students' },
   { label: 'My Profile', icon: UserIcon, path: '/lecturer/profile' },
-  { label: 'Log out', icon: ArrowRightIcon, path: '/' },
+  { label: 'Log out', icon: ArrowRightIcon, path: '/logout' },
 ];
 
 export default function LecturerSidebar() {
@@ -50,7 +50,7 @@ export default function LecturerSidebar() {
               <li key={item.label}>
                 {item.label === 'Log out' ? (
                   <button
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/logout')}
                     className={`flex items-center gap-3 p-2 rounded-lg hover:bg-blue-50 text-gray-700 w-full text-left ${isActive ? 'bg-blue-100 font-bold text-blue-600' : ''}`}
                   >
                     <item.icon className={`h-6 w-6 ${isActive ? 'text-blue-600' : 'text-blue-400'}`} />

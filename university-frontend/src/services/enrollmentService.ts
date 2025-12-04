@@ -1,11 +1,11 @@
-import axios from 'axios';
+import api from './api';
 
 export async function unenrollModule(enrollmentId: number): Promise<void> {
-  await axios.delete(`/api/enrollments/${enrollmentId}`);
+  await api.delete(`/enrollments/${enrollmentId}`);
 }
 
 export async function enrollModule(studentId: number, moduleId: number): Promise<void> {
-  await axios.post('/api/enrollments', {
+  await api.post('/enrollments', {
     student: { studentId },
     module: { moduleId },
     enrollmentDate: new Date().toISOString()

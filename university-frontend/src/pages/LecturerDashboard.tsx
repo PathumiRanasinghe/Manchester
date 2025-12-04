@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { getAnnouncements } from '../services/announcementService';
+import { getAnnouncements, deleteAnnouncement } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
 import { Lecturer } from "../types/Lecturer";
 import { getLecturerById } from "../services/lecturerService";
@@ -25,6 +25,13 @@ export default function LecturerDashboard() {
       .catch(() => setLoading(false));
   }, [lecturerId]);
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this announcement?')) {
+      await deleteAnnouncement(id);
+      setAnnouncements(announcements.filter(a => a.id !== id));
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       <main className="flex-1 p-8">
@@ -40,10 +47,20 @@ export default function LecturerDashboard() {
                 <div className="text-gray-400">No announcements found.</div>
               ) : (
                 announcements.map(a => (
-                  <div key={a.id} className="mb-4">
-                    <div className="text-sky-600 font-bold">{a.title}</div>
-                    <div className="text-gray-700 text-sm">{a.content}</div>
-                    <div className="text-xs text-gray-400">Posted at: {new Date(a.postedAt).toLocaleString()}</div>
+                  <div key={a.id} className="mb-4 border-b pb-2">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="text-sky-600 font-bold">{a.title}</div>
+                        <div className="text-gray-700 text-sm">{a.content}</div>
+                        <div className="text-xs text-gray-400">Posted at: {new Date(a.postedAt).toLocaleString()}</div>
+                      </div>
+                      <button
+                        className="ml-4 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                        onClick={() => handleDelete(a.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 ))
               )}

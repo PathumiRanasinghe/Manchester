@@ -21,4 +21,12 @@ public class AnnouncementRepository {
     public void save(Announcement announcement) {
         em.persist(announcement);
     }
+
+    @Transactional
+    public void deleteById(Long id) {
+        Announcement announcement = em.find(Announcement.class, id);
+        if (announcement != null) {
+            em.remove(announcement);
+        }
+    }
 }

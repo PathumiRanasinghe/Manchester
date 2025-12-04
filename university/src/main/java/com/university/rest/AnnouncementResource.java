@@ -1,9 +1,11 @@
-package com.university.controller;
+package com.university.rest;
 
 import com.university.entity.Announcement;
 import com.university.service.AnnouncementService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
@@ -14,7 +16,7 @@ import java.util.List;
 @Path("/api/announcements")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AnnouncementController {
+public class AnnouncementResource {
 	@Inject
 	AnnouncementService announcementService;
 
@@ -26,5 +28,10 @@ public class AnnouncementController {
 	@POST
 	public void postAnnouncement(Announcement announcement) {
 		announcementService.postAnnouncement(announcement);
+	}
+	@DELETE
+	@Path("/{id}")
+	public void deleteAnnouncement(@PathParam("id") Long id) {
+		announcementService.deleteAnnouncement(id);
 	}
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { postAnnouncement } from "../services/announcementService";
 
-const lecturerId = 1;
+const lecturerId = 2;
 const departmentId = 1;
 
 export default function PostAnnouncementPage() {

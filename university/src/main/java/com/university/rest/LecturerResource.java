@@ -1,6 +1,9 @@
-package com.university.controller;
+package com.university.rest;
 
 import java.util.List;
+
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 import com.university.entity.Lecturer;
 import com.university.service.LecturerService;
 import jakarta.inject.Inject;
@@ -18,10 +21,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/lecturers")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class LecturerController {
+public class LecturerResource {
 
     @Inject
     LecturerService lecturerService;
+
+      @Inject
+    JsonWebToken jwt;
 
     @GET
     public List<Lecturer> getLecturers() {

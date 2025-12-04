@@ -19,7 +19,7 @@ const navItems = [
   { label: 'Departments', icon: BuildingOfficeIcon, path: '/admin/departments' },
   { label: 'Modules', icon: BookOpenIcon, path: '/admin/modules' },
   { label: 'My Profile', icon: UserIcon, path: '/admin/profile' },
-  { label: 'Log out', icon: ArrowRightIcon, path: '/' },
+  { label: 'Log out', icon: ArrowRightIcon, path: '/logout' },
 ];
 
 export default function AdminSidebar() {
@@ -53,7 +53,7 @@ export default function AdminSidebar() {
               <li key={item.label}>
                 {item.label === 'Log out' ? (
                   <button
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/logout')}
                     className={`flex items-center gap-3 p-2 rounded-lg hover:bg-stone-50 text-gray-700 w-full text-left ${isActive ? 'bg-stone-100 font-bold text-stone-500' : ''}`}
                   >
                     <item.icon className={`h-6 w-6 ${isActive ? 'text-stone-500' : 'text-stone-400'}`} />

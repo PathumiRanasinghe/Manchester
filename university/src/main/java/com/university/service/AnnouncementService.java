@@ -19,4 +19,7 @@ public class AnnouncementService {
     public void postAnnouncement(Announcement announcement) {
         announcementRepository.save(announcement);
     }
+    public void deleteAnnouncement(Long id) {
+        announcementRepository.deleteById(id);
+    }
 }

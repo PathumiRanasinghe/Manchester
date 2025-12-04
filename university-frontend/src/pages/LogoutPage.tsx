@@ -1,12 +1,13 @@
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import KeycloakService from '../keycloak';
 
 export default function LogoutPage() {
-  const navigate = useNavigate();
   useEffect(() => {
     localStorage.clear();
     sessionStorage.clear();
-    navigate('/', { replace: true });
-  }, [navigate]);
+    KeycloakService.getKeycloak().logout({ redirectUri: window.location.origin });
+  }, []);
   return null;
 }

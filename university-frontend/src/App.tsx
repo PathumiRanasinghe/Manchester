@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AuthRedirect from './components/AuthRedirect';
 import StudentDashboard from "./pages/StudentDashboard";
 import CoursesPage from "./pages/CoursesPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -29,6 +30,7 @@ import { AdminModulesPage } from "./pages/AdminModulesPage";
 export default function App() {
   return (
     <Router>
+      <AuthRedirect />
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path= "/signup" element={<SignupPage />} />

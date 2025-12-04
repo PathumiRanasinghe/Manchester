@@ -3,7 +3,7 @@ import { Admin } from "../types/Admin";
 import { getAdminById } from "../services/AdminService";
 import { getStudents } from "../services/studentService";
 import { getLecturers } from "../services/lecturerService";
-import axios from "axios";
+import api from "../services/api";
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 
@@ -18,7 +18,7 @@ export const AdminDashboard = () => {
   const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-      axios.get("/api/enrollments").then(res => {
+      api.get("/enrollments").then(res => {
           const enrollments = res.data;
           const dayCounts: { [date: string]: number } = {};
           enrollments.forEach((e: any) => {
@@ -34,8 +34,8 @@ export const AdminDashboard = () => {
       getAdminById(1),
       getStudents(),
       getLecturers(),
-      axios.get("/api/modules").then(res => res.data),
-      axios.get("/api/departments").then(res => res.data)
+      api.get("/modules").then(res => res.data),
+      api.get("/departments").then(res => res.data)
     ])
       .then(([adminData, students, lecturers, modules, departments]) => {
         setAdmin(adminData);
