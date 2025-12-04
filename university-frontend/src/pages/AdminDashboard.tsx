@@ -17,8 +17,8 @@ export const AdminDashboard = () => {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-        axios.get("/enrollments").then(res => {
+    React.useEffect(() => {
+      axios.get("/api/enrollments").then(res => {
           const enrollments = res.data;
           const dayCounts: { [date: string]: number } = {};
           enrollments.forEach((e: any) => {
@@ -34,8 +34,8 @@ export const AdminDashboard = () => {
       getAdminById(1),
       getStudents(),
       getLecturers(),
-      axios.get("/modules").then(res => res.data),
-      axios.get("/departments").then(res => res.data)
+      axios.get("/api/modules").then(res => res.data),
+      axios.get("/api/departments").then(res => res.data)
     ])
       .then(([adminData, students, lecturers, modules, departments]) => {
         setAdmin(adminData);
@@ -60,7 +60,7 @@ export const AdminDashboard = () => {
       <main className="flex-1 p-8">
         <h1 className="text-3xl font-bold mb-2 text-stone-700">Dashboard</h1>
         <div className="mb-6 text-gray-500">
-          Welcome back, <span className="font-semibold text-stone-700">{admin.username}</span>!
+          Welcome back!
         </div>
       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -73,7 +73,7 @@ export const AdminDashboard = () => {
               <span className="font-semibold text-lg text-orange-600">Students</span>
             </div>
             <div className="text-3xl font-bold text-orange-600 mb-1">{studentCount}</div>
-            <div className="flex items-center text-green-500 text-sm">
+            <div className="flex items-center text-orange-500 text-sm">
               Total Students
             </div>
           </div>
@@ -86,7 +86,7 @@ export const AdminDashboard = () => {
               <span className="font-semibold text-lg text-blue-700">Lecturers</span>
             </div>
             <div className="text-3xl font-bold text-blue-600 mb-1">{lecturerCount}</div>
-            <div className="flex items-center text-green-500 text-sm">
+            <div className="flex items-center text-blue-500 text-sm">
               
               Total Lecturers
             </div>
@@ -100,7 +100,7 @@ export const AdminDashboard = () => {
               <span className="font-semibold text-lg text-purple-700">Modules</span>
             </div>
             <div className="text-3xl font-bold text-purple-600 mb-1">{moduleCount}</div>
-            <div className="flex items-center text-green-500 text-sm">
+            <div className="flex items-center text-purple-500 text-sm">
               
               Total Modules
             </div>
@@ -130,7 +130,6 @@ export const AdminDashboard = () => {
               style={{ border: 0 }}
               width="100%"
               height="350"
-              frameBorder="0"
               scrolling="no"
             ></iframe>
           </div>
