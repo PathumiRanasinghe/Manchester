@@ -15,3 +15,12 @@ export const getDepartments = async (): Promise<Department[]> => {
   const response = await api.get('/departments');
   return response.data as Department[];
 };
+
+export const updateDepartment = async (departmentId: number, departmentData: Partial<Department>): Promise<Department> => {
+  const response = await api.put(`/departments/${departmentId}`, departmentData);
+  return response.data as Department;
+};
+
+export const deleteDepartment = async (departmentId: number): Promise<void> => {
+  await api.delete(`/departments/${departmentId}`);
+};

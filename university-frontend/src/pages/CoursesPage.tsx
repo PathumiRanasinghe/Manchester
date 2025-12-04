@@ -2,17 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { getModulesByStudentId } from '../services/moduleService';
 import { useNavigate } from 'react-router-dom';
 import { Module } from '../types/Module';
-
-const studentId = 1;
+import { getStudentByEmail } from '../services/studentService';
+import { getKeycloak } from '../keycloak';
 
 const CoursesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [studentId, setStudentId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getModulesByStudentId(studentId)
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
+    getStudentByEmail(email)
+      .then(student => {
+        setStudentId(student.studentId ?? null);
+        return getModulesByStudentId(student.studentId ?? 0);
+      })
       .then((data: Module[]) => {
         setModules(data);
         setLoading(false);

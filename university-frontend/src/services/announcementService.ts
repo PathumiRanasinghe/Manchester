@@ -14,3 +14,8 @@ export async function deleteAnnouncement(id: number): Promise<void> {
 export async function postAnnouncement(announcement: Partial<Announcement>): Promise<void> {
   await api.post('/announcements', announcement);
 }
+
+export async function getAnnouncementsByLecturerId(lecturerId: number): Promise<Announcement[]> {
+  const response = await api.get(`/announcements/lecturer/${lecturerId}`);
+  return response.data;
+}

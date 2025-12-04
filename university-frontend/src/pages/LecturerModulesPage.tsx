@@ -1,19 +1,32 @@
-
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getModulesByLecturerId } from '../services/lecturerService';
+import { getLecturerByEmail, getModulesByLecturerId } from '../services/lecturerService';
+import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 
 export default function LecturerModulesPage() {
-  const lecturerId = 2;
   const [courses, setCourses] = useState<Module[]>([]);
+  const [lecturerId, setLecturerId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getModulesByLecturerId(lecturerId)
-      .then((data: Module[]) => setCourses(data))
-      .catch(() => setCourses([]));
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturerId(null);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then(lecturer => setLecturerId(lecturer.lecturerId))
+      .catch(() => setLecturerId(null));
+  }, []);
+
+  useEffect(() => {
+    if (lecturerId) {
+      getModulesByLecturerId(lecturerId)
+        .then((data: Module[]) => setCourses(data))
+        .catch(() => setCourses([]));
+    }
   }, [lecturerId]);
 
   return (

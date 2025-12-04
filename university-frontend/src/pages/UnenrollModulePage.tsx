@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getModulesByStudentId} from '../services/moduleService';
-import { getEnrollmentsByStudentId } from '../services/studentService';
+import { getEnrollmentsByStudentId, getStudentByEmail } from '../services/studentService';
 import { unenrollModule } from '../services/enrollmentService';
 import { Enrollment } from '../types/Enrollment';
 import { Module } from '../types/Module';
-
-const studentId = 1;
+import { getKeycloak } from '../keycloak';
 
 const UnenrollModulePage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -15,12 +14,30 @@ const UnenrollModulePage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [studentId, setStudentId] = useState<number | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      getModulesByStudentId(studentId),
-      getEnrollmentsByStudentId(studentId)
-    ])
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
+    getStudentByEmail(email)
+      .then(student => {
+        const id = student.studentId;
+        if (id == null) {
+          setError('Student ID missing from response');
+          setLoading(false);
+          return Promise.reject(new Error('Student ID missing'));
+        }
+        setStudentId(id);
+        return Promise.all([
+          getModulesByStudentId(id),
+          getEnrollmentsByStudentId(id)
+        ]);
+      })
       .then(([mods, ens]) => {
         setModules(mods);
         setEnrollments(ens);

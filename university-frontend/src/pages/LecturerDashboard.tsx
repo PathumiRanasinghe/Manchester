@@ -1,29 +1,43 @@
-
 import { useEffect, useState } from "react";
-import { getAnnouncements, deleteAnnouncement } from '../services/announcementService';
+import Spinner from '../components/Spinner';
+import { getAnnouncementsByLecturerId, deleteAnnouncement } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
 import { Lecturer } from "../types/Lecturer";
-import { getLecturerById } from "../services/lecturerService";
+import { getLecturerByEmail } from "../services/lecturerService";
+import { getKeycloak } from '../keycloak';
 
 
 export default function LecturerDashboard() {
-  const lecturerId = 2;
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [lecturer, setLecturer] = useState<Lecturer|null>(null);
+  const [lecturerId, setLecturerId] = useState<number | null>(null);
 
   useEffect(() => {
-    Promise.all([
-      getAnnouncements(),
-      getLecturerById(2)
-    ])
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturerId(null);
+      setLoading(false);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then(lecturer => {
+        setLecturerId(lecturer.lecturerId);
+        return Promise.all([
+          getAnnouncementsByLecturerId(lecturer.lecturerId),
+          Promise.resolve(lecturer)
+        ]);
+      })
       .then(([announcementsData, lecturerData]) => {
-        setAnnouncements(announcementsData.filter(a => a.lecturer.lecturerId === lecturerId));
+        setAnnouncements(announcementsData);
         setLecturer(lecturerData);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  }, [lecturerId]);
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const handleDelete = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this announcement?')) {
@@ -42,7 +56,7 @@ export default function LecturerDashboard() {
             <div className="font-semibold text-lg  mb-2">Announcements</div>
             <div className="mb-4">
               {loading ? (
-                <div>Loading...</div>
+                <Spinner className="py-8" />
               ) : announcements.length === 0 ? (
                 <div className="text-gray-400">No announcements found.</div>
               ) : (

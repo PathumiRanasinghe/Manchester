@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { getModules } from '../services/moduleService';
+import { getModules, updateModule, deleteModule } from '../services/moduleService';
 import { getDepartments } from '../services/departmentService';
+import { getEnrollmentsByModuleId } from '../services/enrollmentService';
+import Spinner from "../components/Spinner";
 
 export const AdminModulesPage = () => {
   const [search, setSearch] = useState("");
@@ -16,6 +18,15 @@ export const AdminModulesPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedModule, setExpandedModule] = useState<any | null>(null);
+  const [editModule, setEditModule] = useState<any | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editSuccess, setEditSuccess] = useState<string | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteModuleObj, setDeleteModuleObj] = useState<any | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [enrolledCount, setEnrolledCount] = useState<number | null>(null);
 
   useEffect(() => {
     getModules()
@@ -71,7 +82,7 @@ export const AdminModulesPage = () => {
           </a> */}
         </div>
         {loading ? (
-          <div className="text-center py-8 text-stone-400">Loading modules...</div>
+          <Spinner className="p-8" />
         ) : error ? (
           <div className="text-center py-8 text-red-400">{error}</div>
         ) : (
@@ -105,10 +116,22 @@ export const AdminModulesPage = () => {
                     <td className="py-3 px-4 text-gray-500">{module.lecturer ? `${module.lecturer.firstName} ${module.lecturer.lastName}` : '-'}</td>
                     <td className="py-3 px-4 text-gray-500">{module.department ? module.department.departmentName : '-'}</td>
                     <td className="py-3 px-4 text-center flex items-center justify-center gap-2">
-                      <button className="p-2 rounded hover:bg-stone-100" title="Edit">
+                      <button className="p-2 rounded hover:bg-stone-100" title="Edit" onClick={() => {
+                        setEditModule(module);
+                        setEditName(module.moduleName);
+                        setEditDesc(module.description);
+                        setEditError(null);
+                        setEditSuccess(null);
+                      }}>
                         <PencilSquareIcon className="h-5 w-5 text-blue-400" />
                       </button>
-                      <button className="p-2 rounded hover:bg-stone-100" title="Delete">
+                      <button className="p-2 rounded hover:bg-stone-100" title="Delete" onClick={async () => {
+                        setDeleteModuleObj(module);
+                        setShowDelete(true);
+                        setDeleteError(null);
+                        const enrollments = await getEnrollmentsByModuleId(module.moduleId);
+                        setEnrolledCount(enrollments.length);
+                      }}>
                         <TrashIcon className="h-5 w-5 text-red-400" />
                       </button>
                     </td>
@@ -157,6 +180,76 @@ export const AdminModulesPage = () => {
                   <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => setShowCreate(false)}>Cancel</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+        {editModule && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+              <div className="font-bold text-lg mb-4">Edit Module</div>
+              <form className="w-full flex flex-col gap-4" onSubmit={async (e) => {
+                e.preventDefault();
+                setEditError(null);
+                setEditSuccess(null);
+                try {
+                  const updated = await updateModule(editModule.moduleId, { moduleName: editName, description: editDesc });
+                  setEditSuccess(`Module '${updated.moduleName}' updated successfully!`);
+                  setModules(modules.map(m => m.moduleId === updated.moduleId ? updated : m));
+                  setEditModule(null);
+                } catch (err) {
+                  setEditError("Failed to update module.");
+                }
+              }}>
+                <input type="text" placeholder="Module Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                {editError && <div className="text-red-500 text-sm">{editError}</div>}
+                {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}
+                <div className="flex gap-4 mt-4">
+                  <button type="submit" className="px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">Update</button>
+                  <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => setEditModule(null)}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {showDelete && deleteModuleObj && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+              <div className="font-bold text-lg mb-4">Do you want to delete this module?</div>
+              {enrolledCount !== null && enrolledCount > 0 && (
+                <div className="mb-4 text-red-500 font-semibold">There are {enrolledCount} student(s) enrolled in this module. Please unenroll them before deleting.</div>
+              )}
+              <div className="mb-6 text-gray-700">This action cannot be undone.</div>
+              {deleteError && <div className="text-red-500 text-sm mb-2">{deleteError}</div>}
+              <div className="flex gap-4">
+                <button
+                  className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+                  disabled={enrolledCount !== null && enrolledCount > 0}
+                  onClick={async () => {
+                    try {
+                      await deleteModule(deleteModuleObj.moduleId);
+                      setModules(modules.filter(m => m.moduleId !== deleteModuleObj.moduleId));
+                      setShowDelete(false);
+                      setDeleteModuleObj(null);
+                      setEnrolledCount(null);
+                    } catch {
+                      setDeleteError('Failed to delete module.');
+                    }
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                  className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
+                  onClick={() => {
+                    setShowDelete(false);
+                    setDeleteModuleObj(null);
+                    setEnrolledCount(null);
+                  }}
+                >
+                  No
+                </button>
+              </div>
             </div>
           </div>
         )}

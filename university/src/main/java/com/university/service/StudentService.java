@@ -19,6 +19,14 @@ public class StudentService {
 	@Inject
 	StudentRepository studentRepository;
 
+	public Student getStudentByEmail(String email) {
+		Student student = studentRepository.findByEmail(email);
+		if (student == null) {
+			throw new UserNotFoundException("Student with email " + email + " not found");
+		}
+		return student;
+	}
+
 	public List<com.university.entity.Module> getModulesForStudent(Integer studentId) {
 		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
 		List<com.university.entity.Module> modules = new java.util.ArrayList<>();

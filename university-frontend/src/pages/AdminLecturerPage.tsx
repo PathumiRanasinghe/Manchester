@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Lecturer } from "../types/Lecturer";
 import { getLecturers } from "../services/lecturerService";
+import Spinner from "../components/Spinner";
 
 export const AdminLecturerPage = () => {
   const [search, setSearch] = useState("");
@@ -34,7 +35,7 @@ export const AdminLecturerPage = () => {
     return matchesSearch && matchesDepartment;
   });
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
@@ -61,9 +62,9 @@ export const AdminLecturerPage = () => {
               ))}
             </select>
           </div>
-          {/* <a href="/admin/lecturers/create" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
+          <a href="/admin/lecturers/create" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
             <span>+ Create Lecturer</span>
-          </a> */}
+          </a>
         </div>
         <div className="bg-white rounded-xl shadow border border-gray-100">
           <table className="w-full text-left">

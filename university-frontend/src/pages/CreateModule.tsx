@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createModule } from "../services/moduleService";
+import { getLecturerByEmail } from '../services/lecturerService';
+import { getKeycloak } from '../keycloak';
 
 const departmentId = 1;
-const lecturerId = 2;
 
 const CreateModule = () => {
   const [moduleName, setModuleName] = useState("");
@@ -10,6 +11,19 @@ const CreateModule = () => {
   const [credits, setCredits] = useState<number>();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [lecturerId, setLecturerId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturerId(null);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then(lecturer => setLecturerId(lecturer.lecturerId))
+      .catch(() => setLecturerId(null));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

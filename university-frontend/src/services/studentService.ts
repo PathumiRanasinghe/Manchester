@@ -16,3 +16,12 @@ export async function getEnrollmentsByStudentId(studentId: number): Promise<Enro
 	const response = await api.get(`/enrollments`);
 	return (response.data as Enrollment[]).filter(e => e.student.studentId === studentId);
 }
+
+export const getStudentByEmail = async (email: string): Promise<Student> => {
+    const response = await api.get(`/students/by-email?email=${encodeURIComponent(email)}`);
+    return response.data as Student;
+};
+
+export const deleteStudent = async (studentId: number): Promise<void> => {
+    await api.delete(`/admins/students/${studentId}`);
+};

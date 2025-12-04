@@ -8,8 +8,17 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;
 
+
 @ApplicationScoped
 public class LecturerService {
+
+	public Lecturer getLecturerByEmail(String email) {
+		Lecturer lecturer = lecturerRepository.findByEmail(email);
+		if (lecturer == null) {
+			throw new UserNotFoundException("Lecturer with email " + email + " not found");
+		}
+		return lecturer;
+	}
 
 	@Inject
 	LecturerRepository lecturerRepository;

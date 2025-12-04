@@ -25,3 +25,12 @@ export const getModules = async (): Promise<Module[]> => {
   const response = await api.get('/modules');
   return response.data as Module[];
 };
+
+export const updateModule = async (moduleId: number, moduleData: Partial<Module>): Promise<Module> => {
+  const response = await api.put(`/modules/${moduleId}`, moduleData);
+  return response.data as Module;
+};
+
+export const deleteModule = async (moduleId: number): Promise<void> => {
+  await api.delete(`/modules/${moduleId}`);
+};

@@ -2,6 +2,8 @@ import  {  useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Student } from "../types/Student";
 import { getStudents } from "../services/studentService";
+import Spinner from "../components/Spinner";
+import { deleteStudent } from "../services/studentService";
 
 
 
@@ -11,6 +13,9 @@ export const AdminStudentsPage = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
   useEffect(() => {
     getStudents()
@@ -35,7 +40,27 @@ export const AdminStudentsPage = () => {
     return matchesSearch && matchesDepartment;
   });
 
-    if (loading) return <div className="p-8">Loading...</div>;
+  const handleConfirmDelete = async () => {
+    if (selectedStudent) {
+      setDeletingId(selectedStudent.studentId!);
+      try {
+        await deleteStudent(selectedStudent.studentId!);
+        setStudents(students.filter(s => s.studentId !== selectedStudent.studentId));
+        setShowConfirm(false);
+        setSelectedStudent(null);
+      } catch {
+        setError('Failed to delete student');
+      }
+      setDeletingId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirm(false);
+    setSelectedStudent(null);
+  };
+
+    if (loading) return <Spinner className="p-8" />;
     if (error) return <div className="p-8 text-red-500">{error}</div>;
     return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
@@ -62,9 +87,9 @@ export const AdminStudentsPage = () => {
               ))}
             </select>
           </div>
-          {/* <a href="/admin/students/create" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
+          <a href="/admin/create-student" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
             <span>+ Create Student</span>
-          </a> */}
+          </a>
         </div>
         <div className="bg-white rounded-xl shadow border border-gray-100">
           <table className="w-full text-left">
@@ -87,10 +112,15 @@ export const AdminStudentsPage = () => {
                   <td className="py-3 px-4 text-gray-500">{student.phoneNumber}</td>
                   <td className="py-3 px-4 text-gray-500">{student.department.departmentName}</td>
                   <td className="py-3 px-4 text-center flex items-center justify-center gap-2">
-                    <button className="p-2 rounded hover:bg-stone-100" title="Edit">
-                      <PencilSquareIcon className="h-5 w-5 text-blue-400" />
-                    </button>
-                    <button className="p-2 rounded hover:bg-stone-100" title="Delete">
+                    <button
+                      className="p-2 rounded hover:bg-stone-100"
+                      title="Delete"
+                      disabled={deletingId === student.studentId}
+                      onClick={() => {
+                        setSelectedStudent(student);
+                        setShowConfirm(true);
+                      }}
+                    >
                       <TrashIcon className="h-5 w-5 text-red-400" />
                     </button>
                   </td>
@@ -100,9 +130,31 @@ export const AdminStudentsPage = () => {
           </table>
         </div>
       </div>
+      {showConfirm && selectedStudent && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+      <div className="font-bold text-lg mb-4">Do you want to delete this student?</div>
+      <div className="mb-6 text-gray-700">This action cannot be undone.</div>
+      <div className="flex gap-4">
+        <button
+          className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+          onClick={handleConfirmDelete}
+          disabled={deletingId === selectedStudent.studentId}
+        >
+          Yes
+        </button>
+        <button
+          className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
+          onClick={handleCancelDelete}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 
 }
 
- 

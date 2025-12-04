@@ -13,6 +13,10 @@ export const getLecturerById = async (lecturerId: number): Promise<Lecturer> => 
   return response.data as Lecturer;
 };
 
+export const getLecturerByEmail = async (email: string): Promise<Lecturer> => {
+  const response = await api.get(`/lecturers/by-email?email=${encodeURIComponent(email)}`);
+  return response.data as Lecturer;
+};
 
 export const getStudentsByModuleId = async (moduleId: number): Promise<Student[]> => {
   const response = await api.get(`/modules/${moduleId}/students`);

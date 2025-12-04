@@ -6,7 +6,8 @@ import {
   UserIcon,
   UsersIcon,
   BuildingOfficeIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  ClipboardDocumentListIcon
 } from '@heroicons/react/24/outline';
 import useCurrentPath from '../hooks/useCurrentPath';
 import { Admin } from '../types/Admin';
@@ -18,6 +19,7 @@ const navItems = [
   { label: 'Lecturers', icon: UsersIcon, path: '/admin/lecturers' },
   { label: 'Departments', icon: BuildingOfficeIcon, path: '/admin/departments' },
   { label: 'Modules', icon: BookOpenIcon, path: '/admin/modules' },
+  { label: 'Enrollments', icon: ClipboardDocumentListIcon, path: '/admin/enrollments' },
   { label: 'My Profile', icon: UserIcon, path: '/admin/profile' },
   { label: 'Log out', icon: ArrowRightIcon, path: '/logout' },
 ];
@@ -71,6 +73,7 @@ export default function AdminSidebar() {
               </li>
             );
           })}
+        
         </ul>
       </nav>
     </aside>

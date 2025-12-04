@@ -1,8 +1,10 @@
 import { BookOpenIcon } from '@heroicons/react/24/outline';
+import Spinner from '../components/Spinner';
 import React, { useEffect, useState } from 'react';
-import { getAnnouncements} from '../services/announcementService';
+import { getAnnouncements } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
-import { getStudentById } from '../services/studentService';
+import { getStudentByEmail } from '../services/studentService';
+import { getKeycloak } from '../keycloak';
 import { Student } from '../types/Student';
 
 export default function StudentDashboard() {
@@ -12,9 +14,19 @@ export default function StudentDashboard() {
   const [student, setStudent] = useState<Student | null>(null);
 
   useEffect(() => {
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    console.log('Keycloak tokenParsed:', kc.tokenParsed);
+
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
+
     Promise.all([
       getAnnouncements(),
-      getStudentById(1)
+      getStudentByEmail(email)
     ])
       .then(([announcementsData, studentData]) => {
         setAnnouncements(announcementsData);
@@ -37,7 +49,7 @@ export default function StudentDashboard() {
         <div className="bg-white rounded-xl shadow p-6 ">
           <div className="font-semibold mb-4 text-gray-700">Announcements</div>
           {loading ? (
-            <div className="text-gray-500">Loading...</div>
+            <Spinner className="py-8" />
           ) : error ? (
             <div className="text-red-500">{error}</div>
           ) : announcements.length === 0 ? (
