@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getModulesByLecturerId } from '../services/lecturerService';
 import { Module } from '../types/Module';

@@ -29,7 +29,7 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="bg-white w-64 shadow flex flex-col p-4 sticky top-0 h-screen">
+    <aside className="bg-white h-screen w-64 shadow flex flex-col p-4">
       <div className="mb-6 flex justify-center w-full">
         <span className="text-2xl font-bold text-orange-400">MANCHESTER</span>
       </div>

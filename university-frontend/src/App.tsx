@@ -17,6 +17,7 @@ import SignupPage from "./pages/SignupPage";
 import LecturerProfile from "./pages/LecturerProfile";
 import PostAnnouncement from "./pages/PostAnnouncementPage";
 import CreateModule from "./pages/CreateModule";
+import CreateAssigment from "./pages/CreateAssigment";
 import NotFoundPage from "./pages/NotFoundPage";
 import AdminLayout from "./layouts/AdminLayout";
 import { AdminDashboard } from "./pages/AdminDashboard";
@@ -51,14 +52,15 @@ export default function App() {
         <Route path="/lecturer/profile" element={<LecturerLayout><LecturerProfile /></LecturerLayout>} />
         <Route path="/create-announcement" element={<LecturerLayout><PostAnnouncement/></LecturerLayout>} />
         <Route path='/create-module' element={<LecturerLayout><CreateModule/></LecturerLayout>} />
+        <Route path='/create-assignment' element={<LecturerLayout><CreateAssigment/></LecturerLayout>} />
 
         {/* Admin Routes  */}
-        <Route path= '/admin/dashboard' element={<AdminLayout><AdminDashboard/></AdminLayout>} />
-        <Route path='/admin/students' element={<AdminLayout><AdminStudentsPage/></AdminLayout>} />
-        <Route path= '/admin/lecturers' element={<AdminLayout> <AdminLecturerPage/></AdminLayout>} /> 
-        <Route path= '/admin/departments' element={<AdminLayout><AdminDepartmentPage/></AdminLayout>} /> 
-        <Route path= '/admin/profile' element={<AdminLayout><AdminProfilePage/></AdminLayout>} />
-        <Route path= '/admin/modules' element={<AdminLayout><AdminModulesPage/></AdminLayout>} />
+        <Route path= '/admins/dashboard' element={<AdminLayout><AdminDashboard/></AdminLayout>} />
+        <Route path='/admins/students' element={<AdminLayout><AdminStudentsPage/></AdminLayout>} />
+        <Route path= '/admins/lecturers' element={<AdminLayout> <AdminLecturerPage/></AdminLayout>} /> 
+        <Route path= '/admins/departments' element={<AdminLayout><AdminDepartmentPage/></AdminLayout>} /> 
+        <Route path= '/admins/profile' element={<AdminLayout><AdminProfilePage/></AdminLayout>} />
+        <Route path= '/admins/modules' element={<AdminLayout><AdminModulesPage/></AdminLayout>} />
       </Routes>
     </Router>
   );
