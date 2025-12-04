@@ -13,12 +13,12 @@ import { Admin } from '../types/Admin';
 import { getAdminById } from '../services/AdminService';
 
 const navItems = [
-  { label: 'Dashboard', icon: HomeIcon, path: '/admins/dashboard' },
-  { label: 'Students', icon: UsersIcon, path: '/admins/students' },
-  { label: 'Lecturers', icon: UsersIcon, path: '/admins/lecturers' },
-  { label: 'Departments', icon: BuildingOfficeIcon, path: '/admins/departments' },
-  { label: 'Modules', icon: BookOpenIcon, path: '/admins/modules' },
-  { label: 'My Profile', icon: UserIcon, path: '/admins/profile' },
+  { label: 'Dashboard', icon: HomeIcon, path: '/admin/dashboard' },
+  { label: 'Students', icon: UsersIcon, path: '/admin/students' },
+  { label: 'Lecturers', icon: UsersIcon, path: '/admin/lecturers' },
+  { label: 'Departments', icon: BuildingOfficeIcon, path: '/admin/departments' },
+  { label: 'Modules', icon: BookOpenIcon, path: '/admin/modules' },
+  { label: 'My Profile', icon: UserIcon, path: '/admin/profile' },
   { label: 'Log out', icon: ArrowRightIcon, path: '/' },
 ];
 
@@ -34,7 +34,7 @@ export default function AdminSidebar() {
 },[]);
 
   return (
-    <aside className="bg-white h-screen w-64 shadow flex flex-col p-4">
+    <aside className="bg-white w-64 shadow flex flex-col p-4 sticky top-0 h-screen">
       <div className="mt-4 mb-6 flex justify-center w-full">
         <span className="text-2xl font-bold text-stone-400">MANCHESTER</span>
       </div>

@@ -74,13 +74,6 @@ export default function LecturerDashboard() {
             onClick={()=> window.location.href='/create-module'}
             >Create Module</button>
           </div>
-          {/* <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <div className="font-semibold text-lg text-sky-700 mb-2">Create Assignment</div>
-            <div className="mb-4 text-center text-gray-600">Assign coursework to your students.</div>
-            <button className="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600"
-            onClick={()=> window.location.href='/create-assignment'}
-            >Create Assignment</button>
-          </div> */}
         </div>
       </main>
     </div>

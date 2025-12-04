@@ -105,7 +105,6 @@ export const AdminDepartmentPage = () => {
                   setDeptName("");
                   setDeptDesc("");
                   setShowCreate(false);
-                  // Refresh department list
                   getDepartments()
                     .then(data => setDepartments(data))
                     .catch(() => {});

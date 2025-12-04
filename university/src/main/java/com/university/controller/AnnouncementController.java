@@ -11,7 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.inject.Inject;
 import java.util.List;
 
-@Path("/announcements")
+@Path("/api/announcements")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AnnouncementController {
