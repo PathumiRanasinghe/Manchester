@@ -6,6 +6,7 @@ import com.university.repository.EnrollmentRepository;
 import com.university.repository.ModuleRepository;
 import com.university.repository.StudentRepository;
 import jakarta.inject.Inject;
+import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;

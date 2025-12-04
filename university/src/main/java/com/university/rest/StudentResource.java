@@ -6,6 +6,8 @@ import com.university.entity.Student;
 import com.university.service.StudentService;
 
 import jakarta.inject.Inject;
+import jakarta.annotation.security.RolesAllowed;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -25,6 +27,9 @@ public class StudentResource {
 
     @Inject
     StudentService studentService;
+
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     public List<Student> getStudents() {

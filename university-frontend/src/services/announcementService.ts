@@ -1,11 +1,16 @@
-import axios from 'axios';
+import api from './api';
 import { Announcement } from '../types/Announcement';
 
+
 export async function getAnnouncements(): Promise<Announcement[]> {
-  const response = await axios.get('/api/announcements');
+  const response = await api.get('/announcements');
   return response.data;
 }
 
+export async function deleteAnnouncement(id: number): Promise<void> {
+  await api.delete(`/announcements/${id}`);
+}
+
 export async function postAnnouncement(announcement: Partial<Announcement>): Promise<void> {
-  await axios.post('/api/announcements', announcement);
+  await api.post('/announcements', announcement);
 }

@@ -4,6 +4,8 @@ import com.university.entity.Announcement;
 import com.university.service.AnnouncementService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
@@ -26,5 +28,10 @@ public class AnnouncementResource {
 	@POST
 	public void postAnnouncement(Announcement announcement) {
 		announcementService.postAnnouncement(announcement);
+	}
+	@DELETE
+	@Path("/{id}")
+	public void deleteAnnouncement(@PathParam("id") Long id) {
+		announcementService.deleteAnnouncement(id);
 	}
 }

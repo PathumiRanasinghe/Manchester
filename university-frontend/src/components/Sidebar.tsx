@@ -49,7 +49,7 @@ export default function Sidebar() {
               <li key={item.label}>
                 {item.label === 'Log out' ? (
                   <button
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/logout')}
                     className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-gray-700 w-full text-left ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
                   >
                     <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />

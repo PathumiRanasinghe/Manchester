@@ -1,6 +1,9 @@
 package com.university.rest;
 
 import java.util.List;
+
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 import com.university.entity.Lecturer;
 import com.university.service.LecturerService;
 import jakarta.inject.Inject;
@@ -22,6 +25,9 @@ public class LecturerResource {
 
     @Inject
     LecturerService lecturerService;
+
+      @Inject
+    JsonWebToken jwt;
 
     @GET
     public List<Lecturer> getLecturers() {

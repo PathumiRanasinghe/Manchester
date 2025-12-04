@@ -2,13 +2,27 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { initKeycloak } from './keycloak';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+
+initKeycloak({ onLoad: 'login-required', pkceMethod: 'S256' })
+  .then(() => {
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+  })
+  .catch(err => {
+    console.error('Keycloak init failed', err);
+    // Render app anyway — components can check auth state via Keycloak
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+  });
 

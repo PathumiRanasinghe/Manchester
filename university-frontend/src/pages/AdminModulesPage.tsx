@@ -132,11 +132,12 @@ export const AdminModulesPage = () => {
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
               <div className="font-bold text-lg mb-4">Create Module</div>
-              <form className="w-full flex flex-col gap-4" onSubmit={async (e) => {
+                <form className="w-full flex flex-col gap-4" onSubmit={async (e) => {
                 e.preventDefault();
                 setCreateError(null);
                 setCreateSuccess(null);
                 try {
+                  // @ts-ignore - dynamic import extensionless for CRA dev resolver
                   const { createModule } = await import('../services/moduleService');
                   const newModule = await createModule({ moduleName, description: moduleDesc });
                   setCreateSuccess(`Module '${newModule.moduleName}' created successfully!`);
