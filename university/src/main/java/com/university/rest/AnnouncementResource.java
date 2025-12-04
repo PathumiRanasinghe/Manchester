@@ -1,4 +1,4 @@
-package com.university.controller;
+package com.university.rest;
 
 import com.university.entity.Announcement;
 import com.university.service.AnnouncementService;
@@ -14,7 +14,7 @@ import java.util.List;
 @Path("/api/announcements")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AnnouncementController {
+public class AnnouncementResource {
 	@Inject
 	AnnouncementService announcementService;
 

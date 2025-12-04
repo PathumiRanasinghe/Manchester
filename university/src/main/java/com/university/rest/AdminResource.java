@@ -1,4 +1,4 @@
-package com.university.controller;
+package com.university.rest;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/admins")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AdminController {
+public class AdminResource {
 
     @Inject 
     AdminService adminService;
