@@ -5,7 +5,6 @@ import java.util.List;
 import com.university.entity.Module;
 import com.university.service.ModuleService;
 
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;

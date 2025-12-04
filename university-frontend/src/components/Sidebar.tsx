@@ -7,7 +7,8 @@ import {
   UserIcon,
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
-import { getStudentById} from '../services/studentService';
+import { getStudentByEmail } from '../services/studentService';
+import { getKeycloak } from '../keycloak';
 import { Student } from '../types/Student';
 
 const navItems = [
@@ -23,7 +24,13 @@ export default function Sidebar() {
   const currentPath = useCurrentPath();
 
   useEffect(() => {
-    getStudentById(1)
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setStudent(null);
+      return;
+    }
+    getStudentByEmail(email)
       .then((data: Student) => setStudent(data))
       .catch(() => setStudent(null));
   }, []);

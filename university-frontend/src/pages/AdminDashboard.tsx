@@ -1,11 +1,13 @@
 import React from "react";
+import Spinner from "../components/Spinner";
 import { Admin } from "../types/Admin";
-import { getAdminById } from "../services/AdminService";
+import { getAdminByEmail } from "../services/AdminService";
 import { getStudents } from "../services/studentService";
 import { getLecturers } from "../services/lecturerService";
 import api from "../services/api";
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { getKeycloak } from "../keycloak";
 
 export const AdminDashboard = () => {
     const [enrollmentsPerDay, setEnrollmentsPerDay] = useState<{ date: string, count: number }[]>([]);
@@ -30,15 +32,24 @@ export const AdminDashboard = () => {
             .map(([date, count]) => ({ date, count }));
           setEnrollmentsPerDay(sorted);
         });
-    Promise.all([
-      getAdminById(1),
-      getStudents(),
-      getLecturers(),
-      api.get("/modules").then(res => res.data),
-      api.get("/departments").then(res => res.data)
-    ])
-      .then(([adminData, students, lecturers, modules, departments]) => {
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError("Email not found in token");
+      setLoading(false);
+      return;
+    }
+    getAdminByEmail(email)
+      .then(adminData => {
         setAdmin(adminData);
+        return Promise.all([
+          getStudents(),
+          getLecturers(),
+          api.get("/modules").then(res => res.data),
+          api.get("/departments").then(res => res.data)
+        ]);
+      })
+      .then(([students, lecturers, modules, departments]) => {
         setStudentCount(students.length);
         setLecturerCount(lecturers.length);
         setModuleCount(modules.length);
@@ -51,7 +62,7 @@ export const AdminDashboard = () => {
       });
   }, []);
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!admin) return null;
 
@@ -135,7 +146,7 @@ export const AdminDashboard = () => {
           </div>
        
           <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-            <div className="font-semibold text-lg text-stone-700 mb-12">Enrollments Per Day</div>
+            <div className="font-semibold text-lg text-stone-700  mt-5 mb-12">Enrollments Per Day</div>
             <div style={{ width: '100%', height: 200 }}>
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={enrollmentsPerDay} margin={{ top: 10, right: 20, left: 0, bottom: 30 }}>

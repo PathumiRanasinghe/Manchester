@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { getModulesByLecturerId, getStudentsByModuleId } from '../services/lecturerService';
+import { getLecturerByEmail, getModulesByLecturerId, getStudentsByModuleId } from '../services/lecturerService';
+import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 import { Student } from '../types/Student';
 
 export default function LecturerStudentsPage() {
-  const lecturerId = 2;
+  const [lecturerId, setLecturerId] = useState<number | null>(null);
   const [modules, setModules] = useState<Module[]>([]);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getModulesByLecturerId(lecturerId)
-      .then(setModules)
-      .catch(() => setModules([]));
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturerId(null);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then(lecturer => setLecturerId(lecturer.lecturerId))
+      .catch(() => setLecturerId(null));
+  }, []);
+
+  useEffect(() => {
+    if (lecturerId) {
+      getModulesByLecturerId(lecturerId)
+        .then(setModules)
+        .catch(() => setModules([]));
+    }
   }, [lecturerId]);
 
   useEffect(() => {

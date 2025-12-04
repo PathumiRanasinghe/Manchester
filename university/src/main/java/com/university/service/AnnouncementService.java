@@ -9,6 +9,10 @@ import java.util.List;
 
 @ApplicationScoped
 public class AnnouncementService {
+
+    public List<Announcement> getAnnouncementsByLecturerId(Long lecturerId) {
+        return announcementRepository.findByLecturerId(lecturerId);
+    }
     @Inject
     AnnouncementRepository announcementRepository;
 

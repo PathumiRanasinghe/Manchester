@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getAdminById } from '../services/AdminService';
+import { getAdminByEmail } from '../services/AdminService';
+import { getKeycloak } from '../keycloak';
 import { Admin } from '../types/Admin';
+import Spinner from '../components/Spinner';
 
 export default function AdminProfilePage() {
   const [admin, setAdmin] = useState<Admin | null>(null);
@@ -8,7 +10,14 @@ export default function AdminProfilePage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getAdminById(1)
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
+    getAdminByEmail(email)
       .then((data: Admin) => {
         setAdmin(data);
         setLoading(false);
@@ -19,48 +28,37 @@ export default function AdminProfilePage() {
       });
   }, []);
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!admin) return null;
 
   return (
-    <div className="min-h-screen  p-8 flex flex-col md:flex-row gap-8">
-      <aside className="w-full md:w-1/4 flex flex-col items-center gap-6">
-       <h1 className="text-3xl font-bold  mb-6">My Profile</h1>
-        <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center w-full">
-          <img src="/admin.png" alt="Avatar" className="w-24 h-24  object-cover mb-2" />
-          <div className="text-lg font-bold text-stone-500">{admin.username}</div>
-          <div className="text-sm text-gray-500 mb-2">Admin</div>
+    <div className="min-h-screen flex flex-col items-center py-10 bg-gradient-to-br from-stone-50 to-white">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-0 overflow-hidden flex flex-col items-center">
+        <div className="w-full flex flex-col items-center pt-8 pb-4 mb-8">
+          <img src="/admin.png" alt="Avatar" className="w-24 h-24  object-cover  " />
+          <div className="mt-2 text-xl font-bold text-stone-500">{admin.username}</div>
+          <div className="text-xs text-stone-400 mt-1">Admin</div>
         </div>
-          <section className="bg-white rounded-xl shadow p-8">
-          <h2 className="text-xl font-bold text-stone-500 mb-4">Change Password</h2>
-          <div className="flex flex-col gap-6 mb-4">
+        <div className="w-full px-8 pb-8 mb-8">
+          <div className="grid grid-cols-1 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-              <input type="password" className="w-full border rounded px-3 py-2" placeholder="Enter new password" />
+              <label className="block text-xs font-semibold text-gray-400 mb-1">Username</label>
+              <div className="text-base text-gray-700 bg-stone-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-stone-400 rounded-full mr-2"></span>
+                {admin.username}
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Re-type New Password</label>
-              <input type="password" className="w-full border rounded px-3 py-2" placeholder="Enter new password again" />
-            </div>
-          </div>
-          <button className="bg-stone-400 text-white px-6 py-2 rounded font-semibold hover:bg-stone-500">SAVE CHANGES</button>
-        </section>
-      </aside>
-      <main className="flex-1">
-        <form className="mt-20 bg-white rounded-xl shadow p-8 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-              <input type="text" value={admin.username} className="w-full border rounded px-3 py-2" readOnly />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={admin.email} className="w-full border rounded px-3 py-2" readOnly />
+              <label className="block text-xs font-semibold text-gray-400 mb-1">Email</label>
+              <div className="text-base text-gray-700 bg-stone-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-stone-400 rounded-full mr-2"></span>
+                {admin.email}
+              </div>
             </div>
           </div>
-        </form>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }

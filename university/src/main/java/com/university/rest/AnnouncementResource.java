@@ -17,6 +17,12 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AnnouncementResource {
+
+	@GET
+	@Path("/lecturer/{lecturerId}")
+	public List<Announcement> getAnnouncementsByLecturerId(@PathParam("lecturerId") Long lecturerId) {
+		return announcementService.getAnnouncementsByLecturerId(lecturerId);
+	}
 	@Inject
 	AnnouncementService announcementService;
 

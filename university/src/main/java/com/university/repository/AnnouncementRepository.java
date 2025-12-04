@@ -1,3 +1,4 @@
+
 package com.university.repository;
 
 import com.university.entity.Announcement;
@@ -9,6 +10,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class AnnouncementRepository {
+        public List<Announcement> findByLecturerId(Long lecturerId) {
+            return em.createQuery("SELECT a FROM Announcement a WHERE a.lecturer.lecturerId = :lecturerId ORDER BY a.postedAt DESC", Announcement.class)
+                    .setParameter("lecturerId", lecturerId)
+                    .getResultList();
+        }
     @PersistenceContext
     EntityManager em;
 

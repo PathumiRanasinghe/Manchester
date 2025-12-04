@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { getModulesByDepartmentId, getModulesByStudentId } from '../services/moduleService';
-import { getStudentById } from '../services/studentService';
+import { getStudentByEmail } from '../services/studentService';
 import { enrollModule } from '../services/enrollmentService';
 import { Module } from '../types/Module';
-
-const studentId = 1;
+import { getKeycloak } from '../keycloak';
 
 const DepartmentModulesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -14,15 +13,29 @@ const DepartmentModulesPage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [studentId, setStudentId] = useState<number | null>(null);
 
   useEffect(() => {
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
     let departmentId: number;
-    getStudentById(studentId)
+    getStudentByEmail(email)
       .then(student => {
+        setStudentId(student.studentId ?? null);
         departmentId = student.department.departmentId;
+        const sid = student.studentId;
+        if (sid == null) {
+          // student ID missing, fetch department modules and return empty enrollment list
+          return getModulesByDepartmentId(departmentId).then(deptModules => [deptModules, [] as Module[]]);
+        }
         return Promise.all([
           getModulesByDepartmentId(departmentId),
-          getModulesByStudentId(studentId)
+          getModulesByStudentId(sid)
         ]);
       })
       .then(([deptModules, enrolled]) => {
@@ -44,7 +57,7 @@ const DepartmentModulesPage: React.FC = () => {
   const handleConfirmEnroll = async () => {
     if (selectedModule) {
       try {
-        await enrollModule(studentId, selectedModule.moduleId);
+        await enrollModule(studentId!, selectedModule.moduleId);
         setSuccess('Successfully enrolled in module.');
         setEnrolledModules([...enrolledModules, selectedModule.moduleId]);
         setShowConfirm(false);

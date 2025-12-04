@@ -1,3 +1,4 @@
+
 package com.university.rest;
 
 import java.util.List;
@@ -6,7 +7,6 @@ import com.university.entity.Student;
 import com.university.service.StudentService;
 
 import jakarta.inject.Inject;
-import jakarta.annotation.security.RolesAllowed;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -20,10 +20,22 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+
 @Path("/api/students")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class StudentResource {
+
+    @GET
+    @Path("/by-email")
+    public Response getStudentByEmail(@jakarta.ws.rs.QueryParam("email") String email) {
+        try {
+            Student student = studentService.getStudentByEmail(email);
+            return Response.ok(student).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Student not found").build();
+        }
+    }
 
     @Inject
     StudentService studentService;

@@ -18,8 +18,12 @@ public class Student {
     @Column(length = 30, unique = true)
     private String email;
 
+
     @Column(length = 10)
     private String phoneNumber;
+
+    @Transient
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
@@ -71,5 +75,13 @@ public class Student {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

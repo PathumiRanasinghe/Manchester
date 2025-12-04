@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { getDepartments } from '../services/departmentService';
+import { getDepartments, updateDepartment, deleteDepartment } from '../services/departmentService';
+import Spinner from "../components/Spinner";
 
 export const AdminDepartmentPage = () => {
   const [search, setSearch] = useState("");
@@ -12,6 +13,14 @@ export const AdminDepartmentPage = () => {
   const [departments, setDepartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editDept, setEditDept] = useState<any | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editSuccess, setEditSuccess] = useState<string | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteDept, setDeleteDept] = useState<any | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     getDepartments()
@@ -57,7 +66,7 @@ export const AdminDepartmentPage = () => {
           </button>
         </div>
         {loading ? (
-          <div className="text-center py-8 text-stone-400">Loading departments...</div>
+          <Spinner className="p-8" />
         ) : error ? (
           <div className="text-center py-8 text-red-400">{error}</div>
         ) : (
@@ -76,10 +85,20 @@ export const AdminDepartmentPage = () => {
                     <td className="py-3 px-4 font-medium text-gray-700">{dept.departmentName}</td>
                     <td className="py-3 px-4 text-gray-500">{dept.description}</td>
                     <td className="py-3 px-4 text-center flex items-center justify-center gap-2">
-                      <button className="p-2 rounded hover:bg-stone-100" title="Edit">
+                      <button className="p-2 rounded hover:bg-stone-100" title="Edit" onClick={() => {
+                        setEditDept(dept);
+                        setEditName(dept.departmentName);
+                        setEditDesc(dept.description);
+                        setEditError(null);
+                        setEditSuccess(null);
+                      }}>
                         <PencilSquareIcon className="h-5 w-5 text-blue-400" />
                       </button>
-                      <button className="p-2 rounded hover:bg-stone-100" title="Delete">
+                      <button className="p-2 rounded hover:bg-stone-100" title="Delete" onClick={() => {
+                        setDeleteDept(dept);
+                        setShowDelete(true);
+                        setDeleteError(null);
+                      }}>
                         <TrashIcon className="h-5 w-5 text-red-400" />
                       </button>
                     </td>
@@ -89,7 +108,41 @@ export const AdminDepartmentPage = () => {
             </table>
           </div>
         )}
-
+        {showDelete && deleteDept && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+              <div className="font-bold text-lg mb-4">Do you want to delete this department?</div>
+              <div className="mb-6 text-gray-700">This action cannot be undone.</div>
+              {deleteError && <div className="text-red-500 text-sm mb-2">{deleteError}</div>}
+              <div className="flex gap-4">
+                <button
+                  className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+                  onClick={async () => {
+                    try {
+                      await deleteDepartment(deleteDept.departmentId);
+                      setDepartments(departments.filter(d => d.departmentId !== deleteDept.departmentId));
+                      setShowDelete(false);
+                      setDeleteDept(null);
+                    } catch {
+                      setDeleteError('Failed to delete department.');
+                    }
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                  className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
+                  onClick={() => {
+                    setShowDelete(false);
+                    setDeleteDept(null);
+                  }}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {showCreate && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
@@ -120,6 +173,35 @@ export const AdminDepartmentPage = () => {
                 <div className="flex gap-4 mt-4">
                   <button type="submit" className="px-4 py-2 rounded bg-stone-500 text-white font-semibold hover:bg-stone-600">Create</button>
                   <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => setShowCreate(false)}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {editDept && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+              <div className="font-bold text-lg mb-4">Edit Department</div>
+              <form className="w-full flex flex-col gap-4" onSubmit={async (e) => {
+                e.preventDefault();
+                setEditError(null);
+                setEditSuccess(null);
+                try {
+                  const updated = await updateDepartment(editDept.departmentId, { departmentName: editName, description: editDesc });
+                  setEditSuccess(`Department '${updated.departmentName}' updated successfully!`);
+                  setDepartments(departments.map(d => d.departmentId === updated.departmentId ? updated : d));
+                  setEditDept(null);
+                } catch (err) {
+                  setEditError("Failed to update department.");
+                }
+              }}>
+                <input type="text" placeholder="Department Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                {editError && <div className="text-red-500 text-sm">{editError}</div>}
+                {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}
+                <div className="flex gap-4 mt-4">
+                  <button type="submit" className="px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">Update</button>
+                  <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => setEditDept(null)}>Cancel</button>
                 </div>
               </form>
             </div>

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { getDepartmentById } from '../services/departmentService';
 import { Department } from '../types/Department';
 import { Lecturer } from '../types/Lecturer';
-import { getLecturerById } from '../services/lecturerService';
+import { getLecturerByEmail } from '../services/lecturerService';
+import { getKeycloak } from '../keycloak';
 
 export default function LecturerProfile() {
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
@@ -11,7 +12,14 @@ export default function LecturerProfile() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getLecturerById(2)
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setError('Email not found in token');
+      setLoading(false);
+      return;
+    }
+    getLecturerByEmail(email)
       .then((data: Lecturer) => {
         setLecturer(data);
         if (data.department.departmentId) {
@@ -29,7 +37,7 @@ export default function LecturerProfile() {
         }
       })
       .catch(() => {
-        setError('Failed to fetch student details');
+        setError('Failed to fetch lecturer details');
         setLoading(false);
       });
   }, []);
@@ -39,55 +47,47 @@ export default function LecturerProfile() {
   if (!lecturer) return null;
 
   return (
-    <div className="min-h-screen  p-8 flex flex-col md:flex-row gap-8">
-      <aside className="w-full md:w-1/4 flex flex-col items-center gap-6">
-       <h1 className="text-3xl font-bold  mb-6">My Profile</h1>
-        <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center w-full">
-          <img src="/lecturer.png" alt="Avatar" className="w-24 h-24 rounded-full object-cover mb-2" />
-          <div className="text-lg font-bold text-sky-500">{lecturer.firstName} {lecturer.lastName}</div>
-          <div className="text-sm text-gray-500 mb-2">Lecturer</div>
+    <div className="min-h-screen flex flex-col items-center py-10 bg-gradient-to-br from-sky-100 to-white">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl p-0 overflow-hidden flex flex-col items-center">
+        <div className="w-full flex flex-col items-center pt-8 pb-4">
+          <img src="/lecturer.png" alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow" />
+          <div className="mt-2 text-xl font-bold text-sky-500">{lecturer.firstName} {lecturer.lastName}</div>
+          <div className="text-sm text-gray-500">Lecturer</div>
         </div>
-          <section className="bg-white rounded-xl shadow p-8">
-          <h2 className="text-xl font-bold text-sky-500 mb-4">Change Password</h2>
-          <div className="flex flex-col gap-6 mb-4">
+        <div className="w-full px-8 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-              <input type="password" className="w-full border rounded px-3 py-2" placeholder="Enter new password" />
+              <label className="block text-xs font-semibold text-gray-400 mb-1">First Name</label>
+              <div className="text-base text-gray-700 bg-sky-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-sky-400 rounded-full mr-2"></span>
+                {lecturer.firstName}
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Re-type New Password</label>
-              <input type="password" className="w-full border rounded px-3 py-2" placeholder="Enter new password again" />
+              <label className="block text-xs font-semibold text-gray-400 mb-1">Last Name</label>
+              <div className="text-base text-gray-700 bg-sky-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-sky-400 rounded-full mr-2"></span>
+                {lecturer.lastName}
+              </div>
             </div>
-          </div>
-          <button className="bg-sky-400 text-white px-6 py-2 rounded font-semibold hover:bg-sky-500">SAVE CHANGES</button>
-        </section>
-      </aside>
-      
-      <main className="flex-1">
-       
-        <form className="mt-20 bg-white rounded-xl shadow p-8 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-              <input type="text" value={lecturer.firstName} className="w-full border rounded px-3 py-2" readOnly />
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold text-gray-400 mb-1">Email</label>
+              <div className="text-base text-gray-700 bg-sky-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-sky-400 rounded-full mr-2"></span>
+                {lecturer.email}
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-              <input type="text" value={lecturer.lastName} className="w-full border rounded px-3 py-2" readOnly />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={lecturer.email} className="w-full border rounded px-3 py-2" readOnly />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-              <input type="text" value={department ? department.departmentName : lecturer.department.departmentId} className="w-full border rounded px-3 py-2" readOnly />
+            <div className="md:col-span-2 mb-10">
+              <label className="block text-xs font-semibold text-gray-400 mb-1">Department</label>
+              <div className="text-base text-gray-700 bg-sky-50 rounded px-3 py-2 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 bg-sky-400 rounded-full mr-2"></span>
+                {department ? department.departmentName : ''}
+              </div>
             </div>
           </div>
-
-        </form>
-      
-      </main>
+         
+        </div>
+      </div>
     </div>
   );
 }

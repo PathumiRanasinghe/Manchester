@@ -23,6 +23,17 @@ import jakarta.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public class LecturerResource {
 
+    @GET
+    @Path("/by-email")
+    public Response getLecturerByEmail(@jakarta.ws.rs.QueryParam("email") String email) {
+        try {
+            Lecturer lecturer = lecturerService.getLecturerByEmail(email);
+            return Response.ok(lecturer).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Lecturer not found").build();
+        }
+    }
+
     @Inject
     LecturerService lecturerService;
 

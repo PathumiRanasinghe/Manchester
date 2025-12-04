@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getModulesByLecturerId } from '../services/lecturerService';
+import { getLecturerByEmail, getModulesByLecturerId } from '../services/lecturerService';
+import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 import { Lecturer } from '../types/Lecturer';
 import { Department } from '../types/Department';
@@ -14,9 +15,21 @@ const LecturerCourseDetailPage: React.FC = () => {
   const [department, setDepartment] = useState<Department | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lecturerId, setLecturerId] = useState<number | null>(null);
 
   useEffect(() => {
-    getModulesByLecturerId(2)
+    const kc = getKeycloak();
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturerId(null);
+      setLoading(false);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then(lecturer => {
+        setLecturerId(lecturer.lecturerId);
+        return getModulesByLecturerId(lecturer.lecturerId);
+      })
       .then(modules => {
         const found = modules.find(m => m.moduleId === Number(moduleId));
         setModule(found || null);

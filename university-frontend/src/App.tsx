@@ -26,6 +26,8 @@ import { AdminLecturerPage } from "./pages/AdminLecturerPage";
 import { AdminDepartmentPage } from "./pages/AdminDepartmentPage";
 import AdminProfilePage from "./pages/AdminProfilePage";
 import { AdminModulesPage } from "./pages/AdminModulesPage";
+import AdminEnrollmentPage from "./pages/AdminEnrollmentPage";
+import AdminCreateStudentPage from './pages/AdminCreateStudentPage';
 
 export default function App() {
   return (
@@ -61,7 +63,9 @@ export default function App() {
         <Route path= '/admin/departments' element={<AdminLayout><AdminDepartmentPage/></AdminLayout>} /> 
         <Route path= '/admin/profile' element={<AdminLayout><AdminProfilePage/></AdminLayout>} />
         <Route path= '/admin/modules' element={<AdminLayout><AdminModulesPage/></AdminLayout>} />
-      </Routes>
+        <Route path= '/admin/enrollments' element={<AdminLayout><AdminEnrollmentPage/></AdminLayout>} />
+        <Route path="/admin/create-student" element={<AdminLayout><AdminCreateStudentPage /></AdminLayout>} />
+       </Routes>
     </Router>
   );
 }
