@@ -36,46 +36,47 @@ export default function Sidebar() {
   }, []);
 
   return (
-    <aside className="bg-white w-64 shadow flex flex-col p-4 sticky top-0 h-screen">
-      <div className="mb-6 flex justify-center w-full">
-        <span className="text-2xl font-bold text-orange-400">MANCHESTER</span>
+    <aside className="bg-white w-64 shadow flex flex-col p-4 sticky top-0 h-screen bg-[#232347] text-white justify-between">
+      <div>
+        <div className="mt-5 mb-12 flex justify-center w-full">
+          <span className="text-2xl font-bold text-purple-200 tracking-wide">MANCHESTER</span>
+        </div>    
+        <nav>
+          <ul className="space-y-4">
+            {navItems.map(item => {
+              const isActive = currentPath === item.path;
+              return (
+                <li key={item.label}>
+                  {item.label === 'Log out' ? (
+                    <button
+                      onClick={() => navigate('/logout')}
+                      className={`flex items-center gap-3 p-2 rounded-lg hover:bg-purple-700 text-white w-full text-left ${isActive ? 'bg-purple-100 font-bold text-white' : ''}`}
+                    >
+                      <item.icon className={`h-6 w-6 ${isActive ? 'text-purple-600' : 'text-white'}`} />
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  ) : (
+                    <a
+                      href={item.path}
+                      className={`flex items-center gap-3 p-2 rounded-lg hover:bg-purple-700 text-white ${isActive ? 'bg-purple-400 font-bold text-purple-600' : ''}`}
+                    >
+                      <item.icon className={`h-6 w-6 ${isActive ? 'text-white' : 'text-white'}`} />
+                      <span className="font-medium">{item.label}</span>
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </div>
-      <div className="mb-8 flex flex-col items-center">
-        <img src="/student.png" alt="Logo" className="w-16 h-16 rounded-full mb-2 object-cover" />
-        <div className="text-center">
-          <div className="font-semibold text-orange-500">{student ? `${student.firstName} ${student.lastName}` : ''}</div>
-          <div className="text-xs text-orange-500">{student ? student.email : ''}</div>
-          <div className="text-xs text-orange-500">{student ? student.phoneNumber : ''}</div>
+      <div className="mb-4 flex items-center">
+        <div className="w-10 h-10 rounded-full bg-purple-300 flex items-center justify-center text-lg font-bold">{student?.firstName?.[0] || '?'}</div>
+        <div className="ml-3">
+          <div className="font-semibold">{student?.firstName || 'Student'}</div>
+          <div className="text-xs text-purple-100">{student?.email || ''}</div>
         </div>
-      </div>     
-      <nav>
-        <ul className="space-y-2">
-          {navItems.map(item => {
-            const isActive = currentPath === item.path;
-            return (
-              <li key={item.label}>
-                {item.label === 'Log out' ? (
-                  <button
-                    onClick={() => navigate('/logout')}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-orange-700 w-full text-left ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
-                  >
-                    <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />
-                    <span className="font-medium">{item.label}</span>
-                  </button>
-                ) : (
-                  <a
-                    href={item.path}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-orange-700 ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
-                  >
-                    <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />
-                    <span className="font-medium">{item.label}</span>
-                  </a>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
+      </div>
     </aside>
   );
 }

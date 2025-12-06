@@ -77,15 +77,15 @@ export const AdminDashboard = () => {
       
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       
-          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-start border-t-4 border-orange-500">
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-start border-t-4 border-purple-500">
             <div className="flex items-center mb-2">
-              <svg className="w-6 h-6 text-orange-500 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="font-semibold text-lg text-orange-600">Students</span>
+              <span className="font-semibold text-lg text-purple-600">Students</span>
             </div>
-            <div className="text-3xl font-bold text-orange-600 mb-1">{studentCount}</div>
-            <div className="flex items-center text-orange-500 text-sm">
+            <div className="text-3xl font-bold text-purple-600 mb-1">{studentCount}</div>
+            <div className="flex items-center text-purple-500 text-sm">
               Total Students
             </div>
           </div>
@@ -104,15 +104,15 @@ export const AdminDashboard = () => {
             </div>
           </div>
   
-          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-start border-t-4 border-purple-500">
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-start border-t-4 border-rose-400">
             <div className="flex items-center mb-2">
-              <svg className="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-rose-500 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" />
               </svg>
-              <span className="font-semibold text-lg text-purple-700">Modules</span>
+              <span className="font-semibold text-lg text-rose-500">Modules</span>
             </div>
-            <div className="text-3xl font-bold text-purple-600 mb-1">{moduleCount}</div>
-            <div className="flex items-center text-purple-500 text-sm">
+            <div className="text-3xl font-bold text-rose-400 mb-1">{moduleCount}</div>
+            <div className="flex items-center text-rose-400 text-sm">
               
               Total Modules
             </div>

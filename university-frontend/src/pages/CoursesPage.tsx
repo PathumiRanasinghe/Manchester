@@ -53,7 +53,7 @@ const CoursesPage: React.FC = () => {
             aria-label={`View details for ${module.moduleName}`}
           >
             <div className="h-30 w-full flex items-center justify-center ">
-              <img src="course.png" alt="Course" className="object-cover h-full w-full" />
+              <img src="course.jpg" alt="Course" className="object-cover h-full w-full" />
             </div>
             <div className="bg-white p-4 flex-1 flex flex-col justify-between">
               <div>

@@ -47,7 +47,7 @@ export default function Calendar() {
       daysInRow.push(
         <div
           key={cloneDay.toString()}
-          className={`h-12 border border-gray-200 relative flex flex-col items-center justify-center ${!isSameMonth(cloneDay, monthStart) ? 'bg-gray-50 text-gray-300' : ''}`}
+          className={`h-10 border border-gray-200 relative flex flex-col items-center justify-center ${!isSameMonth(cloneDay, monthStart) ? 'bg-gray-50 text-gray-300' : ''}`}
         >
           <span className={`text-sm ${isToday ? 'bg-blue-500 text-white rounded-full px-2' : 'text-gray-700'}`}>{format(cloneDay, 'd')}</span>
           {holiday && (
