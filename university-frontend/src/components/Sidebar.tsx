@@ -13,7 +13,7 @@ import { Student } from '../types/Student';
 
 const navItems = [
   { label: 'Dashboard', icon: HomeIcon, path: '/dashboard' },
-  { label: 'My Courses', icon: BookOpenIcon, path: '/courses' },
+  { label: 'My Modules', icon: BookOpenIcon, path: '/modules' },
   { label: 'My Profile', icon: UserIcon, path: '/profile' },
   { label: 'Log out', icon: ArrowRightIcon, path: '/logout' },
 ];
@@ -44,8 +44,8 @@ export default function Sidebar() {
         <img src="/student.png" alt="Logo" className="w-16 h-16 rounded-full mb-2 object-cover" />
         <div className="text-center">
           <div className="font-semibold text-orange-500">{student ? `${student.firstName} ${student.lastName}` : ''}</div>
-          <div className="text-xs text-gray-500">{student ? student.email : ''}</div>
-          <div className="text-xs text-gray-500">{student ? student.phoneNumber : ''}</div>
+          <div className="text-xs text-orange-500">{student ? student.email : ''}</div>
+          <div className="text-xs text-orange-500">{student ? student.phoneNumber : ''}</div>
         </div>
       </div>     
       <nav>
@@ -57,7 +57,7 @@ export default function Sidebar() {
                 {item.label === 'Log out' ? (
                   <button
                     onClick={() => navigate('/logout')}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-gray-700 w-full text-left ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
+                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-orange-700 w-full text-left ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
                   >
                     <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />
                     <span className="font-medium">{item.label}</span>
@@ -65,7 +65,7 @@ export default function Sidebar() {
                 ) : (
                   <a
                     href={item.path}
-                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-gray-700 ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
+                    className={`flex items-center gap-3 p-2 rounded-lg hover:bg-orange-50 text-orange-700 ${isActive ? 'bg-orange-100 font-bold text-orange-600' : ''}`}
                   >
                     <item.icon className={`h-6 w-6 ${isActive ? 'text-orange-600' : 'text-orange-400'}`} />
                     <span className="font-medium">{item.label}</span>

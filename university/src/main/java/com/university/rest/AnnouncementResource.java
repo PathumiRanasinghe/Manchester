@@ -45,4 +45,11 @@ public class AnnouncementResource {
 	public void deleteAnnouncement(@PathParam("id") Long id) {
 		announcementService.deleteAnnouncement(id);
 	}
+	
+	@GET
+	@RolesAllowed({  "student" })
+	@Path("/department/{departmentId}")
+	public List<Announcement> getAnnouncementsByDepartmentId(@PathParam("departmentId") Long departmentId) {
+		return announcementService.getAnnouncementsByDepartmentId(departmentId);
+	}
 }

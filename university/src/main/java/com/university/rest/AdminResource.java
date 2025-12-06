@@ -60,6 +60,14 @@ public class AdminResource {
         if (deleted) {
             return Response.noContent().build();
         } else {
+            Lecturer lecturer = adminService.getAllLecturers().stream()
+                .filter(l -> l.getLecturerId().equals(id.intValue()))
+                .findFirst().orElse(null);
+            if (lecturer != null) {
+                return Response.status(Response.Status.CONFLICT)
+                    .entity("Cannot delete lecturer: modules are assigned. Please reassign those modules to another lecturer before deleting.")
+                    .build();
+            }
             return Response.status(Response.Status.NOT_FOUND).entity("Lecturer not found").build();
         }
     }

@@ -2,8 +2,8 @@ import api from './api';
 import { Announcement } from '../types/Announcement';
 
 
-export async function getAnnouncements(): Promise<Announcement[]> {
-  const response = await api.get('/announcements');
+export async function getAnnouncementsByDepartmentId(departmentId: number): Promise<Announcement[]> {
+  const response = await api.get(`/announcements/department/${departmentId}`);
   return response.data;
 }
 

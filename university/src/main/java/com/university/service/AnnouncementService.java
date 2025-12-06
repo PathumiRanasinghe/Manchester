@@ -26,4 +26,8 @@ public class AnnouncementService {
     public void deleteAnnouncement(Long id) {
         announcementRepository.deleteById(id);
     }
+
+    public List<Announcement> getAnnouncementsByDepartmentId(Long departmentId) {
+        return announcementRepository.findByDepartmentId(departmentId);
+    }
 }

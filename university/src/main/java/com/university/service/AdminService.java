@@ -5,6 +5,7 @@ import java.util.List;
 import com.university.entity.Admin;
 import com.university.entity.Lecturer;
 import com.university.entity.Student;
+import com.university.entity.Module;
 import com.university.repository.AdminRepository;
 import com.university.repository.LecturerRepository;
 import com.university.repository.StudentRepository;
@@ -30,39 +31,9 @@ public class AdminService {
     @Inject
     DepartmentService departmentService;
 
-    @Transactional
-    public boolean deleteStudent(Long id) {
-        try{
-            String token = keycloakAdminClient.getAdminToken();
-            keycloakAdminClient.deleteUserByUsername(token, studentRepository.findById(id).getEmail());
-        }
-        catch(Exception e){
-            throw new RuntimeException("Keycloak user deletion failed: " + e.getMessage());
-        }
-        Student student = studentRepository.findById(id);
-        if (student != null) {
-            studentRepository.delete(student);
-            return true;
-        }
-        return false;
-    }
+    @Inject
+    ModuleService moduleService;
 
-    @Transactional
-    public boolean deleteLecturer(Long id) {
-        try{
-            String token = keycloakAdminClient.getAdminToken();
-            keycloakAdminClient.deleteUserByUsername(token,lecturerRepository.findById(id).getEmail());
-        }
-        catch(Exception e){
-            throw new RuntimeException("Keycloak user deletion failed: " + e.getMessage());
-        }
-        Lecturer lecturer = lecturerRepository.findById(id);
-        if (lecturer != null) {
-            lecturerRepository.delete(lecturer);
-            return true;
-        }
-        return false;
-    }
 
     
     public Admin getAdminByEmail(String email) {
@@ -120,4 +91,44 @@ public class AdminService {
         lecturerRepository.persist(lecturer);
         return lecturer;
     }
+
+    
+    @Transactional
+    public boolean deleteStudent(Long id) {
+        try{
+            String token = keycloakAdminClient.getAdminToken();
+            keycloakAdminClient.deleteUserByUsername(token, studentRepository.findById(id).getEmail());
+        }
+        catch(Exception e){
+            throw new RuntimeException("Keycloak user deletion failed: " + e.getMessage());
+        }
+        Student student = studentRepository.findById(id);
+        if (student != null) {
+            studentRepository.delete(student);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Transactional
+    public boolean deleteLecturer(Long id) {
+        Lecturer lecturer = lecturerRepository.findById(id);
+        if (lecturer == null) {
+            return false;
+        }
+        List<Module> modules = moduleService.getModulesByLecturerId(lecturer.getLecturerId());
+        if (modules != null && !modules.isEmpty()) {
+            return false;
+        }
+        try {
+            String token = keycloakAdminClient.getAdminToken();
+            keycloakAdminClient.deleteUserByUsername(token, lecturer.getEmail());
+        } catch (Exception e) {
+            throw new RuntimeException("Keycloak user deletion failed: " + e.getMessage());
+        }
+        lecturerRepository.delete(lecturer);
+        return true;
+    }
+
 }

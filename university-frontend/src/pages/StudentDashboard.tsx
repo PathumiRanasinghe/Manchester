@@ -1,8 +1,8 @@
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 import Spinner from '../components/Spinner';
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import StudentCalendar from '../components/Calendar';
-import { getAnnouncements } from '../services/announcementService';
+import { getAnnouncementsByDepartmentId } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
 import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
@@ -25,13 +25,19 @@ export default function StudentDashboard() {
       return;
     }
 
-    Promise.all([
-      getAnnouncements(),
-      getStudentByEmail(email)
-    ])
-      .then(([announcementsData, studentData]) => {
-        setAnnouncements(announcementsData);
+    getStudentByEmail(email)
+      .then(studentData => {
         setStudent(studentData);
+        if (studentData?.department?.departmentId) {
+          return getAnnouncementsByDepartmentId(studentData.department.departmentId);
+        } else {
+          setAnnouncements([]);
+          setLoading(false);
+          return null;
+        }
+      })
+      .then(announcementsData => {
+        if (announcementsData) setAnnouncements(announcementsData);
         setLoading(false);
       })
       .catch(() => {
@@ -59,7 +65,7 @@ export default function StudentDashboard() {
             <ul className="space-y-4">
               {announcements.map(a => (
                 <li key={a.id} className="border-b pb-2">
-                  <div className="font-semibold text-orange-700">{a.title}</div>
+                  <div className="font-semibold text-orange-500">{a.title}</div>
                   <div className="text-gray-700 text-sm mb-1">{a.content}</div>
                   <div className="text-xs text-gray-400">Posted at: {new Date(a.postedAt).toLocaleString()}</div>
                 </li>
@@ -75,12 +81,12 @@ export default function StudentDashboard() {
           <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center">
             <div className="font-semibold mb-4 text-gray-700">Enroll to a Module</div>
             <div className="flex flex-col items-center mb-4">
-              <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mb-2">
-                <BookOpenIcon className="h-10 w-10 text-orange-500" />
+              <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mb-2">
+                <BookOpenIcon className="h-10 w-10 text-teal-500" />
               </div>
               <div className="text-xs text-gray-500 mb-2 text-center">Browse and enroll in modules available in your department.</div>
               <button
-                className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500"
+                className="bg-teal-400 text-white px-4 py-2 rounded hover:bg-teal-500"
                 onClick={() => window.location.href = '/department-modules'}
               >
                 View Department Modules
@@ -93,7 +99,7 @@ export default function StudentDashboard() {
               <div className="bg-red-100 rounded-full w-16 h-16 flex items-center justify-center mb-2">
                 <BookOpenIcon className="h-10 w-10 text-red-500" />
               </div>
-              <div className="text-xs text-gray-500 mb-2 text-center">You can unenroll from a module within 2 weeks of enrollment.</div>
+              <div className="text-xs text-gray-500 mb-2 text-center">You can unenroll from a module that you enrolled in.</div>
               <button
                 className="bg-red-400 text-white px-4 py-2 rounded hover:bg-red-500"
                 onClick={() => window.location.href = '/unenroll-module'}

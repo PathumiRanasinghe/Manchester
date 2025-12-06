@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Module } from '../types/Module';
 import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
+import Spinner from '../components/Spinner';
 
 const CoursesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -35,7 +36,7 @@ const CoursesPage: React.FC = () => {
       });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div>{error}</div>;
 
   return (
