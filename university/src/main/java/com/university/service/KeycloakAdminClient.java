@@ -35,7 +35,7 @@ public class KeycloakAdminClient {
     }
 
     public void createUserAndAssignRole(String token,String fName, String lName, String username, String email, String password, String roleName) throws Exception {
-        ////// 1. Create user
+    
         URL url = new URI(keycloakUrl + "/admin/realms/" + realm + "/users").toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -58,7 +58,7 @@ public class KeycloakAdminClient {
         int responseCode = conn.getResponseCode();
         if (responseCode != 201) throw new RuntimeException("Failed to create user in Keycloak");
 
-        ///// 2. Get user ID
+
         URL getUserUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username).toURL();
         HttpURLConnection getUserConn = (HttpURLConnection) getUserUrl.openConnection();
         getUserConn.setRequestMethod("GET");
@@ -78,7 +78,7 @@ public class KeycloakAdminClient {
         }
         if (userId == null) throw new RuntimeException("User ID not found after creation");
 
-        ////// 3. Get role ID
+
         URL getRolesUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/roles/" + roleName).toURL();
         HttpURLConnection getRoleConn = (HttpURLConnection) getRolesUrl.openConnection();
         getRoleConn.setRequestMethod("GET");
@@ -98,7 +98,6 @@ public class KeycloakAdminClient {
         }
         if (roleId == null) throw new RuntimeException("Role ID not found");
 
-        ////// 4. Assign role to user
         URL assignRoleUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users/" + userId + "/role-mappings/realm").toURL();
         HttpURLConnection assignRoleConn = (HttpURLConnection) assignRoleUrl.openConnection();
         assignRoleConn.setRequestMethod("POST");
@@ -115,7 +114,6 @@ public class KeycloakAdminClient {
 
     public void deleteUserByUsername(String token, String username) throws Exception {
 
-    // 1. Get user ID by username
     URL getUserUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username).toURL();
     HttpURLConnection getUserConn = (HttpURLConnection) getUserUrl.openConnection();
     getUserConn.setRequestMethod("GET");
@@ -135,7 +133,7 @@ public class KeycloakAdminClient {
     }
     if (userId == null) throw new RuntimeException("User ID not found for deletion");
 
-    // 2. Delete user by ID
+
     URL deleteUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users/" + userId).toURL();
     HttpURLConnection deleteConn = (HttpURLConnection) deleteUrl.openConnection();
     deleteConn.setRequestMethod("DELETE");

@@ -36,19 +36,6 @@ public class EnrollmentService {
 		return enrollment;
 	}
 
-
-	@Transactional
-	public Enrollment updateEnrollment(Long id, Enrollment updatedEnrollment) {
-		Enrollment enrollment = enrollmentRepository.findById(id);
-		if (enrollment != null) {
-			enrollment.setStudent(updatedEnrollment.getStudent());
-			enrollment.setModule(updatedEnrollment.getModule());
-			enrollment.setEnrollmentDate(updatedEnrollment.getEnrollmentDate());
-			enrollmentRepository.persist(enrollment);
-		}
-		return enrollment;
-	}
-
 	@Transactional
 	public boolean deleteEnrollment(Long id) {
 		return enrollmentRepository.deleteById(id);

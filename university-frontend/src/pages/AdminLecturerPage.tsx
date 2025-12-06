@@ -5,7 +5,6 @@ import { Module } from "../types/Module";
 import Spinner from "../components/Spinner";
 import { TrashIcon } from '@heroicons/react/24/outline';
 
-// Modal for deleting lecturer, shows assigned modules if any
 interface LecturerDeleteModalProps {
   lecturer: Lecturer;
   onCancel: () => void;
@@ -132,7 +131,6 @@ export const AdminLecturerPage = () => {
   });
 
   if (loading) return <Spinner className="p-8" />;
-  // Show error as a modal if it's a reassign message
   if (error && error.includes('reassign')) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">

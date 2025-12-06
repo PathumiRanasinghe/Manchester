@@ -28,12 +28,6 @@ public class AnnouncementResource {
 		return announcementService.getAnnouncementsByLecturerId(lecturerId);
 	}
 
-	@GET
-	@RolesAllowed({ "lecturer","student"})
-	public List<Announcement> getAllAnnouncements() {
-		return announcementService.getAllAnnouncements();
-	}
-
 	@POST
 	@RolesAllowed("lecturer")
 	public void postAnnouncement(Announcement announcement) {

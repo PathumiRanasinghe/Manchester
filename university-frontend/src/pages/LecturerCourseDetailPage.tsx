@@ -7,6 +7,7 @@ import { Lecturer } from '../types/Lecturer';
 import { Department } from '../types/Department';
 import { getLecturerById } from '../services/lecturerService';
 import { getDepartmentById } from '../services/departmentService';
+import Spinner from '../components/Spinner';
 
 const LecturerCourseDetailPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
@@ -55,7 +56,7 @@ const LecturerCourseDetailPage: React.FC = () => {
       });
   }, [moduleId]);
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error || !module) return <div className="p-8 text-red-500">{error || 'Module not found'}</div>;
 
   return (

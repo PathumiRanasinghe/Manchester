@@ -9,14 +9,6 @@ import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
 import { Student } from '../types/Student';
 
-const sidebarLinks = [
-  { name: 'Dashboard', href: '/dashboard', icon: <BookOpenIcon className="h-5 w-5" /> },
-  { name: 'My Courses', href: '/courses', icon: <BookOpenIcon className="h-5 w-5" /> },
-  { name: 'Schedule', href: '/profile', icon: <BookOpenIcon className="h-5 w-5" /> },
-  { name: 'Announcements', href: '/dashboard', icon: <BookOpenIcon className="h-5 w-5" /> },
-];
-
-
 export default function StudentDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +78,7 @@ export default function StudentDashboard() {
               </ul>
             )}
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-8">
+          <div className="bg-white bg-opacity-50 rounded-xl shadow p-6">
             <StudentCalendar />
           </div>
         </div>

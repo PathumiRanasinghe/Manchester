@@ -40,27 +40,14 @@ public class AdminService {
         return adminRepository.findByEmail(email);
     }
 
-    public List<Student> getAllStudents(){
-        return studentRepository.listAll();
-    }
-
     public List<Lecturer> getAllLecturers(){
         return lecturerRepository.listAll();
-    }
-
-    public List<Admin> getAllAdmin(){
-        return adminRepository.listAll();
     }
 
     public Admin getAdminById(Long id){
         return adminRepository.findById(id);
     }
 
-    @Transactional
-    public Admin createAdmin(Admin admin){
-        adminRepository.persist(admin);
-        return admin;
-    }
 
     @Transactional
     public Student createStudent(Student student) {

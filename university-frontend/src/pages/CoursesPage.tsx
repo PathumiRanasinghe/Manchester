@@ -46,7 +46,7 @@ const CoursesPage: React.FC = () => {
         {modules.map((module, idx) => (
           <div
             key={module.moduleId}
-            className="rounded-xl shadow-lg overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-orange-300"
+            className="rounded-xl shadow-lg overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-purple-300"
             onClick={() => navigate(`/courses/${module.moduleId}`)}
             tabIndex={0}
             role="button"

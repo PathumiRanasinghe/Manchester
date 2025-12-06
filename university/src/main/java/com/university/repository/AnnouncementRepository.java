@@ -1,44 +1,23 @@
 package com.university.repository;
 
 import com.university.entity.Announcement;
+
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class AnnouncementRepository {
+public class AnnouncementRepository implements PanacheRepository<Announcement> {
     @PersistenceContext
     EntityManager em;
 
-    public List<Announcement> findAll() {
-        return em.createQuery("SELECT a FROM Announcement a ORDER BY a.postedAt DESC", Announcement.class)
-                .getResultList();
-    }
-
-    @Transactional
-    public void save(Announcement announcement) {
-        em.persist(announcement);
-    }
-
-    @Transactional
-    public void deleteById(Long id) {
-        Announcement announcement = em.find(Announcement.class, id);
-        if (announcement != null) {
-            em.remove(announcement);
-        }
-    }
-
     public List<Announcement> findByLecturerId(Long lecturerId) {
-            return em.createQuery("SELECT a FROM Announcement a WHERE a.lecturer.lecturerId = :lecturerId ORDER BY a.postedAt DESC", Announcement.class)
-                    .setParameter("lecturerId", lecturerId)
-                    .getResultList();
-        }
+        return find("lecturer.lecturerId = ?1 ORDER BY postedAt DESC", lecturerId).list();
+    }
 
     public List<Announcement> findByDepartmentId(Long departmentId) {
-        return em.createQuery("SELECT a FROM Announcement a WHERE a.lecturer.department.departmentId = :departmentId ORDER BY a.postedAt DESC", Announcement.class)
-                .setParameter("departmentId", departmentId)
-                .getResultList();
+        return find("lecturer.department.departmentId = ?1 ORDER BY postedAt DESC", departmentId).list();
     }
 }

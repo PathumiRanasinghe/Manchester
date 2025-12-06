@@ -16,12 +16,8 @@ public class AnnouncementService {
         return announcementRepository.findByLecturerId(lecturerId);
     }
 
-    public List<Announcement> getAllAnnouncements() {
-        return announcementRepository.findAll();
-    }
-
     public void postAnnouncement(Announcement announcement) {
-        announcementRepository.save(announcement);
+        announcementRepository.persist(announcement);
     }
     public void deleteAnnouncement(Long id) {
         announcementRepository.deleteById(id);

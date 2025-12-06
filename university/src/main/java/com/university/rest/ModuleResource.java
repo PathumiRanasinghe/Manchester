@@ -6,7 +6,6 @@ import com.university.entity.Module;
 import com.university.entity.Lecturer;
 import com.university.service.ModuleService;
 import com.university.service.LecturerService;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -32,47 +31,55 @@ public class ModuleResource {
     LecturerService lecturerService;
 
     @GET
+    @RolesAllowed({"admin"})
     public List<Module> getModules() {
         return moduleService.getAllModules();
     }
 
     @GET
+    @RolesAllowed({"admin", "student"})
     @Path("/student/{studentId}")
     public List<Module> getModulesByStudentId(@PathParam("studentId") Integer studentId) {
         return moduleService.getModulesByStudentId(studentId);
     }
 
     @GET
+    @RolesAllowed({"admin", "lecturer", "student"})
     @Path("/lecturer/{lecturerId}")
     public List<Module> getModulesByLecturerId(@PathParam("lecturerId") Integer lecturerId) {
         return moduleService.getModulesByLecturerId(lecturerId);
     }
 
     @GET
+    @RolesAllowed({"admin", "student"})
     @Path("/department/{departmentId}")
     public List<Module> getModulesByDepartmentId(@PathParam("departmentId") Integer departmentId) {
         return moduleService.getModulesByDepartmentId(departmentId);
     }
 
     @GET
+    @RolesAllowed({"admin", "lecturer", "student"})
     @Path("/{id}")
-    public Module getModule(@PathParam("id") Long id) {
+    public Module getModuleById(@PathParam("id") Long id) {
         return moduleService.getModuleById(id);
     }
 
     @GET
+    @RolesAllowed({"admin", "lecturer"})
     @Path("/{id}/students")
     public List<com.university.entity.Student> getStudentsForModule(@PathParam("id") Integer id) {
         return moduleService.getStudentsForModule(id);
     }
 
     @POST
+    @RolesAllowed("lecturer")
     public Response createModule(Module module) {
         Module created = moduleService.createModule(module);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
+    @RolesAllowed("admin")
     @Path("/{id}")
     public Response updateModule(@PathParam("id") Long id, jakarta.json.JsonObject json) {
         Module updatedModule = new Module();
