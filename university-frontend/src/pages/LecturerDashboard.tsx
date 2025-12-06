@@ -5,6 +5,7 @@ import { Announcement } from '../types/Announcement';
 import { Lecturer } from "../types/Lecturer";
 import { getLecturerByEmail } from "../services/lecturerService";
 import { getKeycloak } from '../keycloak';
+import StudentCalendar from '../components/Calendar';
 
 
 export default function LecturerDashboard() {
@@ -84,19 +85,9 @@ export default function LecturerDashboard() {
             >Post Announcement</button>
           </div>
           <div className="bg-white rounded-xl shadow p-6">
-                <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold text-lg text-stone-700 mb-4">Calendar</div>
-            <iframe
-              src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FColombo"
-              style={{ border: 0 }}
-              width="100%"
-              height="300"
-              scrolling="no"
-            ></iframe>
+            <StudentCalendar />
           </div>
             
-          </div>
-        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
             <div className="font-semibold text-lg text-sky-700 mb-2">Create Module</div>
@@ -105,6 +96,7 @@ export default function LecturerDashboard() {
             onClick={()=> window.location.href='/create-module'}
             >Create Module</button>
           </div>
+        </div>
         </div>
       </main>
     </div>

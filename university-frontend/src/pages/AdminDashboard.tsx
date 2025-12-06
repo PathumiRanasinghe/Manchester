@@ -8,6 +8,7 @@ import api from "../services/api";
 import { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { getKeycloak } from "../keycloak";
+import Calendar from "../components/Calendar";
 
 export const AdminDashboard = () => {
     const [enrollmentsPerDay, setEnrollmentsPerDay] = useState<{ date: string, count: number }[]>([]);
@@ -135,14 +136,7 @@ export const AdminDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
   
           <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold text-lg text-stone-700 mb-4">Calendar</div>
-            <iframe
-              src="https://calendar.google.com/calendar/embed?src=en.lk%23holiday%40group.v.calendar.google.com&ctz=Asia%2FColombo"
-              style={{ border: 0 }}
-              width="100%"
-              height="350"
-              scrolling="no"
-            ></iframe>
+           <Calendar />
           </div>
        
           <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">

@@ -27,3 +27,7 @@ export const getModulesByLecturerId = async (lecturerId: number): Promise<Module
   const response = await api.get(`/modules/lecturer/${lecturerId}`);
   return response.data as Module[];
 };
+
+export const deleteLecturer = async (lecturerId: number): Promise<void> => {
+  await api.delete(`admins/lecturers/${lecturerId}`);
+};

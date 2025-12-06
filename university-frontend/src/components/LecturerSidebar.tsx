@@ -8,8 +8,9 @@ import {
   ArrowRightIcon
 } from '@heroicons/react/24/outline';
 import { Lecturer } from '../types/Lecturer';
-import { getLecturerById } from '../services/lecturerService';
 import useCurrentPath from '../hooks/useCurrentPath';
+import { getKeycloak } from '../keycloak';
+import { getLecturerByEmail } from '../services/lecturerService';
 
 const navItems = [
   { label: 'Dashboard', icon: HomeIcon, path: '/lecturer/dashboard' },
@@ -23,11 +24,25 @@ export default function LecturerSidebar() {
   const navigate = useNavigate();
   const currentPath = useCurrentPath();
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getLecturerById(2)
-        .then((data: Lecturer) => setLecturer(data))
-        .catch(() => setLecturer(null));
+    const kc = getKeycloak();
+      const email = kc.tokenParsed?.email;
+      if (!email) {
+        setLecturer(null);
+        setLoading(false)
+      }
+
+      getLecturerByEmail(email)
+        .then((data: Lecturer) => {
+          setLecturer(data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+
   }, []);
 
   return (

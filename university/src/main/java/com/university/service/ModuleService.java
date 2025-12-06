@@ -6,7 +6,6 @@ import com.university.repository.EnrollmentRepository;
 import com.university.repository.ModuleRepository;
 import com.university.repository.StudentRepository;
 import jakarta.inject.Inject;
-import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -71,15 +70,26 @@ public class ModuleService {
 
 	@Transactional
 	public Module updateModule(Long id, Module updatedModule) {
-		Module module = moduleRepository.findById(id);
-		if (module != null) {
-			module.setModuleName(updatedModule.getModuleName());
-			module.setCredits(updatedModule.getCredits());
-			module.setLecturer(updatedModule.getLecturer());
-			module.setDepartment(updatedModule.getDepartment());
-			moduleRepository.persist(module);
-		}
-		return module;
+		   Module module = moduleRepository.findById(id);
+		   if (module != null) {
+			   if (updatedModule.getModuleName() != null) {
+				   module.setModuleName(updatedModule.getModuleName());
+			   }
+			   if (updatedModule.getCredits() != null) {
+				   module.setCredits(updatedModule.getCredits());
+			   }
+			   if (updatedModule.getLecturer() != null) {
+				   module.setLecturer(updatedModule.getLecturer());
+			   }
+			   if (updatedModule.getDepartment() != null) {
+				   module.setDepartment(updatedModule.getDepartment());
+			   }
+			   if (updatedModule.getDescription() != null) {
+				   module.setDescription(updatedModule.getDescription());
+			   }
+			   moduleRepository.persist(module);
+		   }
+		   return module;
 	}
 
 	@Transactional

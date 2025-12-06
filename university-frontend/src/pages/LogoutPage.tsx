@@ -1,6 +1,5 @@
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import KeycloakService from '../keycloak';
 
 export default function LogoutPage() {

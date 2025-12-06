@@ -23,7 +23,7 @@ export const AdminDepartmentPage = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
-    getDepartments()
+    getDepartments(false)
       .then(data => {
         setDepartments(data);
         setLoading(false);

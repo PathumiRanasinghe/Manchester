@@ -1,5 +1,5 @@
 import  {  useState, useEffect } from "react";
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { Student } from "../types/Student";
 import { getStudents } from "../services/studentService";
 import Spinner from "../components/Spinner";

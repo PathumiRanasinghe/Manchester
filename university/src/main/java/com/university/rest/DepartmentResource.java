@@ -1,10 +1,11 @@
 
 package com.university.rest;
 
-
 import java.util.List;
 import com.university.entity.Department;
 import com.university.service.DepartmentService;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -37,12 +38,14 @@ public class DepartmentResource {
     }
 
     @POST
+    @RolesAllowed("admin")
     public Response createDepartment(Department department) {
         Department created = departmentService.createDepartment(department);
         return Response.status(Response.Status.CREATED).entity(created).build();
     }
 
     @PUT
+    @RolesAllowed("admin")
     @Path("/{id}")
     public Response updateDepartment(@PathParam("id") Long id, Department updatedDepartment) {
         Department department = departmentService.updateDepartment(id, updatedDepartment);
@@ -53,6 +56,7 @@ public class DepartmentResource {
     }
 
     @DELETE
+    @RolesAllowed("admin")
     @Path("/{id}")
     public Response deleteDepartment(@PathParam("id") Long id) {
         boolean deleted = departmentService.deleteDepartment(id);

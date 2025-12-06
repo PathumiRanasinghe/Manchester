@@ -16,15 +16,7 @@ export async function initKeycloak(options: any = { onLoad: 'check-sso', pkceMet
       console.error('[Keycloak] init failed:', err);
       throw err;
     }
-
-    // expose for quick debugging in browser console (dev only)
-    try {
-      (window as any).__KEYCLOAK = kcInstance;
-    } catch (e) {
-      // ignore if not allowed
-    }
-
-    // simple token refresher for dev
+    
     setInterval(() => {
       if (!kcInstance) return;
       kcInstance.updateToken(30).catch(() => kcInstance.clearToken());

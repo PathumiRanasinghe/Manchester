@@ -3,8 +3,11 @@ package com.university.rest;
 
 import java.util.List;
 import com.university.entity.Module;
+import com.university.entity.Lecturer;
 import com.university.service.ModuleService;
+import com.university.service.LecturerService;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -24,6 +27,9 @@ public class ModuleResource {
 
     @Inject
     ModuleService moduleService;
+
+    @Inject
+    LecturerService lecturerService;
 
     @GET
     public List<Module> getModules() {
@@ -68,7 +74,21 @@ public class ModuleResource {
 
     @PUT
     @Path("/{id}")
-    public Response updateModule(@PathParam("id") Long id, Module updatedModule) {
+    public Response updateModule(@PathParam("id") Long id, jakarta.json.JsonObject json) {
+        Module updatedModule = new Module();
+        if (json.containsKey("moduleName") && !json.isNull("moduleName")) {
+            updatedModule.setModuleName(json.getString("moduleName"));
+        }
+        if (json.containsKey("description") && !json.isNull("description")) {
+            updatedModule.setDescription(json.getString("description"));
+        }
+        if (json.containsKey("credits") && !json.isNull("credits")) {
+            updatedModule.setCredits(json.getInt("credits"));
+        }
+        if (json.containsKey("lecturerId") && !json.isNull("lecturerId")) {
+            Lecturer lecturer = lecturerService.getLecturerById((long)json.getInt("lecturerId"));
+            updatedModule.setLecturer(lecturer);
+        }
         Module module = moduleService.updateModule(id, updatedModule);
         if (module == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -77,6 +97,7 @@ public class ModuleResource {
     }
 
     @DELETE
+    @RolesAllowed("admin")
     @Path("/{id}")
     public Response deleteModule(@PathParam("id") Long id) {
         boolean deleted = moduleService.deleteModule(id);

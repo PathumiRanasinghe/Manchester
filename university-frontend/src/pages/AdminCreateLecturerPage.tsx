@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { getDepartments } from '../services/departmentService';
-import { Department } from '../types/Department';
+import React, { useState, useEffect } from "react";
+import { createLecturer } from "../services/AdminService";
+import { getDepartments } from "../services/departmentService";
+import { Department } from "../types/Department";
 
-export default function AdminCreateStudentPage() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [departmentId, setDepartmentId] = useState<number | ''>('');
+export default function AdminCreateLecturerPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [departmentId, setDepartmentId] = useState<number | "">("");
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     getDepartments().then(setDepartments).catch(() => setDepartments([]));
@@ -20,34 +19,33 @@ export default function AdminCreateStudentPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     if (!departmentId) {
-      setError('Please select a department.');
+      setError("Please select a department.");
       return;
     }
     try {
-      await api.post('/admins/students', { firstName, lastName, email, password, phoneNumber, departmentId });
-      setSuccess('Student created successfully!');
-      setFirstName('');
-      setLastName('');
-      setEmail('');
-      setPassword('');
-      setPhoneNumber('');
-      setDepartmentId('');
+      await createLecturer({ firstName, lastName, email, password, departmentId: Number(departmentId) });
+      setSuccess("Lecturer created successfully!");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setDepartmentId("");
     } catch {
-      setError('Failed to create student.');
+      setError("Failed to create lecturer.");
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
       <div className="bg-gradient-to-r from-stone-100 to-stone-300 h-32 flex items-end px-8 pb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Create Student</h2>
+        <h2 className="text-3xl font-bold text-gray-800">Create Lecturer</h2>
       </div>
       <div className="px-8 pt-6 pb-10">
         <div className="flex items-center justify-between mb-6">
-          <p className="text-gray-600">Fill in the details and press create. This will add a new student to the system.</p>
+          <p className="text-gray-600">Fill in the details and press create. This will add a new lecturer to the system.</p>
         </div>
         {success && <div className="mb-2 text-green-600">{success}</div>}
         {error && <div className="mb-2 text-red-600">{error}</div>}
@@ -82,17 +80,6 @@ export default function AdminCreateStudentPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Email"
-                className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
-              <input
-                type="text"
-                value={phoneNumber}
-                onChange={e => setPhoneNumber(e.target.value)}
-                placeholder="Phone Number"
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
                 required
               />

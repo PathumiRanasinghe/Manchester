@@ -9,12 +9,12 @@ import java.util.List;
 
 @ApplicationScoped
 public class AnnouncementService {
+    @Inject
+    AnnouncementRepository announcementRepository;
 
     public List<Announcement> getAnnouncementsByLecturerId(Long lecturerId) {
         return announcementRepository.findByLecturerId(lecturerId);
     }
-    @Inject
-    AnnouncementRepository announcementRepository;
 
     public List<Announcement> getAllAnnouncements() {
         return announcementRepository.findAll();

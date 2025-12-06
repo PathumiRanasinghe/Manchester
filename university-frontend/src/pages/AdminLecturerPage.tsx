@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 import { Lecturer } from "../types/Lecturer";
-import { getLecturers } from "../services/lecturerService";
+import { getLecturers, deleteLecturer } from "../services/lecturerService";
 import Spinner from "../components/Spinner";
 
 export const AdminLecturerPage = () => {
@@ -11,6 +11,29 @@ export const AdminLecturerPage = () => {
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedLecturer, setSelectedLecturer] = useState<Lecturer | null>(null);
+  
+  const handleConfirmDelete = async () => {
+    if (selectedLecturer) {
+      setDeletingId(selectedLecturer.lecturerId!);
+      try {
+        await deleteLecturer(selectedLecturer.lecturerId!);
+        setLecturers(lecturers.filter(l => l.lecturerId !== selectedLecturer.lecturerId));
+        setShowConfirm(false);
+        setSelectedLecturer(null);
+      } catch {
+        setError('Failed to delete lecturer');
+      }
+      setDeletingId(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirm(false);
+    setSelectedLecturer(null);
+  };
 
   useEffect(() => {
     getLecturers()
@@ -62,7 +85,7 @@ export const AdminLecturerPage = () => {
               ))}
             </select>
           </div>
-          <a href="/admin/lecturers/create" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
+          <a href="/admin/create-lecturer" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
             <span>+ Create Lecturer</span>
           </a>
         </div>
@@ -85,10 +108,15 @@ export const AdminLecturerPage = () => {
                   <td className="py-3 px-4 text-gray-500">{lecturer.email}</td>
                   <td className="py-3 px-4 text-gray-500">{lecturer.department.departmentName}</td>
                   <td className="py-3 px-4 text-center flex items-center justify-center gap-2">
-                    <button className="p-2 rounded hover:bg-stone-100" title="Edit">
-                      <PencilSquareIcon className="h-5 w-5 text-blue-400" />
-                    </button>
-                    <button className="p-2 rounded hover:bg-stone-100" title="Delete">
+                    <button
+                      className="p-2 rounded hover:bg-stone-100"
+                      title="Delete"
+                      disabled={deletingId === lecturer.lecturerId}
+                      onClick={() => {
+                        setSelectedLecturer(lecturer);
+                        setShowConfirm(true);
+                      }}
+                    >
                       <TrashIcon className="h-5 w-5 text-red-400" />
                     </button>
                   </td>
@@ -98,6 +126,29 @@ export const AdminLecturerPage = () => {
           </table>
         </div>
       </div>
+      {showConfirm && selectedLecturer && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+            <div className="font-bold text-lg mb-4">Do you want to delete this lecturer?</div>
+            <div className="mb-6 text-gray-700">This action cannot be undone.</div>
+            <div className="flex gap-4">
+              <button
+                className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+                onClick={handleConfirmDelete}
+                disabled={deletingId === selectedLecturer.lecturerId}
+              >
+                Yes
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
+                onClick={handleCancelDelete}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 import Spinner from '../components/Spinner';
 import React, { useEffect, useState } from 'react';
+import StudentCalendar from '../components/Calendar';
 import { getAnnouncements } from '../services/announcementService';
 import { Announcement } from '../types/Announcement';
 import { getStudentByEmail } from '../services/studentService';
@@ -67,16 +68,7 @@ export default function StudentDashboard() {
           )}
         </div>
         <div className="bg-white rounded-xl shadow p-6">
-              <div className="bg-white rounded-xl shadow p-6">
-            <div className="font-semibold text-lg text-stone-700 mb-4">Calendar</div>
-            <iframe
-              src="https://calendar.google.com/calendar/embed?src=en.indian%23holiday%40group.v.calendar.google.com&ctz=Asia%2FColombo"
-              style={{ border: 0 }}
-              width="100%"
-              height="300"
-              scrolling="no"
-            ></iframe>
-          </div>
+          <StudentCalendar />
         </div>
       </div>
         <div className="grid grid-cols-2 gap-8 mb-8">

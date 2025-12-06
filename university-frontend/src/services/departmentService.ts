@@ -11,7 +11,7 @@ export const createDepartment = async (departmentData: Partial<Department>): Pro
   return response.data as Department;
 };
 
-export const getDepartments = async (): Promise<Department[]> => {
+export const getDepartments = async (activeOnly = true): Promise<Department[]> => {
   const response = await api.get('/departments');
   return response.data as Department[];
 };

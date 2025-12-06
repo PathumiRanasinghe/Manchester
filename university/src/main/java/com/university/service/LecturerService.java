@@ -11,6 +11,8 @@ import java.util.List;
 
 @ApplicationScoped
 public class LecturerService {
+	@Inject
+	LecturerRepository lecturerRepository;
 
 	public Lecturer getLecturerByEmail(String email) {
 		Lecturer lecturer = lecturerRepository.findByEmail(email);
@@ -20,8 +22,6 @@ public class LecturerService {
 		return lecturer;
 	}
 
-	@Inject
-	LecturerRepository lecturerRepository;
 
 	public List<Lecturer> getAllLecturers() {
 		return lecturerRepository.listAll();
@@ -31,16 +31,6 @@ public class LecturerService {
 		Lecturer lecturer = lecturerRepository.findById(id);
 		if (lecturer == null) {
 			throw new UserNotFoundException("Lecturer with id " + id + " not found");
-		}
-		return lecturer;
-	}
-
-	@Transactional
-	public Lecturer createLecturer(Lecturer lecturer) {
-		if (lecturer.getLecturerId() != null) {
-			lecturerRepository.getEntityManager().merge(lecturer);
-		} else {
-			lecturerRepository.persist(lecturer);
 		}
 		return lecturer;
 	}

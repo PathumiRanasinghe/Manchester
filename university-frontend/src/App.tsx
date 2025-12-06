@@ -28,6 +28,7 @@ import AdminProfilePage from "./pages/AdminProfilePage";
 import { AdminModulesPage } from "./pages/AdminModulesPage";
 import AdminEnrollmentPage from "./pages/AdminEnrollmentPage";
 import AdminCreateStudentPage from './pages/AdminCreateStudentPage';
+import AdminCreateLecturerPage from "./pages/AdminCreateLecturerPage";
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
         <Route path= '/admin/modules' element={<AdminLayout><AdminModulesPage/></AdminLayout>} />
         <Route path= '/admin/enrollments' element={<AdminLayout><AdminEnrollmentPage/></AdminLayout>} />
         <Route path="/admin/create-student" element={<AdminLayout><AdminCreateStudentPage /></AdminLayout>} />
+        <Route path="/admin/create-lecturer" element={<AdminLayout><AdminCreateLecturerPage /></AdminLayout>} />
        </Routes>
     </Router>
   );
