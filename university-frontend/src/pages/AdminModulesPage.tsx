@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { getModules, updateModule, deleteModule } from '../services/moduleService';
+import { getLecturers } from '../services/lecturerService';
 import { getDepartments } from '../services/departmentService';
 import { getEnrollmentsByModuleId } from '../services/enrollmentService';
 import Spinner from "../components/Spinner";
+import { createModule } from "../services/moduleService";
 
 export const AdminModulesPage = () => {
   const [search, setSearch] = useState("");
@@ -21,8 +23,11 @@ export const AdminModulesPage = () => {
   const [editModule, setEditModule] = useState<any | null>(null);
   const [editName, setEditName] = useState("");
   const [editDesc, setEditDesc] = useState("");
+  const [editCredits, setEditCredits] = useState<number | null>(null);
   const [editError, setEditError] = useState<string | null>(null);
   const [editSuccess, setEditSuccess] = useState<string | null>(null);
+  const [lecturers, setLecturers] = useState<any[]>([]);
+  const [editLecturerId, setEditLecturerId] = useState<number | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteModuleObj, setDeleteModuleObj] = useState<any | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -41,6 +46,9 @@ export const AdminModulesPage = () => {
     getDepartments()
       .then(data => setDepartments(data))
       .catch(() => setDepartments([]));
+    getLecturers()
+      .then(data => setLecturers(data))
+      .catch(() => setLecturers([]));
   }, []);
 
   const filteredModules = modules.filter(module => {
@@ -77,9 +85,6 @@ export const AdminModulesPage = () => {
               ))}
             </select>
           </div>
-          {/* <a href="/admin/modules/create" className="bg-stone-400 hover:bg-stone-500 text-white px-6 py-2 rounded font-semibold shadow flex items-center gap-2">
-            <span>+ Create Module</span>
-          </a> */}
         </div>
         {loading ? (
           <Spinner className="p-8" />
@@ -120,6 +125,8 @@ export const AdminModulesPage = () => {
                         setEditModule(module);
                         setEditName(module.moduleName);
                         setEditDesc(module.description);
+                        setEditCredits(module.credits);
+                        setEditLecturerId(module.lecturer ? module.lecturer.lecturerId : null);
                         setEditError(null);
                         setEditSuccess(null);
                       }}>
@@ -160,8 +167,6 @@ export const AdminModulesPage = () => {
                 setCreateError(null);
                 setCreateSuccess(null);
                 try {
-                  // @ts-ignore - dynamic import extensionless for CRA dev resolver
-                  const { createModule } = await import('../services/moduleService');
                   const newModule = await createModule({ moduleName, description: moduleDesc });
                   setCreateSuccess(`Module '${newModule.moduleName}' created successfully!`);
                   setModuleName("");
@@ -192,7 +197,12 @@ export const AdminModulesPage = () => {
                 setEditError(null);
                 setEditSuccess(null);
                 try {
-                  const updated = await updateModule(editModule.moduleId, { moduleName: editName, description: editDesc });
+                  const updated = await updateModule(editModule.moduleId, {
+                    moduleName: editName,
+                    description: editDesc,
+                    credits: editCredits ?? undefined,
+                    lecturerId: editLecturerId !== null ? editLecturerId : undefined
+                  });
                   setEditSuccess(`Module '${updated.moduleName}' updated successfully!`);
                   setModules(modules.map(m => m.moduleId === updated.moduleId ? updated : m));
                   setEditModule(null);
@@ -202,6 +212,13 @@ export const AdminModulesPage = () => {
               }}>
                 <input type="text" placeholder="Module Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
                 <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                <input type="number" min={1} placeholder="Credits" className="border p-2 rounded w-full" value={editCredits === null ? '' : editCredits} onChange={e => setEditCredits(e.target.value ? Number(e.target.value) : null)} />
+                <select className="border p-2 rounded w-full" value={editLecturerId ?? ''} onChange={e => setEditLecturerId(e.target.value ? Number(e.target.value) : null)} required>
+                  <option value="">Select Lecturer</option>
+                  {lecturers.map(l => (
+                    <option key={l.lecturerId} value={l.lecturerId}>{l.firstName} {l.lastName}</option>
+                  ))}
+                </select>
                 {editError && <div className="text-red-500 text-sm">{editError}</div>}
                 {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}
                 <div className="flex gap-4 mt-4">
@@ -223,9 +240,11 @@ export const AdminModulesPage = () => {
               {deleteError && <div className="text-red-500 text-sm mb-2">{deleteError}</div>}
               <div className="flex gap-4">
                 <button
-                  className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+                  className={`px-4 py-2 rounded font-semibold ${enrolledCount !== null && enrolledCount > 0 ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-red-500 text-white hover:bg-red-600'}`}
                   disabled={enrolledCount !== null && enrolledCount > 0}
+                  title={enrolledCount !== null && enrolledCount > 0 ? 'Unenroll all students before deleting.' : ''}
                   onClick={async () => {
+                    if (enrolledCount !== null && enrolledCount > 0) return;
                     try {
                       await deleteModule(deleteModuleObj.moduleId);
                       setModules(modules.filter(m => m.moduleId !== deleteModuleObj.moduleId));

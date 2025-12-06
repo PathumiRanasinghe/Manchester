@@ -5,6 +5,7 @@ import { unenrollModule } from '../services/enrollmentService';
 import { Enrollment } from '../types/Enrollment';
 import { Module } from '../types/Module';
 import { getKeycloak } from '../keycloak';
+import Spinner from '../components/Spinner';
 
 const UnenrollModulePage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -70,7 +71,7 @@ const UnenrollModulePage: React.FC = () => {
     setSelectedEnrollment(null);
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (

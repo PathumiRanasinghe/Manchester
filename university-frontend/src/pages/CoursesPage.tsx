@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Module } from '../types/Module';
 import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
+import Spinner from '../components/Spinner';
 
 const CoursesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -35,7 +36,7 @@ const CoursesPage: React.FC = () => {
       });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div>{error}</div>;
 
   return (
@@ -45,14 +46,14 @@ const CoursesPage: React.FC = () => {
         {modules.map((module, idx) => (
           <div
             key={module.moduleId}
-            className="rounded-xl shadow-lg overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-orange-300"
+            className="rounded-xl shadow-lg overflow-hidden flex flex-col cursor-pointer hover:ring-2 hover:ring-purple-300"
             onClick={() => navigate(`/courses/${module.moduleId}`)}
             tabIndex={0}
             role="button"
             aria-label={`View details for ${module.moduleName}`}
           >
             <div className="h-30 w-full flex items-center justify-center ">
-              <img src="course.png" alt="Course" className="object-cover h-full w-full" />
+              <img src="course.jpg" alt="Course" className="object-cover h-full w-full" />
             </div>
             <div className="bg-white p-4 flex-1 flex flex-col justify-between">
               <div>

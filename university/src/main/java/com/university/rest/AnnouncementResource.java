@@ -10,6 +10,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import java.util.List;
 
@@ -17,27 +18,32 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AnnouncementResource {
-
+	@Inject
+	AnnouncementService announcementService;
+	
 	@GET
+	@RolesAllowed({ "lecturer"})
 	@Path("/lecturer/{lecturerId}")
 	public List<Announcement> getAnnouncementsByLecturerId(@PathParam("lecturerId") Long lecturerId) {
 		return announcementService.getAnnouncementsByLecturerId(lecturerId);
 	}
-	@Inject
-	AnnouncementService announcementService;
-
-	@GET
-	public List<Announcement> getAllAnnouncements() {
-		return announcementService.getAllAnnouncements();
-	}
 
 	@POST
+	@RolesAllowed("lecturer")
 	public void postAnnouncement(Announcement announcement) {
 		announcementService.postAnnouncement(announcement);
 	}
 	@DELETE
+	@RolesAllowed("lecturer")
 	@Path("/{id}")
 	public void deleteAnnouncement(@PathParam("id") Long id) {
 		announcementService.deleteAnnouncement(id);
+	}
+	
+	@GET
+	@RolesAllowed({  "student" })
+	@Path("/department/{departmentId}")
+	public List<Announcement> getAnnouncementsByDepartmentId(@PathParam("departmentId") Long departmentId) {
+		return announcementService.getAnnouncementsByDepartmentId(departmentId);
 	}
 }

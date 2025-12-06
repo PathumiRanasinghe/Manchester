@@ -9,21 +9,21 @@ import java.util.List;
 
 @ApplicationScoped
 public class AnnouncementService {
+    @Inject
+    AnnouncementRepository announcementRepository;
 
     public List<Announcement> getAnnouncementsByLecturerId(Long lecturerId) {
         return announcementRepository.findByLecturerId(lecturerId);
     }
-    @Inject
-    AnnouncementRepository announcementRepository;
-
-    public List<Announcement> getAllAnnouncements() {
-        return announcementRepository.findAll();
-    }
 
     public void postAnnouncement(Announcement announcement) {
-        announcementRepository.save(announcement);
+        announcementRepository.persist(announcement);
     }
     public void deleteAnnouncement(Long id) {
         announcementRepository.deleteById(id);
+    }
+
+    public List<Announcement> getAnnouncementsByDepartmentId(Long departmentId) {
+        return announcementRepository.findByDepartmentId(departmentId);
     }
 }

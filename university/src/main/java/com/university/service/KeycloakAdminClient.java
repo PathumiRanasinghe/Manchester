@@ -1,10 +1,8 @@
 package com.university.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.io.OutputStream;
 import java.io.InputStream;
@@ -19,7 +17,7 @@ public class KeycloakAdminClient {
     private final String adminPassword = "123";
 
     public String getAdminToken() throws Exception {
-        URL url = new URL(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token");
+        URL url = new URI(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token").toURL();
         String body = "grant_type=password&client_id=" + clientId + "&username=" + adminUsername + "&password=" + adminPassword;
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -36,26 +34,16 @@ public class KeycloakAdminClient {
         }
     }
 
-    public void createUserAndAssignRole(String token, String username, String email, String password, String roleName) throws Exception {
-        // 1. Create user
-        URL url = new URL(keycloakUrl + "/admin/realms/" + realm + "/users");
+    public void createUserAndAssignRole(String token,String fName, String lName, String username, String email, String password, String roleName) throws Exception {
+    
+        URL url = new URI(keycloakUrl + "/admin/realms/" + realm + "/users").toURL();
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setDoOutput(true);
         conn.setRequestProperty("Authorization", "Bearer " + token);
         conn.setRequestProperty("Content-Type", "application/json");
-        String firstName = username;
-        String lastName = username;
-        if (email != null && email.contains("@")) {
-            String[] parts = email.split("@");
-            if (parts[0].contains(".")) {
-                String[] names = parts[0].split("\\.");
-                if (names.length >= 2) {
-                    firstName = names[0];
-                    lastName = names[1];
-                }
-            }
-        }
+        String firstName = fName;
+        String lastName = lName;
         String userJson = "{" +
                 "\"username\":\"" + username + "\"," +
                 "\"email\":\"" + email + "\"," +
@@ -70,8 +58,8 @@ public class KeycloakAdminClient {
         int responseCode = conn.getResponseCode();
         if (responseCode != 201) throw new RuntimeException("Failed to create user in Keycloak");
 
-        // 2. Get user ID
-        URL getUserUrl = new URL(keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username);
+
+        URL getUserUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username).toURL();
         HttpURLConnection getUserConn = (HttpURLConnection) getUserUrl.openConnection();
         getUserConn.setRequestMethod("GET");
         getUserConn.setRequestProperty("Authorization", "Bearer " + token);
@@ -90,8 +78,8 @@ public class KeycloakAdminClient {
         }
         if (userId == null) throw new RuntimeException("User ID not found after creation");
 
-        // 3. Get role ID
-        URL getRolesUrl = new URL(keycloakUrl + "/admin/realms/" + realm + "/roles/" + roleName);
+
+        URL getRolesUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/roles/" + roleName).toURL();
         HttpURLConnection getRoleConn = (HttpURLConnection) getRolesUrl.openConnection();
         getRoleConn.setRequestMethod("GET");
         getRoleConn.setRequestProperty("Authorization", "Bearer " + token);
@@ -110,8 +98,7 @@ public class KeycloakAdminClient {
         }
         if (roleId == null) throw new RuntimeException("Role ID not found");
 
-        // 4. Assign role to user
-        URL assignRoleUrl = new URL(keycloakUrl + "/admin/realms/" + realm + "/users/" + userId + "/role-mappings/realm");
+        URL assignRoleUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users/" + userId + "/role-mappings/realm").toURL();
         HttpURLConnection assignRoleConn = (HttpURLConnection) assignRoleUrl.openConnection();
         assignRoleConn.setRequestMethod("POST");
         assignRoleConn.setDoOutput(true);
@@ -124,5 +111,36 @@ public class KeycloakAdminClient {
         int assignRoleResponseCode = assignRoleConn.getResponseCode();
         if (assignRoleResponseCode != 204) throw new RuntimeException("Failed to assign role to user");
     }
+
+    public void deleteUserByUsername(String token, String username) throws Exception {
+
+    URL getUserUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users?username=" + username).toURL();
+    HttpURLConnection getUserConn = (HttpURLConnection) getUserUrl.openConnection();
+    getUserConn.setRequestMethod("GET");
+    getUserConn.setRequestProperty("Authorization", "Bearer " + token);
+    int getUserResponseCode = getUserConn.getResponseCode();
+    if (getUserResponseCode != 200) throw new RuntimeException("Failed to fetch user for deletion");
+    String userListJson;
+    try (InputStream is = getUserConn.getInputStream()) {
+        userListJson = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    }
+    String userId = null;
+    int idIndex = userListJson.indexOf("\"id\":\"");
+    if (idIndex != -1) {
+        int idStart = idIndex + 6;
+        int idEnd = userListJson.indexOf('"', idStart);
+        userId = userListJson.substring(idStart, idEnd);
+    }
+    if (userId == null) throw new RuntimeException("User ID not found for deletion");
+
+
+    URL deleteUrl = new URI(keycloakUrl + "/admin/realms/" + realm + "/users/" + userId).toURL();
+    HttpURLConnection deleteConn = (HttpURLConnection) deleteUrl.openConnection();
+    deleteConn.setRequestMethod("DELETE");
+    deleteConn.setRequestProperty("Authorization", "Bearer " + token);
+    int deleteResponseCode = deleteConn.getResponseCode();
+    if (deleteResponseCode != 204) throw new RuntimeException("Failed to delete user in Keycloak");
+}
+
     }
 

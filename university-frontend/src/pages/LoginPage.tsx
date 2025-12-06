@@ -59,9 +59,7 @@ export default function LoginPage() {
             </button>
           </form>
           <div className="mt-6 text-center">
-            <button type="button" className="text-base text-orange-500 hover:underline bg-transparent border-none p-0 cursor-pointer">
-              Dont have an account? Sign Up
-            </button>
+              {/* Registration link removed since self-signup is not allowed */}
           </div>
           <div className="mt-10 text-sm text-gray-400 text-center">
             manchesterstudents.com &nbsp;•&nbsp; Technical Support &nbsp;•&nbsp; Terms &nbsp;•&nbsp; Privacy 

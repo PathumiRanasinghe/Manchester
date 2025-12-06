@@ -6,6 +6,7 @@ import { Lecturer } from '../types/Lecturer';
 import { Department } from '../types/Department';
 import { getLecturerById } from '../services/lecturerService';
 import { getDepartmentById} from '../services/departmentService';
+import Spinner from '../components/Spinner';
 
 const CourseDetailPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
@@ -41,7 +42,7 @@ const CourseDetailPage: React.FC = () => {
         });
     }, [moduleId]);
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error || !module) return <div className="p-8 text-red-500">{error || 'Module not found'}</div>;
 
   return (
@@ -61,12 +62,12 @@ const CourseDetailPage: React.FC = () => {
                 <li>Module ID: {module.moduleId}</li>
               </ul>
               <div className="flex gap-4 mt-4 text-s">
-                <span className="bg-orange-100 text-orange-500 px-3 py-1 rounded-full font-semibold">Credits: {module.credits}</span>
+                <span className="bg-purple-100 text-purple-500 px-3 py-1 rounded-full font-semibold">Credits: {module.credits}</span>
                 </div>
             </div>
           </div>
           <div className="border-b mt-3 px-8 flex gap-6 text-gray-500 text-sm font-semibold">
-            <button className="text-orange-500 border-b-2 border-orange-400 pb-2">Overview</button>
+            <button className="text-purple-500 border-b-2 border-purple-400 pb-2">Overview</button>
           </div>
           <div className="flex flex-col md:flex-row gap-8 px-8 py-8">
             <div className="md:w-2/3">

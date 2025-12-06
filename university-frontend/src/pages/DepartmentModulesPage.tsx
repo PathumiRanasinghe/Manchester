@@ -4,6 +4,7 @@ import { getStudentByEmail } from '../services/studentService';
 import { enrollModule } from '../services/enrollmentService';
 import { Module } from '../types/Module';
 import { getKeycloak } from '../keycloak';
+import Spinner from '../components/Spinner';
 
 const DepartmentModulesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
@@ -30,7 +31,6 @@ const DepartmentModulesPage: React.FC = () => {
         departmentId = student.department.departmentId;
         const sid = student.studentId;
         if (sid == null) {
-          // student ID missing, fetch department modules and return empty enrollment list
           return getModulesByDepartmentId(departmentId).then(deptModules => [deptModules, [] as Module[]]);
         }
         return Promise.all([
@@ -73,7 +73,7 @@ const DepartmentModulesPage: React.FC = () => {
     setSelectedModule(null);
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading) return <Spinner className="p-8" />;
   if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
@@ -90,7 +90,7 @@ const DepartmentModulesPage: React.FC = () => {
               <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
               <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.lecturerId}</div>
               <button
-                className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-orange-400 text-white hover:bg-orange-500'}`}
+                className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-400 text-white hover:bg-purple-500'}`}
                 disabled={isEnrolled}
                 onClick={() => !isEnrolled && handleEnrollClick(module)}
               >
@@ -108,7 +108,7 @@ const DepartmentModulesPage: React.FC = () => {
             <div className="mb-6 text-gray-700">This action will enroll you in the selected module.</div>
             <div className="flex gap-4">
               <button
-                className="px-4 py-2 rounded bg-orange-500 text-white font-semibold hover:bg-orange-600"
+                className="px-4 py-2 rounded bg-purple-500 text-white font-semibold hover:bg-purple-600"
                 onClick={handleConfirmEnroll}
               >
                 Yes

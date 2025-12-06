@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { getDepartments, updateDepartment, deleteDepartment } from '../services/departmentService';
 import Spinner from "../components/Spinner";
+import { createDepartment } from "../services/departmentService";
 
 export const AdminDepartmentPage = () => {
   const [search, setSearch] = useState("");
@@ -23,7 +24,7 @@ export const AdminDepartmentPage = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
-    getDepartments()
+    getDepartments(false)
       .then(data => {
         setDepartments(data);
         setLoading(false);
@@ -94,13 +95,6 @@ export const AdminDepartmentPage = () => {
                       }}>
                         <PencilSquareIcon className="h-5 w-5 text-blue-400" />
                       </button>
-                      <button className="p-2 rounded hover:bg-stone-100" title="Delete" onClick={() => {
-                        setDeleteDept(dept);
-                        setShowDelete(true);
-                        setDeleteError(null);
-                      }}>
-                        <TrashIcon className="h-5 w-5 text-red-400" />
-                      </button>
                     </td>
                   </tr>
                 ))}
@@ -152,8 +146,6 @@ export const AdminDepartmentPage = () => {
                 setCreateError(null);
                 setCreateSuccess(null);
                 try {
-                  // @ts-ignore - dynamic import extensionless for CRA dev resolver
-                  const { createDepartment } = await import('../services/departmentService');
                   const newDept = await createDepartment({ departmentName: deptName, description: deptDesc });
                   setCreateSuccess(`Department '${newDept.departmentName}' created successfully!`);
                   setDeptName("");

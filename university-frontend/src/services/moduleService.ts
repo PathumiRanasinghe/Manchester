@@ -26,7 +26,10 @@ export const getModules = async (): Promise<Module[]> => {
   return response.data as Module[];
 };
 
-export const updateModule = async (moduleId: number, moduleData: Partial<Module>): Promise<Module> => {
+export const updateModule = async (
+  moduleId: number,
+  moduleData: Partial<Module> & { lecturerId?: number }
+): Promise<Module> => {
   const response = await api.put(`/modules/${moduleId}`, moduleData);
   return response.data as Module;
 };

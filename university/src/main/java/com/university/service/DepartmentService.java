@@ -37,9 +37,4 @@ public class DepartmentService {
 		}
 		return department;
 	}
-
-	@Transactional
-	public boolean deleteDepartment(Long id) {
-		return deparmentRepository.deleteById(id);
-	}
 }

@@ -1,12 +1,13 @@
 
 package com.university.service;
 
+import com.university.entity.Enrollment;
 import com.university.entity.Module;
+import com.university.entity.Student;
 import com.university.repository.EnrollmentRepository;
 import com.university.repository.ModuleRepository;
 import com.university.repository.StudentRepository;
 import jakarta.inject.Inject;
-import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -15,18 +16,26 @@ import java.util.List;
 public class ModuleService {
 	@Inject
 	EnrollmentRepository enrollmentRepository;
-
+	
 	@Inject
 	StudentRepository studentRepository;
-
+	
 	@Inject
 	ModuleRepository moduleRepository;
+	
+	public List<Module> getAllModules() {
+		return moduleRepository.listAll();
+	}
+	
+	public Module getModuleById(Long id) {
+		return moduleRepository.findById(id);
+	}
 
-	public List<com.university.entity.Student> getStudentsForModule(Integer moduleId) {
-		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("module.moduleId", moduleId).list();
-		List<com.university.entity.Student> students = new java.util.ArrayList<>();
-		for (com.university.entity.Enrollment enrollment : enrollments) {
-			com.university.entity.Student student = studentRepository.findById(enrollment.getStudent().getStudentId().longValue());
+	public List<Student> getStudentsForModule(Integer moduleId) {
+		List<Enrollment> enrollments = enrollmentRepository.find("module.moduleId", moduleId).list();
+		List<Student> students = new java.util.ArrayList<>();
+		for (Enrollment enrollment : enrollments) {
+			Student student = studentRepository.findById(enrollment.getStudent().getStudentId().longValue());
 			if (student != null) {
 				students.add(student);
 			}
@@ -35,9 +44,9 @@ public class ModuleService {
 	}
 
 	public List<Module> getModulesByStudentId(Integer studentId) {
-		List<com.university.entity.Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
+		List<Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
 		List<Module> modules = new java.util.ArrayList<>();
-		for (com.university.entity.Enrollment enrollment : enrollments) {
+		for (Enrollment enrollment : enrollments) {
 			Module module = moduleRepository.findById(enrollment.getModule().getModuleId().longValue());
 			if (module != null) {
 				modules.add(module);
@@ -55,13 +64,6 @@ public class ModuleService {
 	}
 
 	
-	public List<Module> getAllModules() {
-		return moduleRepository.listAll();
-	}
-
-	public Module getModuleById(Long id) {
-		return moduleRepository.findById(id);
-	}
 
 	@Transactional
 	public Module createModule(Module module) {
@@ -71,15 +73,26 @@ public class ModuleService {
 
 	@Transactional
 	public Module updateModule(Long id, Module updatedModule) {
-		Module module = moduleRepository.findById(id);
-		if (module != null) {
-			module.setModuleName(updatedModule.getModuleName());
-			module.setCredits(updatedModule.getCredits());
-			module.setLecturer(updatedModule.getLecturer());
-			module.setDepartment(updatedModule.getDepartment());
-			moduleRepository.persist(module);
-		}
-		return module;
+		   Module module = moduleRepository.findById(id);
+		   if (module != null) {
+			   if (updatedModule.getModuleName() != null) {
+				   module.setModuleName(updatedModule.getModuleName());
+			   }
+			   if (updatedModule.getCredits() != null) {
+				   module.setCredits(updatedModule.getCredits());
+			   }
+			   if (updatedModule.getLecturer() != null) {
+				   module.setLecturer(updatedModule.getLecturer());
+			   }
+			   if (updatedModule.getDepartment() != null) {
+				   module.setDepartment(updatedModule.getDepartment());
+			   }
+			   if (updatedModule.getDescription() != null) {
+				   module.setDescription(updatedModule.getDescription());
+			   }
+			   moduleRepository.persist(module);
+		   }
+		   return module;
 	}
 
 	@Transactional
