@@ -15,7 +15,6 @@ const UnenrollModulePage: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [studentId, setStudentId] = useState<number | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
@@ -33,7 +32,6 @@ const UnenrollModulePage: React.FC = () => {
           setLoading(false);
           return Promise.reject(new Error('Student ID missing'));
         }
-        setStudentId(id);
         return Promise.all([
           getModulesByStudentId(id),
           getEnrollmentsByStudentId(id)

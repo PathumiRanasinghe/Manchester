@@ -1,8 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import KeycloakService from './keycloak';
 import { JSX } from 'react';
-
-
 import { hasRole } from './authHelpers';
 
 interface ProtectedRouteProps {

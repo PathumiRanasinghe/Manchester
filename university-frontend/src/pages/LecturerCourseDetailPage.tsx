@@ -16,19 +16,16 @@ const LecturerCourseDetailPage: React.FC = () => {
   const [department, setDepartment] = useState<Department | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lecturerId, setLecturerId] = useState<number | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setLecturerId(null);
       setLoading(false);
       return;
     }
     getLecturerByEmail(email)
       .then(lecturer => {
-        setLecturerId(lecturer.lecturerId);
         return getModulesByLecturerId(lecturer.lecturerId);
       })
       .then(modules => {
@@ -82,7 +79,7 @@ const LecturerCourseDetailPage: React.FC = () => {
           <button className="text-blue-500 border-b-2 border-blue-400 pb-2">Overview</button>
         </div>
         <div className="flex flex-col md:flex-row gap-8 px-8 py-8">
-          <div className="md:w-2/3">
+          <div className="md:w-full">
             <h2 className="text-xl font-bold mb-2 text-blue-700">Course Details</h2>
             <p className="text-gray-600 mb-4">{module.description}</p>
           </div>

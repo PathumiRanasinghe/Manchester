@@ -15,7 +15,7 @@ export default function AuthRedirect() {
       
           const currentPath: string = (window && window.location && window.location.pathname) ? String(window.location.pathname) : '/';
    
-          const shouldRedirect = currentPath === '/' || currentPath === '/login' || currentPath === '' || currentPath === '/dashboard';
+          const shouldRedirect =  currentPath === '' || currentPath === '/dashboard';
           if (!shouldRedirect) return;
 
           const tokenParsed = (kc && kc.tokenParsed) || {};

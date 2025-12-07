@@ -12,19 +12,16 @@ export default function LecturerDashboard() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
-  const [lecturerId, setLecturerId] = useState<number | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setLecturerId(null);
       setLoading(false);
       return;
     }
     getLecturerByEmail(email)
       .then(lecturer => {
-        setLecturerId(lecturer.lecturerId);
         return Promise.all([
           getAnnouncementsByLecturerId(lecturer.lecturerId),
           Promise.resolve(lecturer)
