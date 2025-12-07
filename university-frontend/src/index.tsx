@@ -19,10 +19,9 @@ initKeycloak({ onLoad: 'login-required', pkceMethod: 'S256' })
   .catch(err => {
     console.error('Keycloak init failed', err);
     root.render(
-      <div className="p-8 text-red-500">
-        <h1 className="text-2xl font-bold mb-4">Authentication Error</h1>
-        <p>Failed to initialize authentication. Please try again later.</p>
-      </div>
+     <React.StrictMode>
+        <App />
+      </React.StrictMode>
     );
   });
 

@@ -39,7 +39,7 @@ const CoursesPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">My Courses</h1>
+      <h1 className="text-2xl font-bold mb-6">My Modules</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {modules.map((module, idx) => (
           <div
