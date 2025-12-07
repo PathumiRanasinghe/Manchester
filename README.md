@@ -41,6 +41,10 @@ Manchester is a university management system supporting roles for admin, lecture
 
 ---
 
+## System Architecure
+
+![System Architecture](university-frontend/public/architecture.png)
+
 ## Setup & Installation
 ### Prerequisites
 - Node.js & npm

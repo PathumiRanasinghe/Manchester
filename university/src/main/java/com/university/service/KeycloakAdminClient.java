@@ -1,6 +1,8 @@
 package com.university.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import jakarta.inject.Inject;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -13,8 +15,14 @@ public class KeycloakAdminClient {
     private final String keycloakUrl = "http://localhost:8080";
     private final String realm = "university";
     private final String clientId = "admin-cli";
-    private final String adminUsername = "admin1";
-    private final String adminPassword = "123";
+
+    @Inject
+    @ConfigProperty(name = "keycloak.admin.username")
+    String adminUsername;
+
+    @Inject
+    @ConfigProperty(name = "keycloak.admin.password")
+    String adminPassword;
 
     public String getAdminToken() throws Exception {
         URL url = new URI(keycloakUrl + "/realms/" + realm + "/protocol/openid-connect/token").toURL();
