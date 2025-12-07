@@ -20,7 +20,7 @@ export default function NotFoundPage() {
         <div className="blackhole border-[5px] border-fuchsia-600 h-[75px] w-[75px] rounded-full absolute top-0 left-0">
           <div className="absolute top-[-5px] left-[-5px] h-[85px] w-[85px] border-[5px] border-fuchsia-600 border-r-transparent border-b-transparent rounded-full rotate-45 z-5"></div>
         </div>
-        <div className="ship absolute bottom-[-150px] left-[10px] h-[150px] w-[55px]" style={{background: 'url("https://cbwconline.com/IMG/Codepen/Space%20Ship.svg") center/contain no-repeat', animation: 'blackhole 4s infinite linear'}}></div>
+        <div className="ship absolute bottom-[-150px] left-[10px] h-[150px] w-[55px]" ></div>
       </div>
       <style>{`
         @keyframes blackhole {

@@ -3,26 +3,24 @@ import { createModule } from "../services/moduleService";
 import { getLecturerByEmail } from '../services/lecturerService';
 import { getKeycloak } from '../keycloak';
 
-const departmentId = 1;
-
 const CreateModule = () => {
   const [moduleName, setModuleName] = useState("");
   const [description, setDescription] = useState("");
   const [credits, setCredits] = useState<number>();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [lecturerId, setLecturerId] = useState<number | null>(null);
+  const [lecturer, setLecturer] = useState<any | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setLecturerId(null);
+      setLecturer(null);
       return;
     }
     getLecturerByEmail(email)
-      .then(lecturer => setLecturerId(lecturer.lecturerId))
-      .catch(() => setLecturerId(null));
+      .then(lecturer => setLecturer(lecturer))
+      .catch(() => setLecturer(null));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,16 +32,21 @@ const CreateModule = () => {
         moduleName,
         description,
         credits,
-        department: {
-            departmentId,
-            departmentName: "",
-            description: ""
-          },
-        lecturer: {
-          lecturerId,
+        department: lecturer?.department || {
+          departmentId: 0,
+          departmentName: "",
+          description: ""
+        },
+        lecturer: lecturer ? {
+          lecturerId: lecturer.lecturerId,
+          firstName: lecturer.firstName,
+          lastName: lecturer.lastName,
+          email: lecturer.email,
+        } : {
+          lecturerId: null,
           firstName: "",
           lastName: "",
-          email: "",     
+          email: "",
         }
       } as any);
       setSuccess("Module created successfully.");

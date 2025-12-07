@@ -3,32 +3,32 @@ import { postAnnouncement } from "../services/announcementService";
 import { getLecturerByEmail } from '../services/lecturerService';
 import { getKeycloak } from '../keycloak';
 
-const departmentId = 1;
+
 
 export default function PostAnnouncementPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const [lecturerId, setLecturerId] = useState<number | null>(null);
+  const [lecturer, setLecturer] = useState<any | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setLecturerId(null);
+      setLecturer(null);
       return;
     }
     getLecturerByEmail(email)
-      .then(lecturer => setLecturerId(lecturer.lecturerId))
-      .catch(() => setLecturerId(null));
+      .then(lecturer => setLecturer(lecturer))
+      .catch(() => setLecturer(null));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess("");
     setError("");
-    if (lecturerId === null) {
+    if (!lecturer) {
       setError("Lecturer not found. Cannot post announcement.");
       return;
     }
@@ -38,12 +38,12 @@ export default function PostAnnouncementPage() {
         content,
         postedAt: new Date().toISOString(),
         lecturer: {
-          lecturerId,
-          firstName: "",
-          lastName: "",
-          email: "",
-          department: {
-            departmentId,
+          lecturerId: lecturer.lecturerId,
+          firstName: lecturer.firstName,
+          lastName: lecturer.lastName,
+          email: lecturer.email,
+          department: lecturer.department || {
+            departmentId: 0,
             departmentName: "",
             description: ""
           }

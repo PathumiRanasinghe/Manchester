@@ -2,21 +2,7 @@ import { useEffect, useState } from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import Spinner from '../components/Spinner';
 import api from '../services/api';
-
-interface Enrollment {
-  enrollmentId: number;
-  student: {
-    studentId: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-  module: {
-    moduleId: number;
-    moduleName: string;
-  };
-  enrollmentDate: string;
-}
+import { Enrollment } from '../types/Enrollment';
 
 export default function AdminEnrollmentPage() {
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
