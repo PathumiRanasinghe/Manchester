@@ -24,12 +24,13 @@ public class EnrollmentResource {
     EnrollmentService enrollmentService;
 
     @GET
-    @RolesAllowed({"admin"})
+    @RolesAllowed({"admin","student", "lecturer"})
     public List<Enrollment> getEnrollments() {
         return enrollmentService.getAllEnrollments();
     }
 
     @GET
+    @RolesAllowed({"admin", "student", "lecturer"})
     @Path("/{id}")
     public Enrollment getEnrollmentById(@PathParam("id") Long id) {
         return enrollmentService.getEnrollmentById(id);

@@ -32,12 +32,6 @@ export default function ForbiddenPage() {
           <p className="text-gray-500 mb-1">The page you're trying to access has restricted access.</p>
           <p className="text-gray-400 mb-6">If you feel this is a mistake, contact your admin.</p>
           <div className="mb-4 text-purple-500 text-sm">Redirecting to your home page in {countdown}...</div>
-          {/* <button
-            onClick={() => window.location.href = '/'}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2 rounded transition-colors duration-200 shadow-md"
-          >
-            RETURN HOME
-          </button> */}
         </div>
       </div>
     </div>

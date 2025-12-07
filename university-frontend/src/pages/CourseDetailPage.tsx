@@ -70,7 +70,7 @@ const CourseDetailPage: React.FC = () => {
             <button className="text-purple-500 border-b-2 border-purple-400 pb-2">Overview</button>
           </div>
           <div className="flex flex-col md:flex-row gap-8 px-8 py-8">
-            <div className="md:w-2/3">
+            <div className="md:w-full">
               <h2 className="text-xl font-bold mb-2 text-gray-700">Course Details</h2>
                <p className="text-gray-600 mb-4">{module.description}</p>
             </div>

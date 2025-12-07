@@ -47,7 +47,7 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-[#f3f0ff] flex">
       <main className="flex-1 px-8 py-2">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 bg-purple-200 p-4 rounded-2xl">
           <div>
             <h1 className="text-3xl font-bold text-[#232347]">Dashboard</h1>
           </div>

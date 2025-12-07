@@ -10,7 +10,6 @@ const CoursesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [studentId, setStudentId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +22,6 @@ const CoursesPage: React.FC = () => {
     }
     getStudentByEmail(email)
       .then(student => {
-        setStudentId(student.studentId ?? null);
         return getModulesByStudentId(student.studentId ?? 0);
       })
       .then((data: Module[]) => {

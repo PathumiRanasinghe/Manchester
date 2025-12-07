@@ -24,25 +24,20 @@ export default function LecturerSidebar() {
   const navigate = useNavigate();
   const currentPath = useCurrentPath();
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const kc = getKeycloak();
-      const email = kc.tokenParsed?.email;
-      if (!email) {
-        setLecturer(null);
-        setLoading(false)
-      }
-
-      getLecturerByEmail(email)
-        .then((data: Lecturer) => {
-          setLecturer(data);
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-
+    const email = kc.tokenParsed?.email;
+    if (!email) {
+      setLecturer(null);
+      return;
+    }
+    getLecturerByEmail(email)
+      .then((data: Lecturer) => {
+        setLecturer(data);
+      })
+      .catch(() => { setLecturer(null);
+      });
   }, []);
 
   return (
