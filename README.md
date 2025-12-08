@@ -41,7 +41,7 @@ Manchester is a university management system supporting roles for admin, lecture
 
 ---
 
-## System Architecure
+## System Architecture
 
 ![System Architecture](university-frontend/public/architecture.png)
 

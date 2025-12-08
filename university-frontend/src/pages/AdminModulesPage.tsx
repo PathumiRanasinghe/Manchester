@@ -215,7 +215,12 @@ export const AdminModulesPage = () => {
                 <input type="number" min={1} placeholder="Credits" className="border p-2 rounded w-full" value={editCredits === null ? '' : editCredits} onChange={e => setEditCredits(e.target.value ? Number(e.target.value) : null)} />
                 <select className="border p-2 rounded w-full" value={editLecturerId ?? ''} onChange={e => setEditLecturerId(e.target.value ? Number(e.target.value) : null)} required>
                   <option value="">Select Lecturer</option>
-                  {lecturers.map(l => (
+                  {lecturers
+                  .filter(l=>{
+                    const deptId= editModule?.department?.departmentId?? Number(selectedDept);
+                    return l.department && l.department.departmentId === deptId;
+                  })
+                  .map(l => (
                     <option key={l.lecturerId} value={l.lecturerId}>{l.firstName} {l.lastName}</option>
                   ))}
                 </select>

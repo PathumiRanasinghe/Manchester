@@ -19,6 +19,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.PathParam;
+import jakarta.json.JsonObject;
 
 @Path("/api/admins")
 @RolesAllowed("admin")
@@ -85,7 +86,7 @@ public class AdminResource {
     @Path("/students")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createStudent(jakarta.json.JsonObject json) {
+    public Response createStudent(JsonObject json) {
         try {
             if (!json.containsKey("departmentId") || json.isNull("departmentId")) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("departmentId is required").build();
