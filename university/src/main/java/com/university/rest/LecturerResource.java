@@ -12,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.QueryParam;
 
 @Path("/api/lecturers")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,7 +36,7 @@ public class LecturerResource {
     @GET
     @RolesAllowed({"admin", "lecturer"})
     @Path("/by-email")
-    public Response getLecturerByEmail(@jakarta.ws.rs.QueryParam("email") String email) {
+    public Response getLecturerByEmail(@QueryParam("email") String email) {
         try {
             Lecturer lecturer = lecturerService.getLecturerByEmail(email);
             return Response.ok(lecturer).build();

@@ -4,6 +4,7 @@ package com.university.rest;
 import java.util.List;
 import com.university.entity.Module;
 import com.university.entity.Lecturer;
+import com.university.entity.Student;
 import com.university.service.ModuleService;
 import com.university.service.LecturerService;
 import jakarta.annotation.security.RolesAllowed;
@@ -67,7 +68,7 @@ public class ModuleResource {
     @GET
     @RolesAllowed({"admin", "lecturer"})
     @Path("/{id}/students")
-    public List<com.university.entity.Student> getStudentsForModule(@PathParam("id") Integer id) {
+    public List<Student> getStudentsForModule(@PathParam("id") Integer id) {
         return moduleService.getStudentsForModule(id);
     }
 
