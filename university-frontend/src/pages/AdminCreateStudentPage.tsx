@@ -36,7 +36,7 @@ export default function AdminCreateStudentPage() {
       setPhoneNumber('');
       setDepartmentId('');
     } catch {
-      setError('Failed to create student.');
+      setError('Failed to create student. Please try again.');
     }
   };
 
@@ -81,7 +81,7 @@ export default function AdminCreateStudentPage() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="Email"
+                placeholder="manchester@gmail.com"
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
                 required
               />
@@ -89,10 +89,13 @@ export default function AdminCreateStudentPage() {
             <div>
               <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
               <input
-                type="text"
+                type="tel"
                 value={phoneNumber}
                 onChange={e => setPhoneNumber(e.target.value)}
-                placeholder="Phone Number"
+                placeholder="0712345678"
+                pattern='07[0-9]{8}'
+                minLength={10}
+                maxLength={10}
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
                 required
               />

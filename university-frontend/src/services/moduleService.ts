@@ -2,12 +2,12 @@ import api from './api';
 import { Module } from '../types/Module';
 
 export const getModulesByStudentId = async (studentId: number): Promise<Module[]> => {
-  const response = await api.get(`/modules/student/${studentId}`);
+  const response = await api.get(`/students/${studentId}/modules`);
   return response.data as Module[];
 };
 
 export const getModulesByDepartmentId = async (departmentId: number): Promise<Module[]> => {
-  const response = await api.get(`/modules/department/${departmentId}`);
+  const response = await api.get(`/departments/${departmentId}/modules`);
   return response.data as Module[];
 };
 
@@ -36,4 +36,9 @@ export const updateModule = async (
 
 export const deleteModule = async (moduleId: number): Promise<void> => {
   await api.delete(`/modules/${moduleId}`);
+};
+
+export const getModulesByLecturerId = async (lecturerId: number): Promise<Module[]> => {
+  const response = await api.get(`/lecturers/${lecturerId}/modules`);
+  return response.data as Module[];
 };

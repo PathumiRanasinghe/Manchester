@@ -15,29 +15,31 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/departments")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DepartmentResource {
 
     @Inject
-    DepartmentService departmentService;
+    private DepartmentService departmentService;
 
     @GET
     @RolesAllowed({"admin", "lecturer", "student"})
+    @Path("/departments")
     public List<Department> getDepartments() {
         return departmentService.getAllDepartments();
     }
 
     @GET
     @RolesAllowed({"admin", "lecturer", "student"})
-    @Path("/{id}")
+    @Path("/departments/{id}")
     public Department getDepartmentById(@PathParam("id") Long id) {
         return departmentService.getDepartmentById(id);
     }
 
     @POST
     @RolesAllowed("admin")
+    @Path("/departments")
     public Response createDepartment(Department department) {
         Department created = departmentService.createDepartment(department);
         return Response.status(Response.Status.CREATED).entity(created).build();
@@ -45,7 +47,7 @@ public class DepartmentResource {
 
     @PUT
     @RolesAllowed("admin")
-    @Path("/{id}")
+    @Path("/departments/{id}")
     public Response updateDepartment(@PathParam("id") Long id, Department updatedDepartment) {
         Department department = departmentService.updateDepartment(id, updatedDepartment);
         if (department == null) {

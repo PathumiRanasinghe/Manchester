@@ -187,7 +187,9 @@ export const AdminDepartmentPage = () => {
                   setEditError("Failed to update department.");
                 }
               }}>
+                <label className="block text-gray-500 font-medium">Department Name</label>
                 <input type="text" placeholder="Department Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <label className="block text-gray-500 font-medium">Description</label>
                 <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
                 {editError && <div className="text-red-500 text-sm">{editError}</div>}
                 {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}

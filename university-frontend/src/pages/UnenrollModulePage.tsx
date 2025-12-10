@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getModulesByStudentId} from '../services/moduleService';
-import { getEnrollmentsByStudentId, getStudentByEmail } from '../services/studentService';
+import { getEnrollmentsByStudentId } from '../services/enrollmentService';
+import { getStudentByEmail } from '../services/studentService';
 import { unenrollModule } from '../services/enrollmentService';
 import { Enrollment } from '../types/Enrollment';
 import { Module } from '../types/Module';

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Lecturer } from "../types/Lecturer";
-import { getLecturers, deleteLecturer, getModulesByLecturerId } from "../services/lecturerService";
+import { getLecturers, deleteLecturer } from "../services/lecturerService";
+import { getModulesByLecturerId } from "../services/moduleService";
 import { Module } from "../types/Module";
 import Spinner from "../components/Spinner";
 import { TrashIcon } from '@heroicons/react/24/outline';

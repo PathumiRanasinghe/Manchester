@@ -4,9 +4,8 @@ package com.university.rest;
 import java.util.List;
 import com.university.entity.Module;
 import com.university.entity.Lecturer;
-import com.university.entity.Student;
-import com.university.service.ModuleService;
 import com.university.service.LecturerService;
+import com.university.service.ModuleService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -20,60 +19,55 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-@Path("/api/modules")
+@Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ModuleResource {
 
     @Inject
-    ModuleService moduleService;
+    private ModuleService moduleService;
 
     @Inject
-    LecturerService lecturerService;
+    private LecturerService lecturerService;
 
     @GET
     @RolesAllowed({"admin"})
+    @Path("/modules")
     public List<Module> getModules() {
         return moduleService.getAllModules();
     }
 
     @GET
     @RolesAllowed({"admin", "student"})
-    @Path("/student/{studentId}")
+    @Path("/students/{studentId}/modules")
     public List<Module> getModulesByStudentId(@PathParam("studentId") Integer studentId) {
         return moduleService.getModulesByStudentId(studentId);
     }
 
     @GET
     @RolesAllowed({"admin", "lecturer", "student"})
-    @Path("/lecturer/{lecturerId}")
+    @Path("/lecturers/{lecturerId}/modules")
     public List<Module> getModulesByLecturerId(@PathParam("lecturerId") Integer lecturerId) {
         return moduleService.getModulesByLecturerId(lecturerId);
     }
 
     @GET
     @RolesAllowed({"admin", "student"})
-    @Path("/department/{departmentId}")
+    @Path("/departments/{departmentId}/modules")
     public List<Module> getModulesByDepartmentId(@PathParam("departmentId") Integer departmentId) {
         return moduleService.getModulesByDepartmentId(departmentId);
     }
 
     @GET
     @RolesAllowed({"admin", "lecturer", "student"})
-    @Path("/{id}")
+    @Path("/modules/{id}")
     public Module getModuleById(@PathParam("id") Long id) {
         return moduleService.getModuleById(id);
     }
-
-    @GET
-    @RolesAllowed({"admin", "lecturer"})
-    @Path("/{id}/students")
-    public List<Student> getStudentsForModule(@PathParam("id") Integer id) {
-        return moduleService.getStudentsForModule(id);
-    }
-
+    
     @POST
     @RolesAllowed("lecturer")
+    @Path("/modules")
     public Response createModule(Module module) {
         Module created = moduleService.createModule(module);
         return Response.status(Response.Status.CREATED).entity(created).build();
@@ -81,7 +75,7 @@ public class ModuleResource {
 
     @PUT
     @RolesAllowed("admin")
-    @Path("/{id}")
+    @Path("/modules/{id}")
     public Response updateModule(@PathParam("id") Long id, jakarta.json.JsonObject json) {
         Module updatedModule = new Module();
         if (json.containsKey("moduleName") && !json.isNull("moduleName")) {
@@ -106,13 +100,9 @@ public class ModuleResource {
 
     @DELETE
     @RolesAllowed("admin")
-    @Path("/{id}")
+    @Path("/modules/{id}")
     public Response deleteModule(@PathParam("id") Long id) {
         boolean deleted = moduleService.deleteModule(id);
-        if (deleted) {
-            return Response.noContent().build();
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+        return deleted? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 }

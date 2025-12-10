@@ -1,43 +1,14 @@
 package com.university.service;
 
-import com.university.entity.Enrollment;
-import com.university.repository.EnrollmentRepository;
-import com.university.repository.ModuleRepository;
-import com.university.repository.StudentRepository;
-
-import jakarta.inject.Inject;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.transaction.Transactional;
 import java.util.List;
+import com.university.entity.Enrollment;
 
-@ApplicationScoped
-public class EnrollmentService {
+public interface EnrollmentService {
+    public List<Enrollment> getAllEnrollments();
 
-	@Inject
-	EnrollmentRepository enrollmentRepository;
+	public Enrollment getEnrollmentById(Long id);
 
-	@Inject
-	StudentRepository studentRepository;
+	public Enrollment createEnrollment(Enrollment enrollment);
 
-	@Inject
-	ModuleRepository moduleRepository;
-
-	public List<Enrollment> getAllEnrollments() {
-		return enrollmentRepository.listAll();
-	}
-
-	public Enrollment getEnrollmentById(Long id) {
-		return enrollmentRepository.findById(id);
-	}
-
-	@Transactional
-	public Enrollment createEnrollment(Enrollment enrollment) {
-		enrollmentRepository.persist(enrollment);
-		return enrollment;
-	}
-
-	@Transactional
-	public boolean deleteEnrollment(Long id) {
-		return enrollmentRepository.deleteById(id);
-	}
+	public boolean deleteEnrollment(Long id);
 }

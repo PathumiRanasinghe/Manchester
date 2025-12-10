@@ -210,9 +210,13 @@ export const AdminModulesPage = () => {
                   setEditError("Failed to update module.");
                 }
               }}>
+                <label className="block text-gray-500 font-medium">Module Name</label>
                 <input type="text" placeholder="Module Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <label className="block text-gray-500 font-medium">Description</label>
                 <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                <label className="block text-gray-500 font-medium">Credits</label>
                 <input type="number" min={1} placeholder="Credits" className="border p-2 rounded w-full" value={editCredits === null ? '' : editCredits} onChange={e => setEditCredits(e.target.value ? Number(e.target.value) : null)} />
+                <label className="block text-gray-500 font-medium">Lecturer</label>
                 <select className="border p-2 rounded w-full" value={editLecturerId ?? ''} onChange={e => setEditLecturerId(e.target.value ? Number(e.target.value) : null)} required>
                   <option value="">Select Lecturer</option>
                   {lecturers

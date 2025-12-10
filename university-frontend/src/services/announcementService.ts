@@ -3,7 +3,7 @@ import { Announcement } from '../types/Announcement';
 
 
 export async function getAnnouncementsByDepartmentId(departmentId: number): Promise<Announcement[]> {
-  const response = await api.get(`/announcements/department/${departmentId}`);
+  const response = await api.get(`/departments/${departmentId}/announcements`);
   return response.data;
 }
 
@@ -16,6 +16,6 @@ export async function postAnnouncement(announcement: Partial<Announcement>): Pro
 }
 
 export async function getAnnouncementsByLecturerId(lecturerId: number): Promise<Announcement[]> {
-  const response = await api.get(`/announcements/lecturer/${lecturerId}`);
+  const response = await api.get(`/lecturers/${lecturerId}/announcements`);
   return response.data;
 }

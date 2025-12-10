@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createLecturer } from "../services/AdminService";
+import { createLecturer } from "../services/lecturerService";
 import { getDepartments } from "../services/departmentService";
 import { Department } from "../types/Department";
 

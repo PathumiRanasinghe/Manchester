@@ -1,6 +1,4 @@
 import api from './api';
-import { Student } from '../types/Student';
-import { Module } from '../types/Module';
 import { Lecturer } from '../types/Lecturer';
 
 export const getLecturers = async (): Promise<Lecturer[]> => {
@@ -18,16 +16,17 @@ export const getLecturerByEmail = async (email: string): Promise<Lecturer> => {
   return response.data as Lecturer;
 };
 
-export const getStudentsByModuleId = async (moduleId: number): Promise<Student[]> => {
-  const response = await api.get(`/modules/${moduleId}/students`);
-  return response.data as Student[];
-};
-
-export const getModulesByLecturerId = async (lecturerId: number): Promise<Module[]> => {
-  const response = await api.get(`/modules/lecturer/${lecturerId}`);
-  return response.data as Module[];
-};
-
 export const deleteLecturer = async (lecturerId: number): Promise<void> => {
-  await api.delete(`admins/lecturers/${lecturerId}`);
+  await api.delete(`/lecturers/${lecturerId}`);
 };
+
+export async function createLecturer({ firstName, lastName, email, password, departmentId }: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    departmentId: number;
+}): Promise<Lecturer> {
+        const response = await api.post("/lecturers", { firstName, lastName, email, password, departmentId });
+        return response.data as Lecturer;
+}
