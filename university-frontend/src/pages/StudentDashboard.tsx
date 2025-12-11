@@ -4,13 +4,13 @@ import Spinner from '../components/Spinner';
 import { useEffect, useState } from 'react';
 import StudentCalendar from '../components/Calendar';
 import { getAnnouncementsByDepartmentId } from '../services/announcementService';
-import { Announcement } from '../types/Announcement';
+import { AnnouncementDto } from '../types/AnnouncementDto';
 import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
 import { Student } from '../types/Student';
 
 export default function StudentDashboard() {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<AnnouncementDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [student, setStudent] = useState<Student | null>(null);

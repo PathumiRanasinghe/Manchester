@@ -1,3 +1,4 @@
+
 import api from './api';
 import { Student } from '../types/Student';
 
@@ -22,5 +23,26 @@ export const deleteStudent = async (studentId: number): Promise<void> => {
 
 export const getStudentsByModuleId = async (moduleId: number): Promise<Student[]> => {
   const response = await api.get(`/modules/${moduleId}/students`);
+  
   return response.data as Student[];
+};
+
+export const createStudent = async (student: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  departmentId: string | number;
+}): Promise<Student> => {
+  const payload = {
+    firstName: student.firstName,
+    lastName: student.lastName,
+    email: student.email,
+    password: student.password,
+    phoneNumber: student.phoneNumber,
+    department: { departmentId: Number(student.departmentId) }
+  };
+  const response = await api.post('/students', payload);
+  return response.data as Student;
 };

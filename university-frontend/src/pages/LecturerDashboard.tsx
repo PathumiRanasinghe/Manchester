@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Spinner from '../components/Spinner';
 import { getAnnouncementsByLecturerId, deleteAnnouncement } from '../services/announcementService';
-import { Announcement } from '../types/Announcement';
+import { AnnouncementDto } from '../types/AnnouncementDto';
 import { Lecturer } from "../types/Lecturer";
 import { getLecturerByEmail } from "../services/lecturerService";
 import { getKeycloak } from '../keycloak';
@@ -9,7 +9,7 @@ import StudentCalendar from '../components/Calendar';
 
 
 export default function LecturerDashboard() {
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<AnnouncementDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
 
@@ -37,10 +37,26 @@ export default function LecturerDashboard() {
       });
   }, []);
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this announcement?')) {
-      await deleteAnnouncement(id);
-      setAnnouncements(announcements.filter(a => a.id !== id));
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteAnnouncementObj, setDeleteAnnouncementObj] = useState<any | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDeleteClick = (announcement: any) => {
+    setDeleteAnnouncementObj(announcement);
+    setShowDelete(true);
+    setDeleteError(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteAnnouncementObj) {
+      try {
+        await deleteAnnouncement(deleteAnnouncementObj.id);
+        setAnnouncements(announcements.filter(a => a.id !== deleteAnnouncementObj.id));
+        setShowDelete(false);
+        setDeleteAnnouncementObj(null);
+      } catch {
+        setDeleteError('Failed to delete announcement.');
+      }
     }
   };
 
@@ -68,10 +84,36 @@ export default function LecturerDashboard() {
                       </div>
                       <button
                         className="ml-4 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                        onClick={() => handleDelete(a.id)}
+                        onClick={() => handleDeleteClick(a)}
                       >
                         Delete
                       </button>
+                          {showDelete && deleteAnnouncementObj && (
+                            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                              <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
+                                <div className="font-bold text-lg mb-4">Do you want to delete this announcement?</div>
+                                <div className="mb-6 text-gray-700">This action cannot be undone.</div>
+                                {deleteError && <div className="text-red-500 text-sm mb-2">{deleteError}</div>}
+                                <div className="flex gap-4">
+                                  <button
+                                    className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"
+                                    onClick={handleConfirmDelete}
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
+                                    onClick={() => {
+                                      setShowDelete(false);
+                                      setDeleteAnnouncementObj(null);
+                                    }}
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                     </div>
                   </div>
                 ))

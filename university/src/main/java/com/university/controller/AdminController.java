@@ -1,5 +1,6 @@
-package com.university.rest;
+package com.university.controller;
 
+import com.university.mapper.AdminMapper;
 import com.university.entity.Admin;
 import com.university.service.AdminService;
 import jakarta.annotation.security.RolesAllowed;
@@ -16,15 +17,19 @@ import jakarta.ws.rs.core.Response;
 @RolesAllowed("admin")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AdminResource {
+public class AdminController {
 
     @Inject
     private AdminService adminService;
     
     @GET
     @Path("/{id}")
-    public Admin getAdminById(Long id) {
-        return adminService.getAdminById(id);
+    public Response getAdminById(Long id) {
+        Admin admin = adminService.getAdminById(id);
+        if (admin == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Admin not found").build();
+        }
+        return Response.ok(AdminMapper.toDto(admin)).build();
     }
 
     @GET
@@ -34,7 +39,7 @@ public class AdminResource {
         if (admin == null) {
             return Response.status(Response.Status.NOT_FOUND).entity("Admin not found").build();
         }
-        return Response.ok(admin).build();
+        return Response.ok(AdminMapper.toDto(admin)).build();
     }
 
    

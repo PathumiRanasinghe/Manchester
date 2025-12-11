@@ -8,10 +8,13 @@ import jakarta.persistence.*;
 public class Module {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer moduleId;
+    private Long moduleId;
 
     @Column(length = 30)
     private String moduleName;
+    
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     private Integer credits;
 
@@ -23,9 +26,6 @@ public class Module {
     @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
     private Department department;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     public String getDescription() {
         return description;
     }
@@ -34,11 +34,11 @@ public class Module {
         this.description = description;
     }
 
-    public Integer getModuleId() {
+    public Long getModuleId() {
         return moduleId;
     }
 
-    public void setModuleId(Integer moduleId) {
+    public void setModuleId(Long moduleId) {
         this.moduleId = moduleId;
     }
 

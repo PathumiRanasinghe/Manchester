@@ -13,7 +13,7 @@ public class Admin {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer adminId;
+    private Long adminId;
 
     @Column(length = 10, unique = true)
     private String username;
@@ -21,11 +21,11 @@ public class Admin {
     @Column(length = 25)
     private String email;
 
-    public Integer getAdminId() {
+    public Long getAdminId() {
         return adminId;
     }
 
-    public void setAdminId(Integer adminId) {
+    public void setAdminId(Long adminId) {
         this.adminId = adminId;
     }
 

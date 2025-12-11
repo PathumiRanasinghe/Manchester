@@ -16,17 +16,29 @@ export const getLecturerByEmail = async (email: string): Promise<Lecturer> => {
   return response.data as Lecturer;
 };
 
+export const getLecturersByDepartmentId = async (departmentId: number): Promise<Lecturer[]> => {
+  const response = await api.get(`/departments/${departmentId}/lecturers`);
+  return response.data as Lecturer[];
+};
+
 export const deleteLecturer = async (lecturerId: number): Promise<void> => {
   await api.delete(`/lecturers/${lecturerId}`);
 };
 
 export async function createLecturer({ firstName, lastName, email, password, departmentId }: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    departmentId: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  departmentId: number;
 }): Promise<Lecturer> {
-        const response = await api.post("/lecturers", { firstName, lastName, email, password, departmentId });
-        return response.data as Lecturer;
+  const payload = {
+    firstName,
+    lastName,
+    email,
+    password,
+    department: { departmentId }
+  };
+  const response = await api.post("/lecturers", payload);
+  return response.data as Lecturer;
 }

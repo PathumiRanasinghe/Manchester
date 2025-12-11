@@ -1,20 +1,18 @@
+package com.university.dto;
 
-package com.university.entity;
-
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "Department")
-public class Department {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DepartmentDto {
     private Long departmentId;
-
-    @Column(length = 10)
     private String departmentName;
-
-    @Column(length = 50)
     private String description;
+
+    public DepartmentDto() {
+    }
+
+    public DepartmentDto(Long departmentId, String departmentName, String description) {
+        this.departmentId = departmentId;
+        this.departmentName = departmentName;
+        this.description = description;
+    }
 
     public Long getDepartmentId() {
         return departmentId;

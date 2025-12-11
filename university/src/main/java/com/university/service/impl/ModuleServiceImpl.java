@@ -28,7 +28,7 @@ public class ModuleServiceImpl implements ModuleService {
 		return moduleRepository.findById(id);
 	}
 
-	public List<Module> getModulesByStudentId(Integer studentId) {
+	public List<Module> getModulesByStudentId(Long studentId) {
 		List<Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
 		List<Module> modules = new java.util.ArrayList<>();
 		for (Enrollment enrollment : enrollments) {

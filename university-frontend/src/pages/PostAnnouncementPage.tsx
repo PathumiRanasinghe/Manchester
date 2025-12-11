@@ -37,17 +37,8 @@ export default function PostAnnouncementPage() {
         title,
         content,
         postedAt: new Date().toISOString(),
-        lecturer: {
-          lecturerId: lecturer.lecturerId,
-          firstName: lecturer.firstName,
-          lastName: lecturer.lastName,
-          email: lecturer.email,
-          department: lecturer.department || {
-            departmentId: 0,
-            departmentName: "",
-            description: ""
-          }
-        }
+        lecturerId: lecturer.lecturerId,
+        departmentId: lecturer.department.departmentId
       });
       setSuccess("Announcement posted successfully.");
       setTitle("");

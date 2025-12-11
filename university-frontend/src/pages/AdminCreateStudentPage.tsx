@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { getDepartments } from '../services/departmentService';
 import { Department } from '../types/Department';
+import { createStudent } from '../services/studentService';
 
 export default function AdminCreateStudentPage() {
   const [firstName, setFirstName] = useState('');
@@ -9,7 +10,7 @@ export default function AdminCreateStudentPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [departmentId, setDepartmentId] = useState<number | ''>('');
+  const [departmentId, setDepartmentId] = useState<string>('');
   const [departments, setDepartments] = useState<Department[]>([]);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -27,7 +28,8 @@ export default function AdminCreateStudentPage() {
       return;
     }
     try {
-      await api.post('/admins/students', { firstName, lastName, email, password, phoneNumber, departmentId });
+      await createStudent({ firstName, lastName, email, password, phoneNumber, departmentId
+      });
       setSuccess('Student created successfully!');
       setFirstName('');
       setLastName('');
@@ -92,10 +94,11 @@ export default function AdminCreateStudentPage() {
                 type="tel"
                 value={phoneNumber}
                 onChange={e => setPhoneNumber(e.target.value)}
-                placeholder="0712345678"
+                placeholder="07XXXXXXXX"
                 pattern='07[0-9]{8}'
                 minLength={10}
                 maxLength={10}
+                title="Phone number must start with '07' followed by 8 digits."
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
                 required
               />
@@ -115,13 +118,13 @@ export default function AdminCreateStudentPage() {
               <label className="block text-gray-700 font-medium mb-2">Department</label>
               <select
                 value={departmentId}
-                onChange={e => setDepartmentId(Number(e.target.value))}
+                onChange={e => setDepartmentId(e.target.value)}
                 required
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
               >
                 <option value="">Select Department</option>
                 {departments.map(dep => (
-                  <option key={dep.departmentId} value={dep.departmentId}>{dep.departmentName}</option>
+                  <option key={dep.departmentId ?? dep.departmentName} value={dep.departmentId}>{dep.departmentName}</option>
                 ))}
               </select>
             </div>

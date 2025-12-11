@@ -14,4 +14,6 @@ public interface LecturerService {
     public boolean deleteLecturer(Long id);
 
     public Lecturer createLecturer(Lecturer lecturer);
+
+    public List<Lecturer> getLecturersByDepartmentId(Long departmentId);
 }

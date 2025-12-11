@@ -179,9 +179,17 @@ export const AdminDepartmentPage = () => {
                 setEditError(null);
                 setEditSuccess(null);
                 try {
-                  const updated = await updateDepartment(editDept.departmentId, { departmentName: editName, description: editDesc });
+                  const deptId = editDept.departmentId ?? editDept.id;
+                  console.log('Updating department with ID:', deptId, editDept);
+                  if (!deptId) {
+                    setEditError('Department ID is missing. Cannot update.');
+                    return;
+                  }
+                  const updated = await updateDepartment(deptId, { departmentName: editName, description: editDesc });
                   setEditSuccess(`Department '${updated.departmentName}' updated successfully!`);
-                  setDepartments(departments.map(d => d.departmentId === updated.departmentId ? updated : d));
+                  getDepartments()
+                    .then(data => setDepartments(data))
+                    .catch(() => {});
                   setEditDept(null);
                 } catch (err) {
                   setEditError("Failed to update department.");

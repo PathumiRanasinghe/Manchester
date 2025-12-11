@@ -1,3 +1,4 @@
+
 package com.university.service.impl;
 
 import com.university.entity.Lecturer;
@@ -63,19 +64,23 @@ public class LecturerServiceImpl implements LecturerService {
 		return true;
 	}
 
-	  @Transactional
-    public Lecturer createLecturer(Lecturer lecturer) {
-        try {
-            String token = keycloakAdminClient.getAdminToken();
-            keycloakAdminClient.createUserAndAssignRole(token,lecturer.getFirstName(),lecturer.getLastName(), lecturer.getEmail(), lecturer.getEmail(), lecturer.getPassword(), "lecturer");
-        } catch (Exception e) {
-            throw new RuntimeException("Keycloak user creation failed: " + e.getMessage());
-        }
-        if (lecturer.getDepartment() == null) {
-            throw new RuntimeException("Department must be set on lecturer");
-        }
-        lecturerRepository.persist(lecturer);
-        return lecturer;
-    }
+	@Transactional
+	public Lecturer createLecturer(Lecturer lecturer) {
+		try {
+			String token = keycloakAdminClient.getAdminToken();
+			keycloakAdminClient.createUserAndAssignRole(token,lecturer.getFirstName(),lecturer.getLastName(), lecturer.getEmail(), lecturer.getEmail(), lecturer.getPassword(), "lecturer");
+		} catch (Exception e) {
+			throw new RuntimeException("Keycloak user creation failed: " + e.getMessage());
+		}
+		if (lecturer.getDepartment() == null) {
+			throw new RuntimeException("Department must be set on lecturer");
+		}
+		lecturerRepository.persist(lecturer);
+		return lecturer;
+	}
+
+	public java.util.List<Lecturer> getLecturersByDepartmentId(Long departmentId) {
+		return lecturerRepository.findByDepartmentId(departmentId);
+	}
 
 }

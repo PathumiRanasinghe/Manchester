@@ -27,42 +27,37 @@ const CreateModule = () => {
     e.preventDefault();
     setSuccess("");
     setError("");
-    try {
-      await createModule({
-        moduleName,
-        description,
-        credits,
-        department: lecturer?.department || {
-          departmentId: 0,
-          departmentName: "",
-          description: ""
-        },
-        lecturer: lecturer ? {
-          lecturerId: lecturer.lecturerId,
-          firstName: lecturer.firstName,
-          lastName: lecturer.lastName,
-          email: lecturer.email,
-        } : {
-          lecturerId: null,
-          firstName: "",
-          lastName: "",
-          email: "",
-        }
-      } as any);
-      setSuccess("Module created successfully.");
-      setModuleName("");
-      setDescription("");
-      setCredits(undefined);
-    } catch {
-      setError("Failed to create module.");
-    }
+      try {
+        await createModule({
+          moduleName,
+          description,
+          credits,
+          lecturer: {
+            lecturerId: lecturer.lecturerId,
+            firstName: lecturer.firstName,
+            lastName: lecturer.lastName,
+            email: lecturer.email,
+            department: {
+              id: lecturer.department.departmentId,
+              departmentName: lecturer.department.departmentName,
+              description: lecturer.department.description
+            }
+          },
+          department: {
+            id: lecturer.department.departmentId,
+            departmentName: lecturer.department.departmentName,
+            description: lecturer.department.description
+          }
+        } as any);
+        setSuccess("Module created successfully.");
+        setModuleName("");
+        setDescription("");
+        setCredits(undefined);
+      } catch {
+        setError("Failed to create module.");
+      }
   };
-
   return (
-    <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
-      <div className="bg-gradient-to-r from-sky-100 to-sky-300 h-32 flex items-end px-8 pb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Create Module</h2>
-      </div>
       <div className="px-8 pt-6 pb-10">
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">Fill in the details and press create. This will add a new module to the system.</p>
@@ -108,8 +103,7 @@ const CreateModule = () => {
           <button type="submit" className="bg-sky-400 hover:bg-sky-500 text-white px-8 py-2 rounded font-semibold float-right mb-10">Create</button>
         </form>
       </div>
-    </div>
-  );
+  )
 };
 
 export default CreateModule;

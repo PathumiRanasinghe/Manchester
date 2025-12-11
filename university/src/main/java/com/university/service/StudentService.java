@@ -15,4 +15,6 @@ public interface StudentService {
     public boolean deleteStudent(Long id);
 
     public List<Student> getStudentsByModuleId(Integer moduleId);
+
+    public List<com.university.entity.Module> getModulesByStudentId(Long studentId);
 }

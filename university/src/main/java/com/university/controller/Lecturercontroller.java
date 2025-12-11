@@ -1,11 +1,12 @@
-package com.university.rest;
+package com.university.controller;
 
+import com.university.dto.LecturerDto;
+import com.university.mapper.LecturerMapper;
 import java.util.List;
 import com.university.entity.Department;
 import com.university.entity.Lecturer;
 import com.university.service.DepartmentService;
 import com.university.service.LecturerService;
-
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
@@ -22,26 +23,39 @@ import jakarta.ws.rs.QueryParam;
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class LecturerResource {
+public class Lecturercontroller {
     @Inject
     private LecturerService lecturerService;
 
     @Inject
     private DepartmentService departmentService;
 
-
+    
     @GET
     @Path("/lecturers")
     @RolesAllowed({ "admin" })
-    public List<Lecturer> getLecturers() {
-        return lecturerService.getAllLecturers();
+    public List<LecturerDto> getLecturers() {
+        List<Lecturer> lecturers = lecturerService.getAllLecturers();
+        return lecturers.stream().map(LecturerMapper::toDto).toList();
+    }
+    
+    @GET
+    @Path("/departments/{departmentId}/lecturers")
+    @RolesAllowed({ "admin" })
+    public List<LecturerDto> getLecturersByDepartmentId(@PathParam("departmentId") Long departmentId) {
+        List<Lecturer> lecturers = lecturerService.getLecturersByDepartmentId(departmentId);
+        return lecturers.stream().map(LecturerMapper::toDto).toList();
     }
 
     @GET
     @Path("/lecturers/{id}")
     @RolesAllowed({ "admin", "lecturer", "student" })
-    public Lecturer getLecturer(@PathParam("id") Long id) {
-        return lecturerService.getLecturerById(id);
+    public Response getLecturer(@PathParam("id") Long id) {
+        Lecturer lecturer = lecturerService.getLecturerById(id);
+        if (lecturer == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Lecturer not found").build();
+        }
+        return Response.ok(LecturerMapper.toDto(lecturer)).build();
     }
 
     @GET
@@ -50,7 +64,10 @@ public class LecturerResource {
     public Response getLecturerByEmail(@QueryParam("email") String email) {
         try {
             Lecturer lecturer = lecturerService.getLecturerByEmail(email);
-            return Response.ok(lecturer).build();
+            if (lecturer == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity("Lecturer not found").build();
+            }
+            return Response.ok(LecturerMapper.toDto(lecturer)).build();
         } catch (Exception e) {
             return Response.status(Response.Status.NOT_FOUND).entity("Lecturer not found").build();
         }
@@ -65,7 +82,7 @@ public class LecturerResource {
             return Response.noContent().build();
         } else {
             Lecturer lecturer = lecturerService.getAllLecturers().stream()
-                    .filter(l -> l.getLecturerId().equals(id.intValue()))
+                    .filter(l -> l.getLecturerId().equals(id.longValue()))
                     .findFirst().orElse(null);
             if (lecturer != null) {
                 return Response.status(Response.Status.CONFLICT)
@@ -80,26 +97,19 @@ public class LecturerResource {
     @Path("/lecturers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLecturer(jakarta.json.JsonObject json) {
+    public Response createLecturer(LecturerDto lecturerDto) {
         try {
-            if (!json.containsKey("departmentId") || json.isNull("departmentId")) {
+            if (lecturerDto.getDepartment() == null || lecturerDto.getDepartment().getDepartmentId() == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("departmentId is required").build();
             }
-            Long departmentId = json.getJsonNumber("departmentId").longValue();
-            Department department = departmentService.getDepartmentById(departmentId);
+            Department department = departmentService.getDepartmentById(lecturerDto.getDepartment().getDepartmentId());
             if (department == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Invalid departmentId").build();
             }
-            Lecturer lecturer = new Lecturer();
-            lecturer.setFirstName(json.getString("firstName", null));
-            lecturer.setLastName(json.getString("lastName", null));
-            lecturer.setEmail(json.getString("email", null));
-            lecturer.setPassword(json.getString("password", null));
+            Lecturer lecturer = LecturerMapper.toEntity(lecturerDto);
             lecturer.setDepartment(department);
-
             Lecturer created = lecturerService.createLecturer(lecturer);
-            return Response.status(Response.Status.CREATED).entity(created).build();
-
+            return Response.status(Response.Status.CREATED).entity(LecturerMapper.toDto(created)).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

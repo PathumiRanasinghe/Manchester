@@ -22,3 +22,5 @@ export async function getEnrollmentsByStudentId(studentId: number): Promise<Enro
 	const response = await api.get(`/enrollments`);
 	return (response.data as Enrollment[]).filter(e => e.student.studentId === studentId);
 }
+
+

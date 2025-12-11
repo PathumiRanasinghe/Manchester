@@ -8,7 +8,7 @@ public interface ModuleService {
 
     public Module getModuleById(Long id);
 
-    public List<Module> getModulesByStudentId(Integer studentId);
+    public List<Module> getModulesByStudentId(Long studentId);
 
     public List<Module> getModulesByLecturerId(Integer lecturerId);
 
