@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getLecturerByEmail, getModulesByLecturerId } from '../services/lecturerService';
+import { getLecturerByEmail } from '../services/lecturerService';
+import { getModulesByLecturerId } from '../services/moduleService';
 import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 

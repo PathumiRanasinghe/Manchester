@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer enrollmentId;
+    private Long enrollmentId;
 
     @ManyToOne
     @JoinColumn(name = "studentId", referencedColumnName = "studentId")
@@ -21,11 +21,11 @@ public class Enrollment {
 
     private LocalDateTime enrollmentDate;
 
-    public Integer getEnrollmentId() {
+    public Long getEnrollmentId() {
         return enrollmentId;
     }
 
-    public void setEnrollmentId(Integer enrollmentId) {
+    public void setEnrollmentId(Long enrollmentId) {
         this.enrollmentId = enrollmentId;
     }
 

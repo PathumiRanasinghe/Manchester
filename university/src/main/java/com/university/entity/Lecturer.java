@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class Lecturer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer lecturerId;
+    private Long lecturerId;
 
     @Column(length = 10)
     private String firstName;
@@ -26,11 +26,11 @@ public class Lecturer {
     @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
     private Department department;
     
-    public Integer getLecturerId() {
+    public Long getLecturerId() {
         return lecturerId;
     }
     
-    public void setLecturerId(Integer lecturerId) {
+    public void setLecturerId(Long lecturerId) {
         this.lecturerId = lecturerId;
     }
     

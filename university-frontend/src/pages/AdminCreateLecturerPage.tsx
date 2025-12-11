@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createLecturer } from "../services/AdminService";
+import { createLecturer } from "../services/lecturerService";
 import { getDepartments } from "../services/departmentService";
 import { Department } from "../types/Department";
 
@@ -8,7 +8,7 @@ export default function AdminCreateLecturerPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [departmentId, setDepartmentId] = useState<number | "">("");
+  const [departmentId, setDepartmentId] = useState<string>("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -99,7 +99,7 @@ export default function AdminCreateLecturerPage() {
               <label className="block text-gray-700 font-medium mb-2">Department</label>
               <select
                 value={departmentId}
-                onChange={e => setDepartmentId(Number(e.target.value))}
+                onChange={e => setDepartmentId(e.target.value)}
                 required
                 className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
               >

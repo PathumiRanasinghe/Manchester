@@ -179,15 +179,25 @@ export const AdminDepartmentPage = () => {
                 setEditError(null);
                 setEditSuccess(null);
                 try {
-                  const updated = await updateDepartment(editDept.departmentId, { departmentName: editName, description: editDesc });
+                  const deptId = editDept.departmentId ?? editDept.id;
+                  console.log('Updating department with ID:', deptId, editDept);
+                  if (!deptId) {
+                    setEditError('Department ID is missing. Cannot update.');
+                    return;
+                  }
+                  const updated = await updateDepartment(deptId, { departmentName: editName, description: editDesc });
                   setEditSuccess(`Department '${updated.departmentName}' updated successfully!`);
-                  setDepartments(departments.map(d => d.departmentId === updated.departmentId ? updated : d));
+                  getDepartments()
+                    .then(data => setDepartments(data))
+                    .catch(() => {});
                   setEditDept(null);
                 } catch (err) {
                   setEditError("Failed to update department.");
                 }
               }}>
+                <label className="block text-gray-500 font-medium">Department Name</label>
                 <input type="text" placeholder="Department Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <label className="block text-gray-500 font-medium">Description</label>
                 <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
                 {editError && <div className="text-red-500 text-sm">{editError}</div>}
                 {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}

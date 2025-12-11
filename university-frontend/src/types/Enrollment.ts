@@ -1,9 +1,9 @@
-import { Student } from './Student';
-import { Module } from './Module';
+import { Module } from "./Module";
+import { Student } from "./Student";
 
 export interface Enrollment {
   enrollmentId: number;
   student: Student;
-  module: Module;
+  module: Module
   enrollmentDate: Date;
 }

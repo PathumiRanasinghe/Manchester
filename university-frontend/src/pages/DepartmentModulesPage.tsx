@@ -88,7 +88,7 @@ const DepartmentModulesPage: React.FC = () => {
               <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
               <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
               <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
-              <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.lecturerId}</div>
+              <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.firstName} {module.lecturer.lastName}</div>
               <button
                 className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-400 text-white hover:bg-purple-500'}`}
                 disabled={isEnrolled}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getModulesByStudentId} from '../services/moduleService';
-import { getEnrollmentsByStudentId, getStudentByEmail } from '../services/studentService';
+import { getEnrollmentsByStudentId } from '../services/enrollmentService';
+import { getStudentByEmail } from '../services/studentService';
 import { unenrollModule } from '../services/enrollmentService';
 import { Enrollment } from '../types/Enrollment';
 import { Module } from '../types/Module';
@@ -89,7 +90,7 @@ const UnenrollModulePage: React.FC = () => {
                 <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
                 <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
                 <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
-                <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.lecturerId}</div>
+                <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.firstName} {module.lecturer.lastName}</div>
                 <button
                   className="mt-4 px-4 py-1 rounded font-semibold bg-red-400 text-white hover:bg-red-500"
                   onClick={() => handleUnenrollClick(enrollment)}

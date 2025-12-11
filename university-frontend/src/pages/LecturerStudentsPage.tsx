@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { getLecturerByEmail, getModulesByLecturerId, getStudentsByModuleId } from '../services/lecturerService';
+import { useEffect, useState } from 'react';
+import { getLecturerByEmail } from '../services/lecturerService';
+import { getModulesByLecturerId } from '../services/moduleService';
+import { getStudentsByModuleId } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 import { Student } from '../types/Student';

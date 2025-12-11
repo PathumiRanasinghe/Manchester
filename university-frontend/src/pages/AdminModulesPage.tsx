@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { getModules, updateModule, deleteModule } from '../services/moduleService';
-import { getLecturers } from '../services/lecturerService';
+import { getLecturers, getLecturersByDepartmentId } from '../services/lecturerService';
 import { getDepartments } from '../services/departmentService';
 import { getEnrollmentsByModuleId } from '../services/enrollmentService';
 import Spinner from "../components/Spinner";
@@ -16,7 +16,7 @@ export const AdminModulesPage = () => {
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
   const [modules, setModules] = useState<any[]>([]);
   const [departments, setDepartments] = useState<any[]>([]);
-  const [selectedDept, setSelectedDept] = useState<string>('');
+  const [selectedDept, setSelectedDept] = useState<string>('All');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedModule, setExpandedModule] = useState<any | null>(null);
@@ -27,6 +27,7 @@ export const AdminModulesPage = () => {
   const [editError, setEditError] = useState<string | null>(null);
   const [editSuccess, setEditSuccess] = useState<string | null>(null);
   const [lecturers, setLecturers] = useState<any[]>([]);
+  const [editLecturers, setEditLecturers] = useState<any[]>([]);
   const [editLecturerId, setEditLecturerId] = useState<number | null>(null);
   const [showDelete, setShowDelete] = useState(false);
   const [deleteModuleObj, setDeleteModuleObj] = useState<any | null>(null);
@@ -51,11 +52,15 @@ export const AdminModulesPage = () => {
       .catch(() => setLecturers([]));
   }, []);
 
+  // Build unique department name options from modules
+  const departmentOptions = ["All", ...Array.from(new Set(modules.map(m => m.department?.departmentName).filter(Boolean)))];
+
   const filteredModules = modules.filter(module => {
     const matchesSearch =
       module.moduleName.toLowerCase().includes(search.toLowerCase()) ||
       (module.description || '').toLowerCase().includes(search.toLowerCase());
-    const matchesDept = selectedDept ? (module.department && module.department.departmentId === Number(selectedDept)) : true;
+    const matchesDept =
+      selectedDept === "All" || (module.department && module.department.departmentName === selectedDept);
     return matchesSearch && matchesDept;
   });
 
@@ -79,9 +84,8 @@ export const AdminModulesPage = () => {
               onChange={e => setSelectedDept(e.target.value)}
               className="border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
             >
-              <option value="">All </option>
-              {departments.map(dept => (
-                <option key={dept.departmentId} value={dept.departmentId}>{dept.departmentName}</option>
+              {departmentOptions.map(dept => (
+                <option key={dept} value={dept}>{dept}</option>
               ))}
             </select>
           </div>
@@ -121,7 +125,7 @@ export const AdminModulesPage = () => {
                     <td className="py-3 px-4 text-gray-500">{module.lecturer ? `${module.lecturer.firstName} ${module.lecturer.lastName}` : '-'}</td>
                     <td className="py-3 px-4 text-gray-500">{module.department ? module.department.departmentName : '-'}</td>
                     <td className="py-3 px-4 text-center flex items-center justify-center gap-2">
-                      <button className="p-2 rounded hover:bg-stone-100" title="Edit" onClick={() => {
+                      <button className="p-2 rounded hover:bg-stone-100" title="Edit" onClick={async () => {
                         setEditModule(module);
                         setEditName(module.moduleName);
                         setEditDesc(module.description);
@@ -129,6 +133,23 @@ export const AdminModulesPage = () => {
                         setEditLecturerId(module.lecturer ? module.lecturer.lecturerId : null);
                         setEditError(null);
                         setEditSuccess(null);
+                        // Fetch lecturers for the department of the selected module
+                        const deptId = module.department?.id;
+                        console.log('Edit module:', module);
+                        console.log('Department ID for lecturer fetch:', deptId);
+                        if (deptId) {
+                          try {
+                            const deptLecturers = await getLecturersByDepartmentId(deptId);
+                            console.log('Fetched lecturers for department:', deptLecturers);
+                            setEditLecturers(deptLecturers);
+                          } catch (err) {
+                            console.error('Failed to fetch lecturers for department', deptId, err);
+                            setEditLecturers([]);
+                          }
+                        } else {
+                          console.warn('No department ID found for selected module.');
+                          setEditLecturers([]);
+                        }
                       }}>
                         <PencilSquareIcon className="h-5 w-5 text-blue-400" />
                       </button>
@@ -210,25 +231,25 @@ export const AdminModulesPage = () => {
                   setEditError("Failed to update module.");
                 }
               }}>
+                <label className="block text-gray-500 font-medium">Module Name</label>
                 <input type="text" placeholder="Module Name" className="border p-2 rounded w-full" value={editName} onChange={e => setEditName(e.target.value)} required />
+                <label className="block text-gray-500 font-medium">Description</label>
                 <textarea placeholder="Description" className="border p-2 rounded w-full" value={editDesc} onChange={e => setEditDesc(e.target.value)} />
+                <label className="block text-gray-500 font-medium">Credits</label>
                 <input type="number" min={1} placeholder="Credits" className="border p-2 rounded w-full" value={editCredits === null ? '' : editCredits} onChange={e => setEditCredits(e.target.value ? Number(e.target.value) : null)} />
+                <label className="block text-gray-500 font-medium">Lecturer</label>
                 <select className="border p-2 rounded w-full" value={editLecturerId ?? ''} onChange={e => setEditLecturerId(e.target.value ? Number(e.target.value) : null)} required>
                   <option value="">Select Lecturer</option>
-                  {lecturers
-                  .filter(l=>{
-                    const deptId= editModule?.department?.departmentId?? Number(selectedDept);
-                    return l.department && l.department.departmentId === deptId;
-                  })
-                  .map(l => (
-                    <option key={l.lecturerId} value={l.lecturerId}>{l.firstName} {l.lastName}</option>
+                  {editLecturers.length === 0 && <option disabled>No lecturers found for this department</option>}
+                  {editLecturers.map((l, idx) => (
+                    <option key={String(l.lecturerId) + '-' + idx} value={l.lecturerId}>{l.firstName} {l.lastName}</option>
                   ))}
                 </select>
                 {editError && <div className="text-red-500 text-sm">{editError}</div>}
                 {editSuccess && <div className="text-green-500 text-sm">{editSuccess}</div>}
                 <div className="flex gap-4 mt-4">
                   <button type="submit" className="px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600">Update</button>
-                  <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => setEditModule(null)}>Cancel</button>
+                  <button type="button" className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400" onClick={() => { setEditModule(null); setEditLecturers([]); }}>Cancel</button>
                 </div>
               </form>
             </div>

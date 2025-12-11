@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer departmentId;
+    private Long departmentId;
 
     @Column(length = 10)
     private String departmentName;
@@ -16,11 +16,11 @@ public class Department {
     @Column(length = 50)
     private String description;
 
-    public Integer getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(Integer departmentId) {
+    public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
 

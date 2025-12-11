@@ -17,3 +17,10 @@ export async function getEnrollmentsByModuleId(moduleId: number): Promise<Enroll
   const response = await api.get(`/enrollments`);
   return (response.data as Enrollment[]).filter(e => e.module.moduleId === moduleId);
 }
+
+export async function getEnrollmentsByStudentId(studentId: number): Promise<Enrollment[]> {
+	const response = await api.get(`/enrollments`);
+	return (response.data as Enrollment[]).filter(e => e.student.studentId === studentId);
+}
+
+

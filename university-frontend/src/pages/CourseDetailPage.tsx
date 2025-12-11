@@ -57,8 +57,8 @@ const CourseDetailPage: React.FC = () => {
               <h1 className="text-3xl font-bold text-gray-800 mb-2">{module.moduleName}</h1>
            
               <ul className="text-s text-gray-500 mb-2 list-disc pl-5">
-                <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturer.lecturerId}</li>
-                <li>Department: {department ? department.departmentName : module.department.departmentId}</li>
+                <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturer.firstName + " " + module.lecturer.lastName}</li>
+                <li>Department: {department ? department.departmentName : module.department.departmentName}</li>
                 <li>Module ID: {module.moduleId}</li>
               </ul>
               <div className="flex gap-4 mt-4 text-s">

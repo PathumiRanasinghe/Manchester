@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getLecturerByEmail, getModulesByLecturerId } from '../services/lecturerService';
+import { getLecturerByEmail } from '../services/lecturerService';
+import { getModulesByLecturerId } from '../services/moduleService';
 import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 import { Lecturer } from '../types/Lecturer';
@@ -32,17 +33,29 @@ const LecturerCourseDetailPage: React.FC = () => {
         const found = modules.find(m => m.moduleId === Number(moduleId));
         setModule(found || null);
         if (found) {
-          Promise.all([
-            getLecturerById(found.lecturer.lecturerId),
-            getDepartmentById(found.department.departmentId)
-          ]).then(([lecturerData, departmentData]) => {
-            setLecturer(lecturerData);
-            setDepartment(departmentData);
-            setLoading(false);
-          }).catch(() => {
-            setError('Failed to fetch lecturer or department');
-            setLoading(false);
-          });
+          const lecturerPromise = getLecturerById(found.lecturer.lecturerId);
+          if (found.department && found.department.departmentId !== undefined && found.department.departmentId !== null) {
+            Promise.all([
+              lecturerPromise,
+              getDepartmentById(found.department.departmentId)
+            ]).then(([lecturerData, departmentData]) => {
+              setLecturer(lecturerData);
+              setDepartment(departmentData);
+              setLoading(false);
+            }).catch(() => {
+              setError('Failed to fetch lecturer or department');
+              setLoading(false);
+            });
+          } else {
+            lecturerPromise.then(lecturerData => {
+              setLecturer(lecturerData);
+              setDepartment(null);
+              setLoading(false);
+            }).catch(() => {
+              setError('Failed to fetch lecturer');
+              setLoading(false);
+            });
+          }
         } else {
           setLoading(false);
         }
@@ -66,8 +79,8 @@ const LecturerCourseDetailPage: React.FC = () => {
           <div className="md:w-3/5 w-full p-8 flex flex-col justify-center">
             <h1 className="text-3xl font-bold text-blue-800 mb-2">{module.moduleName}</h1>
             <ul className="text-s text-blue-500 mb-2 list-disc pl-5">
-              <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturer.lecturerId}</li>
-              <li>Department: {department ? department.departmentName : module.department.departmentId}</li>
+              <li>Lecturer: {lecturer ? `${lecturer.firstName} ${lecturer.lastName}` : module.lecturer.firstName + " " + module.lecturer.lastName}</li>
+              <li>Department: {department ? department.departmentName : module.department?.departmentName || 'N/A'}</li>
               <li>Module ID: {module.moduleId}</li>
             </ul>
             <div className="flex gap-4 mt-4 text-s">

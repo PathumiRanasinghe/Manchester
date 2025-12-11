@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer studentId;
+    private Long studentId;
 
     @Column(length = 10)
     private String firstName;
@@ -29,11 +29,11 @@ public class Student {
     @JoinColumn(name = "departmentId", referencedColumnName = "departmentId")
     private Department department;
 
-    public Integer getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(Integer studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
