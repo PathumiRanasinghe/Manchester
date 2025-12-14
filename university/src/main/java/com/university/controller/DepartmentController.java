@@ -1,8 +1,8 @@
 package com.university.controller;
 
 import com.university.dto.DepartmentDto;
+import com.university.dto.PaginatedResponse;
 import com.university.mapper.DepartmentMapper;
-import java.util.List;
 import com.university.entity.Department;
 import com.university.service.DepartmentService;
 import jakarta.annotation.security.RolesAllowed;
@@ -14,6 +14,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -28,9 +29,8 @@ public class DepartmentController {
     @GET
     @RolesAllowed({"admin", "lecturer", "student"})
     @Path("/departments")
-    public List<DepartmentDto> getDepartments() {
-        List<Department> departments = departmentService.getAllDepartments();
-        return departments.stream().map(DepartmentMapper::toDto).toList();
+    public PaginatedResponse<DepartmentDto> getDepartments(@QueryParam("page") Integer page, @QueryParam("pageSize") Integer pageSize) {
+        return departmentService.getAllDepartments(page, pageSize);
     }
 
     @GET
@@ -64,5 +64,12 @@ public class DepartmentController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.ok(DepartmentMapper.toDto(updated)).build();
+    }
+    @GET
+    @RolesAllowed({"admin"})
+    @Path("/departments/count")
+    public Response getDepartmentCount() {
+        long count = departmentService.getAllDepartments(1, 1).getTotal();
+        return Response.ok(count).build();
     }
 }

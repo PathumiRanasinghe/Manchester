@@ -6,7 +6,9 @@ import com.university.entity.Module;
 import com.university.repository.EnrollmentRepository;
 import com.university.repository.ModuleRepository;
 import com.university.service.ModuleService;
-
+import com.university.dto.PaginatedResponse;
+import com.university.dto.ModuleDto;
+import com.university.mapper.ModuleMapper;
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -20,8 +22,14 @@ public class ModuleServiceImpl implements ModuleService {
 	@Inject
 	private ModuleRepository moduleRepository;
 
-	public List<Module> getAllModules() {
-		return moduleRepository.listAll();
+	public PaginatedResponse<ModuleDto> getAllModules(Integer page, Integer pageSize) {
+		 int pageNum = (page != null && page > 0) ? page : 1;
+		int size = (pageSize != null && pageSize > 0) ? pageSize : 10;
+
+		List<Module> modules = moduleRepository.findPaged(pageNum, size);
+		long total = moduleRepository.countAll();
+		List<ModuleDto> dtos = modules.stream().map(ModuleMapper::toDto).toList();
+		return new PaginatedResponse<>(dtos, total, pageNum, size);
 	}
 
 	public Module getModuleById(Long id) {

@@ -2,12 +2,14 @@ package com.university.service;
 
 import java.util.List;
 import com.university.entity.Lecturer;
+import com.university.dto.PaginatedResponse;
+import com.university.dto.LecturerDto;
 
 public interface LecturerService {
     
     public Lecturer getLecturerByEmail(String email);
 
-    public List<Lecturer> getAllLecturers();
+    PaginatedResponse<LecturerDto> getAllLecturers(int page, int pageSize);
 
     public Lecturer getLecturerById(Long id);
 

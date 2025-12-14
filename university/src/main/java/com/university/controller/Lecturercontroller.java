@@ -1,11 +1,11 @@
 package com.university.controller;
 
 import com.university.dto.LecturerDto;
+import com.university.dto.PaginatedResponse;
 import com.university.mapper.LecturerMapper;
 import java.util.List;
-import com.university.entity.Department;
 import com.university.entity.Lecturer;
-import com.university.service.DepartmentService;
+import com.university.exception.DuplicateEmailException;
 import com.university.service.LecturerService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -27,18 +27,22 @@ public class Lecturercontroller {
     @Inject
     private LecturerService lecturerService;
 
-    @Inject
-    private DepartmentService departmentService;
+    @GET
+    @RolesAllowed({ "admin" })
+    @Path("/lecturers/count")
+    public Response getLecturerCount() {
+        long count = lecturerService.getAllLecturers(1, 1).getTotal();
+        return Response.ok(count).build();
+    }
 
-    
     @GET
     @Path("/lecturers")
     @RolesAllowed({ "admin" })
-    public List<LecturerDto> getLecturers() {
-        List<Lecturer> lecturers = lecturerService.getAllLecturers();
-        return lecturers.stream().map(LecturerMapper::toDto).toList();
+    public PaginatedResponse<LecturerDto> getLecturers(@QueryParam("page") Integer page,
+            @QueryParam("pageSize") Integer pageSize) {
+        return lecturerService.getAllLecturers(page, pageSize);
     }
-    
+
     @GET
     @Path("/departments/{departmentId}/lecturers")
     @RolesAllowed({ "admin" })
@@ -81,7 +85,9 @@ public class Lecturercontroller {
         if (deleted) {
             return Response.noContent().build();
         } else {
-            Lecturer lecturer = lecturerService.getAllLecturers().stream()
+
+            var response = lecturerService.getAllLecturers(1, 10);
+            LecturerDto lecturer = response.getItems().stream()
                     .filter(l -> l.getLecturerId().equals(id.longValue()))
                     .findFirst().orElse(null);
             if (lecturer != null) {
@@ -98,23 +104,14 @@ public class Lecturercontroller {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLecturer(LecturerDto lecturerDto) {
-        try {
-            if (lecturerDto.getDepartment() == null || lecturerDto.getDepartment().getDepartmentId() == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("departmentId is required").build();
-            }
-            Department department = departmentService.getDepartmentById(lecturerDto.getDepartment().getDepartmentId());
-            if (department == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Invalid departmentId").build();
-            }
-            Lecturer lecturer = LecturerMapper.toEntity(lecturerDto);
-            lecturer.setDepartment(department);
+        Lecturer lecturer = LecturerMapper.toEntity(lecturerDto);
+        try{
             Lecturer created = lecturerService.createLecturer(lecturer);
             return Response.status(Response.Status.CREATED).entity(LecturerMapper.toDto(created)).build();
+        } catch(DuplicateEmailException e){
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         } catch (Exception e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("Failed to create lecturer: " + e.getMessage())
-                    .build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to create lecturer: " + e.getMessage()).build();
         }
     }
 

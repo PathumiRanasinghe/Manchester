@@ -1,10 +1,11 @@
-
 package com.university.controller;
 
+import com.university.dto.PaginatedResponse;
 import com.university.dto.StudentDto;
 import com.university.mapper.StudentMapper;
 import java.util.List;
 import com.university.entity.Student;
+import com.university.exception.DuplicateEmailException;
 import com.university.service.StudentService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -27,11 +28,19 @@ public class StudentController {
     private StudentService studentService;
 
     @GET
-    @Path("/students")  
     @RolesAllowed({ "admin" })
-    public List<StudentDto> getStudents() {
-        List<Student> students = studentService.getAllStudents();
-        return students.stream().map(StudentMapper::toDto).toList();
+    @Path("/students/count")
+    public Response getStudentCount() {
+        long count = studentService.getAllStudents(1, 1).getTotal();
+        return Response.ok(count).build();
+    }
+
+    @GET
+    @Path("/students")
+    @RolesAllowed({ "admin" })
+    public PaginatedResponse<StudentDto> getStudents(@QueryParam("page") Integer page,
+            @QueryParam("pageSize") Integer pageSize) {
+        return studentService.getAllStudents(page, pageSize);
     }
 
     @POST
@@ -39,8 +48,14 @@ public class StudentController {
     @RolesAllowed({ "admin" })
     public Response createStudent(StudentDto studentDto) {
         Student student = StudentMapper.toEntity(studentDto);
-        Student created = studentService.createStudent(student);
-        return Response.status(Response.Status.CREATED).entity(StudentMapper.toDto(created)).build();
+        try {
+            Student created = studentService.createStudent(student);
+            return Response.status(Response.Status.CREATED).entity(StudentMapper.toDto(created)).build();
+        } catch (DuplicateEmailException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR) .entity("Failed to create student: " + e.getMessage()).build();
+        }
     }
 
     @GET
@@ -81,25 +96,24 @@ public class StudentController {
     }
 
     @GET
-    @RolesAllowed({"admin", "lecturer"})
+    @RolesAllowed({ "admin", "lecturer" })
     @Path("/modules/{id}/students")
     public List<StudentDto> getStudentsByModuleId(@PathParam("id") Integer id) {
         List<Student> students = studentService.getStudentsByModuleId(id);
         return students.stream()
-            .map(StudentMapper::toDto)
-            .toList();
+                .map(StudentMapper::toDto)
+                .toList();
     }
 
     @GET
     @Path("/students/{id}/modules")
-    @RolesAllowed({"admin", "student"})
+    @RolesAllowed({ "admin", "student" })
     public Response getModulesByStudentId(@PathParam("id") Long id) {
         List<com.university.entity.Module> modules = studentService.getModulesByStudentId(id);
         List<com.university.dto.ModuleDto> moduleDtos = modules.stream()
-            .map(com.university.mapper.ModuleMapper::toDto)
-            .toList();
+                .map(com.university.mapper.ModuleMapper::toDto)
+                .toList();
         return Response.ok(moduleDtos).build();
     }
-
 
 }

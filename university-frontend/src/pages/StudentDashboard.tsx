@@ -8,18 +8,17 @@ import { AnnouncementDto } from '../types/AnnouncementDto';
 import { getStudentByEmail } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
 import { Student } from '../types/Student';
+import { toast } from 'react-toastify';
 
 export default function StudentDashboard() {
   const [announcements, setAnnouncements] = useState<AnnouncementDto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [student, setStudent] = useState<Student | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError('Email not found in token');
       setLoading(false);
       return;
     }
@@ -39,7 +38,7 @@ export default function StudentDashboard() {
         setLoading(false);
       })
       .catch(() => {
-        setError('Failed to fetch announcements or student');
+        toast.error('Failed to fetch announcements or student');
         setLoading(false);
       });
   }, []);
@@ -62,8 +61,6 @@ export default function StudentDashboard() {
             <div className="font-semibold mb-4 text-[#232347] text-lg">Announcements</div>
             {loading ? (
               <Spinner className="py-8" />
-            ) : error ? (
-              <div className="text-red-500">{error}</div>
             ) : announcements.length === 0 ? (
               <div className="text-gray-400">No announcements available.</div>
             ) : (

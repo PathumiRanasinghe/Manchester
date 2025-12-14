@@ -7,21 +7,20 @@ import { Enrollment } from '../types/Enrollment';
 import { Module } from '../types/Module';
 import { getKeycloak } from '../keycloak';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
+import NoDataFound from '../components/NoDataFound';
 
 const UnenrollModulePage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError('Email not found in token');
       setLoading(false);
       return;
     }
@@ -29,7 +28,6 @@ const UnenrollModulePage: React.FC = () => {
       .then(student => {
         const id = student.studentId;
         if (id == null) {
-          setError('Student ID missing from response');
           setLoading(false);
           return Promise.reject(new Error('Student ID missing'));
         }
@@ -38,12 +36,18 @@ const UnenrollModulePage: React.FC = () => {
           getEnrollmentsByStudentId(id)
         ]);
       })
-      .then(([mods, ens]) => {
+      .then(([mods, enrollmentsResponse]) => {
         setModules(mods);
-        setEnrollments(ens);
+        const enrollments = Array.isArray(enrollmentsResponse)
+          ? enrollmentsResponse
+          : ((enrollmentsResponse as any)?.items ?? []);
+        setEnrollments(enrollments);
         setLoading(false);
       })
-      .catch(() => setError('Failed to fetch enrolled modules'));
+      .catch(() => {
+        toast.error('Failed to fetch enrolled modules');
+        setLoading(false);
+      });
   }, []);
 
   const handleUnenrollClick = (enrollment: Enrollment) => {
@@ -55,12 +59,12 @@ const UnenrollModulePage: React.FC = () => {
     if (selectedEnrollment) {
       try {
         await unenrollModule(selectedEnrollment.enrollmentId);
-        setSuccess('Successfully unenrolled from module.');
+        toast.success('Successfully unenrolled from module.');
         setEnrollments(enrollments.filter(e => e.enrollmentId !== selectedEnrollment.enrollmentId));
         setShowConfirm(false);
         setSelectedEnrollment(null);
       } catch {
-        setError('Failed to unenroll.');
+        toast.error('Failed to unenroll.');
       }
     }
   };
@@ -71,18 +75,16 @@ const UnenrollModulePage: React.FC = () => {
   };
 
   if (loading) return <Spinner className="p-8" />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Unenroll from a Module</h1>
       <div className="mb-4 text-gray-500 text-sm">Select a module below to unenroll.</div>
-      {success && <div className="mb-4 text-green-500">{success}</div>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {enrollments.length === 0 ? (
-          <div className="col-span-3 text-gray-400">You are not enrolled in any modules.</div>
+          <NoDataFound message="You are not enrolled in any modules." />
         ) : (
-          enrollments.map(enrollment => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {enrollments.map(enrollment => {
             const module = modules.find(m => m.moduleId === enrollment.module.moduleId);
             if (!module) return null;
             return (
@@ -99,9 +101,9 @@ const UnenrollModulePage: React.FC = () => {
                 </button>
               </div>
             );
-          })
+          })}
+        </div>
         )}
-      </div>
 
       {showConfirm && selectedEnrollment && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">

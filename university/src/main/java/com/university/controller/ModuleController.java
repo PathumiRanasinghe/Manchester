@@ -2,11 +2,13 @@
 package com.university.controller;
 
 import java.util.List;
+import jakarta.ws.rs.QueryParam;
 import com.university.entity.Module;
 import com.university.entity.Lecturer;
 import com.university.service.LecturerService;
 import com.university.service.ModuleService;
 import com.university.dto.ModuleDto;
+import com.university.dto.PaginatedResponse;
 import com.university.dto.LecturerDto;
 import com.university.dto.DepartmentDto;
 import com.university.mapper.ModuleMapper;
@@ -37,9 +39,9 @@ public class ModuleController {
     @GET
     @RolesAllowed({"admin"})
     @Path("/modules")
-    public List<ModuleDto> getAllModules() {
-        List<Module> modules = moduleService.getAllModules();
-        return modules.stream().map(ModuleMapper::toDto).toList();
+    public Response getAllModules(@QueryParam("page") Integer page,@QueryParam("pageSize") Integer pageSize) {
+        PaginatedResponse<ModuleDto> response = moduleService.getAllModules(page, pageSize);
+        return Response.ok(response).build();
     }
 
     @POST
@@ -59,7 +61,7 @@ public class ModuleController {
         }
         if (departmentId == null && lecturer.getDepartment() != null) {
             departmentId = lecturer.getDepartment().getDepartmentId();
-            departmentDto = null; // Use lecturer's department
+            departmentDto = null;
         }
         if (departmentId == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("Department ID is required").build();
@@ -105,18 +107,7 @@ public class ModuleController {
         }
         return Response.ok(ModuleMapper.toDto(module)).build();
     }
-    
-    // @POST
-    // @RolesAllowed("lecturer")
-    // @Path("/modules")
-    // public Response createModule(ModuleDto moduleDto) {
-    //     Lecturer lecturer = lecturerService.getLecturerById(moduleDto.getLecturerId());
-    //     Department department = lecturer != null ? lecturer.getDepartment() : null;
-    //     Module module = ModuleMapper.toEntity(moduleDto, lecturer, department);
-    //     Module created = moduleService.createModule(module);
-    //     return Response.status(Response.Status.CREATED).entity(ModuleMapper.toDto(created)).build();
-    // }
-
+ 
     @PUT
     @RolesAllowed("admin")
     @Path("/modules/{id}")
@@ -148,5 +139,12 @@ public class ModuleController {
     public Response deleteModule(@PathParam("id") Long id) {
         boolean deleted = moduleService.deleteModule(id);
         return deleted? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
+    }
+    @GET
+    @RolesAllowed({"admin"})
+    @Path("/modules/count")
+    public Response getModuleCount() {
+        long count = moduleService.getAllModules(1, 1).getTotal();
+        return Response.ok(count).build();
     }
 }

@@ -2,9 +2,11 @@ package com.university.service;
 
 import java.util.List;
 import com.university.entity.Student;
+import com.university.dto.PaginatedResponse;
+import com.university.dto.StudentDto;
 
 public interface StudentService {
-    public List<Student> getAllStudents();
+    PaginatedResponse<StudentDto> getAllStudents(Integer page, Integer pageSize);
 
     public Student getStudentById(Long id);
 

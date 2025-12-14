@@ -7,18 +7,18 @@ import { getLecturerByEmail } from '../services/lecturerService';
 import { getKeycloak } from '../keycloak';
 import { EnvelopeIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 export default function LecturerProfile() {
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
   const [department, setDepartment] = useState<Department | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError('Email not found in token');
+      toast.error('Email not found in token');
       setLoading(false);
       return;
     }
@@ -32,7 +32,7 @@ export default function LecturerProfile() {
               setLoading(false);
             })
             .catch(() => {
-              setError('Failed to fetch department details');
+              toast.error('Failed to fetch department details');
               setLoading(false);
             });
         } else {
@@ -40,14 +40,13 @@ export default function LecturerProfile() {
         }
       })
       .catch(() => {
-        setError('Failed to fetch lecturer details');
+        toast.error('Failed to fetch lecturer details');
         setLoading(false);
       });
   }, []);
 
 
   if (loading) return <Spinner className="p-8" />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!lecturer) return null;
 
   return (

@@ -21,9 +21,16 @@ export const createModule = async (moduleData: Partial<Module>): Promise<Module>
   return response.data as Module;
 };
 
-export const getModules = async (): Promise<Module[]> => {
-  const response = await api.get('/modules');
-  return response.data as Module[];
+export interface PaginatedModules {
+  items: Module[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export const getModules = async (page = 1, pageSize = 10): Promise<PaginatedModules> => {
+  const response = await api.get(`/modules?page=${page}&pageSize=${pageSize}`);
+  return response.data as PaginatedModules;
 };
 
 export const updateModule = async (
@@ -41,4 +48,8 @@ export const deleteModule = async (moduleId: number): Promise<void> => {
 export const getModulesByLecturerId = async (lecturerId: number): Promise<Module[]> => {
   const response = await api.get(`/lecturers/${lecturerId}/modules`);
   return response.data as Module[];
+};
+export const getModuleCount = async (): Promise<number> => {
+  const response = await api.get('/modules/count');
+  return response.data as number;
 };

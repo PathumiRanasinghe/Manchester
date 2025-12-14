@@ -4,30 +4,34 @@ import { Student } from "../types/Student";
 import { getStudents } from "../services/studentService";
 import Spinner from "../components/Spinner";
 import { deleteStudent } from "../services/studentService";
-
-
+import Pagination from "../components/Pagination";
+import { toast } from "react-toastify";
 
 export const AdminStudentsPage = () => {
   const [search, setSearch] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState<string>("All");
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    getStudents()
+    setLoading(true);
+    getStudents(page, pageSize)
       .then(data => {
-        setStudents(data);
+        setStudents(data.items);
+        setTotal(data.total);
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch students");
+        toast.error("Failed to fetch students");
         setLoading(false);
       });
-  }, []);
+  }, [page, pageSize]);
 
   const departmentOptions = ["All", ...Array.from(new Set(students.map(s => s.department.departmentName)))];
   const filteredStudents = students.filter(s => {
@@ -41,17 +45,22 @@ export const AdminStudentsPage = () => {
   });
 
   const handleConfirmDelete = async () => {
-    if (selectedStudent) {
-      setDeletingId(selectedStudent.studentId!);
+    if (selectedStudent && selectedStudent.studentId !== undefined) {
+      setDeletingId(selectedStudent.studentId);
       try {
-        await deleteStudent(selectedStudent.studentId!);
+        await deleteStudent(selectedStudent.studentId);
         setStudents(students.filter(s => s.studentId !== selectedStudent.studentId));
         setShowConfirm(false);
         setSelectedStudent(null);
+        toast.success('Student deleted successfully!');
       } catch {
-        setError('Failed to delete student');
+        toast.error('Failed to delete student');
       }
       setDeletingId(null);
+    } else {
+      toast.error('Invalid student ID. Cannot delete.');
+      setShowConfirm(false);
+      setSelectedStudent(null);
     }
   };
 
@@ -61,7 +70,6 @@ export const AdminStudentsPage = () => {
   };
 
     if (loading) return <Spinner className="p-8" />;
-    if (error) return <div className="p-8 text-red-500">{error}</div>;
     return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
       <div className="bg-gradient-to-r from-stone-100 to-stone-300 h-32 flex items-end px-8 pb-6">
@@ -82,8 +90,8 @@ export const AdminStudentsPage = () => {
               onChange={e => setDepartmentFilter(e.target.value)}
               className="border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
             >
-              {departmentOptions.map(dept => (
-                <option key={dept} value={dept}>{dept}</option>
+              {departmentOptions.map((dept, idx) => (
+                <option key={dept + '-' + idx} value={dept}>{dept}</option>
               ))}
             </select>
           </div>
@@ -105,7 +113,7 @@ export const AdminStudentsPage = () => {
             </thead>
             <tbody>
               {filteredStudents.map((student: Student) => (
-                <tr key={student.studentId} className="border-b hover:bg-stone-50">
+                <tr key={student.studentId ?? student.email} className="border-b hover:bg-stone-50">
                   <td className="py-3 px-4 font-medium text-gray-700">{student.firstName}</td>
                   <td className="py-3 px-4 text-gray-500">{student.lastName}</td>
                   <td className="py-3 px-4 text-gray-500">{student.email}</td>
@@ -115,10 +123,14 @@ export const AdminStudentsPage = () => {
                     <button
                       className="p-2 rounded hover:bg-stone-100"
                       title="Delete"
-                      disabled={deletingId === student.studentId}
+                      disabled={deletingId === student.studentId || student.studentId === undefined}
                       onClick={() => {
-                        setSelectedStudent(student);
-                        setShowConfirm(true);
+                        if (student.studentId !== undefined) {
+                          setSelectedStudent(student);
+                          setShowConfirm(true);
+                        } else {
+                          toast.error('Invalid student ID. Cannot delete.');
+                        }
                       }}
                     >
                       <TrashIcon className="h-5 w-5 text-red-400" />
@@ -128,6 +140,13 @@ export const AdminStudentsPage = () => {
               ))}
             </tbody>
           </table>
+       <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPage}
+                    onPageSizeChange={size => { setPageSize(size); setPage(1); }}
+                  />
         </div>
       </div>
       {showConfirm && selectedStudent && (

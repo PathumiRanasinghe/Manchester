@@ -6,13 +6,16 @@ import { Lecturer } from "../types/Lecturer";
 import { getLecturerByEmail } from "../services/lecturerService";
 import { getKeycloak } from '../keycloak';
 import StudentCalendar from '../components/Calendar';
+import { toast } from "react-toastify";
 
 
 export default function LecturerDashboard() {
   const [announcements, setAnnouncements] = useState<AnnouncementDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
-
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteAnnouncementObj, setDeleteAnnouncementObj] = useState<any | null>(null);
+  
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
@@ -37,14 +40,10 @@ export default function LecturerDashboard() {
       });
   }, []);
 
-  const [showDelete, setShowDelete] = useState(false);
-  const [deleteAnnouncementObj, setDeleteAnnouncementObj] = useState<any | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const handleDeleteClick = (announcement: any) => {
     setDeleteAnnouncementObj(announcement);
     setShowDelete(true);
-    setDeleteError(null);
   };
 
   const handleConfirmDelete = async () => {
@@ -55,7 +54,7 @@ export default function LecturerDashboard() {
         setShowDelete(false);
         setDeleteAnnouncementObj(null);
       } catch {
-        setDeleteError('Failed to delete announcement.');
+        toast.error('Failed to delete announcement.');
       }
     }
   };
@@ -93,7 +92,6 @@ export default function LecturerDashboard() {
                               <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
                                 <div className="font-bold text-lg mb-4">Do you want to delete this announcement?</div>
                                 <div className="mb-6 text-gray-700">This action cannot be undone.</div>
-                                {deleteError && <div className="text-red-500 text-sm mb-2">{deleteError}</div>}
                                 <div className="flex gap-4">
                                   <button
                                     className="px-4 py-2 rounded bg-red-500 text-white font-semibold hover:bg-red-600"

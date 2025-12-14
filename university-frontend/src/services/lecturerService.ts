@@ -1,9 +1,9 @@
 import api from './api';
 import { Lecturer } from '../types/Lecturer';
 
-export const getLecturers = async (): Promise<Lecturer[]> => {
-  const response = await api.get('/lecturers');
-  return response.data as Lecturer[];
+export const getLecturers = async (page = 1, pageSize = 10) => {
+  const response = await api.get(`/lecturers?page=${page}&pageSize=${pageSize}`);
+  return response.data;
 };
 
 export const getLecturerById = async (lecturerId: number): Promise<Lecturer> => {
@@ -42,3 +42,8 @@ export async function createLecturer({ firstName, lastName, email, password, dep
   const response = await api.post("/lecturers", payload);
   return response.data as Lecturer;
 }
+
+export const getLecturerCount = async (): Promise<number> => {
+  const response = await api.get('/lecturers/count');
+  return response.data as number;
+};

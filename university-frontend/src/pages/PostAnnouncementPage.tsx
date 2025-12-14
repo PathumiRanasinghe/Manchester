@@ -2,14 +2,11 @@ import React, { useState, useEffect } from "react";
 import { postAnnouncement } from "../services/announcementService";
 import { getLecturerByEmail } from '../services/lecturerService';
 import { getKeycloak } from '../keycloak';
-
-
+import { toast } from "react-toastify";
 
 export default function PostAnnouncementPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const [lecturer, setLecturer] = useState<any | null>(null);
 
   useEffect(() => {
@@ -26,10 +23,8 @@ export default function PostAnnouncementPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccess("");
-    setError("");
     if (!lecturer) {
-      setError("Lecturer not found. Cannot post announcement.");
+      toast.error("Lecturer not found. Cannot post announcement.");
       return;
     }
     try {
@@ -40,11 +35,11 @@ export default function PostAnnouncementPage() {
         lecturerId: lecturer.lecturerId,
         departmentId: lecturer.department.departmentId
       });
-      setSuccess("Announcement posted successfully.");
+      toast.success("Announcement posted successfully.");
       setTitle("");
       setContent("");
     } catch {
-      setError("Failed to post announcement.");
+      toast.error("Failed to post announcement.");
     }
   };
 
@@ -54,8 +49,6 @@ export default function PostAnnouncementPage() {
         <h2 className="text-3xl font-bold text-gray-800">Announcement </h2>
       </div>
       <div className="px-8 pt-6 pb-10">
-        {success && <div className="mb-2 text-green-600">{success}</div>}
-        {error && <div className="mb-2 text-red-600">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>

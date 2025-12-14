@@ -12,6 +12,7 @@ public class LecturerMapper {
         lecturer.setFirstName(dto.getFirstName());
         lecturer.setLastName(dto.getLastName());
         lecturer.setEmail(dto.getEmail());
+        lecturer.setPassword(dto.getPassword());
         if (dto.getDepartment() != null) {
             lecturer.setDepartment(DepartmentMapper.toEntity(dto.getDepartment()));
         }
@@ -22,11 +23,12 @@ public class LecturerMapper {
         if (lecturer == null)
             return null;
         return new LecturerDto(
-                lecturer.getLecturerId(),
-                lecturer.getFirstName(),
-                lecturer.getLastName(),
-                lecturer.getEmail(),
-                DepartmentMapper.toDto(lecturer.getDepartment())
+            lecturer.getLecturerId(),
+            lecturer.getFirstName(),
+            lecturer.getLastName(),
+            lecturer.getEmail(),
+            DepartmentMapper.toDto(lecturer.getDepartment()),
+            null
         );
     }
 }

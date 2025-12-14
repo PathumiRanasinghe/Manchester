@@ -5,22 +5,22 @@ import { enrollModule } from '../services/enrollmentService';
 import { Module } from '../types/Module';
 import { getKeycloak } from '../keycloak';
 import Spinner from '../components/Spinner';
+import NoDataFound from '../components/NoDataFound';
+import { toast } from 'react-toastify';
 
 const DepartmentModulesPage: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [enrolledModules, setEnrolledModules] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [studentId, setStudentId] = useState<number | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError('Email not found in token');
+      toast.error('Email not found in token');
       setLoading(false);
       return;
     }
@@ -44,7 +44,7 @@ const DepartmentModulesPage: React.FC = () => {
         setLoading(false);
       })
       .catch(() => {
-        setError('Failed to fetch modules');
+        toast.error('Failed to fetch modules');
         setLoading(false);
       });
   }, []);
@@ -58,12 +58,12 @@ const DepartmentModulesPage: React.FC = () => {
     if (selectedModule) {
       try {
         await enrollModule(studentId!, selectedModule.moduleId);
-        setSuccess('Successfully enrolled in module.');
+        toast.success('Successfully enrolled in module.');
         setEnrolledModules([...enrolledModules, selectedModule.moduleId]);
         setShowConfirm(false);
         setSelectedModule(null);
       } catch {
-        setError('Failed to enroll.');
+        toast.error('Failed to enroll.');
       }
     }
   };
@@ -74,32 +74,36 @@ const DepartmentModulesPage: React.FC = () => {
   };
 
   if (loading) return <Spinner className="p-8" />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Department Modules</h1>
-      {success && <div className="mb-4 text-green-500">{success}</div>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {modules.map(module => {
-          const isEnrolled = enrolledModules.includes(module.moduleId);
-          return (
-            <div key={module.moduleId} className="rounded-xl shadow-lg bg-white p-6 flex flex-col">
-              <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
-              <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
-              <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
-              <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.firstName} {module.lecturer.lastName}</div>
-              <button
-                className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-400 text-white hover:bg-purple-500'}`}
-                disabled={isEnrolled}
-                onClick={() => !isEnrolled && handleEnrollClick(module)}
-              >
-                {isEnrolled ? 'Enrolled' : 'Enroll'}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+      {modules.length === 0 ? (
+        <div className="flex min-h-screen items-center justify-center w-full">
+          <NoDataFound message="No modules found for your department." />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {modules.map(module => {
+            const isEnrolled = enrolledModules.includes(module.moduleId);
+            return (
+              <div key={module.moduleId} className="rounded-xl shadow-lg bg-white p-6 flex flex-col">
+                <div className="font-semibold text-lg mb-2">{module.moduleName}</div>
+                <div className="text-sm text-gray-600 mb-1">Module ID: {module.moduleId}</div>
+                <div className="text-xs text-gray-500 mb-1">Credits: {module.credits}</div>
+                <div className="text-xs text-gray-500 mb-1">Lecturer: {module.lecturer.firstName} {module.lecturer.lastName}</div>
+                <button
+                  className={`mt-4 px-4 py-1 rounded font-semibold ${isEnrolled ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-purple-400 text-white hover:bg-purple-500'}`}
+                  disabled={isEnrolled}
+                  onClick={() => !isEnrolled && handleEnrollClick(module)}
+                >
+                  {isEnrolled ? 'Enrolled' : 'Enroll'}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {showConfirm && selectedModule && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">

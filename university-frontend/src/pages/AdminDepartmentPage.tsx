@@ -3,6 +3,8 @@ import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { getDepartments, updateDepartment, deleteDepartment } from '../services/departmentService';
 import Spinner from "../components/Spinner";
 import { createDepartment } from "../services/departmentService";
+import Pagination from "../components/Pagination";
+import { toast } from "react-toastify";
 
 export const AdminDepartmentPage = () => {
   const [search, setSearch] = useState("");
@@ -13,7 +15,9 @@ export const AdminDepartmentPage = () => {
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
   const [departments, setDepartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
   const [editDept, setEditDept] = useState<any | null>(null);
   const [editName, setEditName] = useState("");
   const [editDesc, setEditDesc] = useState("");
@@ -24,23 +28,28 @@ export const AdminDepartmentPage = () => {
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
-    getDepartments(false)
+    setLoading(true);
+    getDepartments(page, pageSize)
       .then(data => {
-        setDepartments(data);
+        setDepartments(Array.isArray(data.items) ? data.items : []);
+        setTotal(data.total || 0);
         setLoading(false);
       })
       .catch(() => {
-        setError('Failed to fetch departments');
+        toast.error('Failed to fetch departments');
+        setDepartments([]);
         setLoading(false);
       });
-  }, []);
+  }, [page, pageSize]);
 
-  const filteredDepartments = departments.filter(dept => {
-    const matchesSearch =
-      dept.departmentName.toLowerCase().includes(search.toLowerCase()) ||
-      dept.description.toLowerCase().includes(search.toLowerCase());
-    return matchesSearch;
-  });
+  const filteredDepartments = Array.isArray(departments)
+    ? departments.filter(dept => {
+        const matchesSearch =
+          dept.departmentName.toLowerCase().includes(search.toLowerCase()) ||
+          dept.description.toLowerCase().includes(search.toLowerCase());
+        return matchesSearch;
+      })
+    : [];
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
@@ -68,8 +77,6 @@ export const AdminDepartmentPage = () => {
         </div>
         {loading ? (
           <Spinner className="p-8" />
-        ) : error ? (
-          <div className="text-center py-8 text-red-400">{error}</div>
         ) : (
           <div className="bg-white rounded-xl shadow border border-gray-100">
             <table className="w-full text-left">
@@ -100,6 +107,13 @@ export const AdminDepartmentPage = () => {
                 ))}
               </tbody>
             </table>
+           <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPage}
+                    onPageSizeChange={size => { setPageSize(size); setPage(1); }}
+                  />
           </div>
         )}
         {showDelete && deleteDept && (

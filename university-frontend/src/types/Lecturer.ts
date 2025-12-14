@@ -6,4 +6,5 @@ export interface Lecturer {
   lastName: string;
   email: string;
   department: Department;
+  password?: string;
 }

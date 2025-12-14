@@ -14,6 +14,7 @@ public class StudentMapper {
         student.setLastName(dto.getLastName());
         student.setEmail(dto.getEmail());
         student.setPhoneNumber(dto.getPhoneNumber());
+        student.setPassword(dto.getPassword());
         if (dto.getDepartment() != null) {
             student.setDepartment(DepartmentMapper.toEntity(dto.getDepartment()));
         }
@@ -24,13 +25,13 @@ public class StudentMapper {
         if (student == null)
             return null;
         return new StudentDto(
-                student.getStudentId(),
-                student.getFirstName(),
-                student.getLastName(),
-                student.getEmail(),
-                student.getPhoneNumber(),
-                DepartmentMapper.toDto(student.getDepartment()),
-                null // password not mapped
+            student.getStudentId(),
+            student.getFirstName(),
+            student.getLastName(),
+            student.getEmail(),
+            student.getPhoneNumber(),
+            DepartmentMapper.toDto(student.getDepartment()),
+            null 
         );
     }
 }
