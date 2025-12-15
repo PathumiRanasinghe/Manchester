@@ -11,9 +11,9 @@ export const createDepartment = async (departmentData: Partial<Department>): Pro
   return response.data as Department;
 };
 
-export const getDepartments = async (activeOnly = true): Promise<Department[]> => {
-  const response = await api.get('/departments');
-  return response.data as Department[];
+export const getDepartments = async (page = 1, pageSize = 10) => {
+  const response = await api.get(`/departments?page=${page}&pageSize=${pageSize}`);
+  return response.data;
 };
 
 export const updateDepartment = async (departmentId: number, departmentData: Partial<Department>): Promise<Department> => {
@@ -24,3 +24,8 @@ export const updateDepartment = async (departmentId: number, departmentData: Par
 export const deleteDepartment = async (departmentId: number): Promise<void> => {
   await api.delete(`/departments/${departmentId}`);
 };
+
+export const getDepartmentCount = async (): Promise<number> => {
+  const response = await api.get('/departments/count');
+  return response.data as number;
+}

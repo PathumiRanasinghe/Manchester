@@ -9,6 +9,7 @@ import { Department } from '../types/Department';
 import { getLecturerById } from '../services/lecturerService';
 import { getDepartmentById } from '../services/departmentService';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 const LecturerCourseDetailPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
@@ -16,7 +17,6 @@ const LecturerCourseDetailPage: React.FC = () => {
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
   const [department, setDepartment] = useState<Department | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
@@ -43,7 +43,7 @@ const LecturerCourseDetailPage: React.FC = () => {
               setDepartment(departmentData);
               setLoading(false);
             }).catch(() => {
-              setError('Failed to fetch lecturer or department');
+              toast.error('Failed to fetch lecturer or department');
               setLoading(false);
             });
           } else {
@@ -52,7 +52,7 @@ const LecturerCourseDetailPage: React.FC = () => {
               setDepartment(null);
               setLoading(false);
             }).catch(() => {
-              setError('Failed to fetch lecturer');
+              toast.error('Failed to fetch lecturer');
               setLoading(false);
             });
           }
@@ -61,13 +61,16 @@ const LecturerCourseDetailPage: React.FC = () => {
         }
       })
       .catch(() => {
-        setError('Failed to fetch module');
+        toast.error('Failed to fetch module');
         setLoading(false);
       });
   }, [moduleId]);
 
   if (loading) return <Spinner className="p-8" />;
-  if (error || !module) return <div className="p-8 text-red-500">{error || 'Module not found'}</div>;
+  if (!module) {
+    toast.error('Module not found');
+    return null;
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center py-10 ">

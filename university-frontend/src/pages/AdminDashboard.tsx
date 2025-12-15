@@ -2,41 +2,28 @@ import React from "react";
 import Spinner from "../components/Spinner";
 import { Admin } from "../types/Admin";
 import { getAdminByEmail } from "../services/AdminService";
-import { getStudents } from "../services/studentService";
-import { getLecturers } from "../services/lecturerService";
-import api from "../services/api";
-import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { getStudentCount } from "../services/studentService";
+import { getLecturerCount } from "../services/lecturerService";
+import { getModuleCount } from "../services/moduleService";
+import { getDepartmentCount } from "../services/departmentService";
 import { getKeycloak } from "../keycloak";
 import Calendar from "../components/Calendar";
+import { toast } from "react-toastify";
+
 
 export const AdminDashboard = () => {
-    const [enrollmentsPerDay, setEnrollmentsPerDay] = useState<{ date: string, count: number }[]>([]);
   const [admin, setAdmin] = React.useState<Admin | null>(null);
   const [studentCount, setStudentCount] = React.useState<number>(0);
   const [lecturerCount, setLecturerCount] = React.useState<number>(0);
   const [moduleCount, setModuleCount] = React.useState<number>(0);
   const [departmentCount, setDepartmentCount] = React.useState<number>(0);
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-      api.get("/enrollments").then(res => {
-          const enrollments = res.data;
-          const dayCounts: { [date: string]: number } = {};
-          enrollments.forEach((e: any) => {
-            const date = new Date(e.enrollmentDate).toISOString().slice(0, 10);
-            dayCounts[date] = (dayCounts[date] || 0) + 1;
-          });
-          const sorted = Object.entries(dayCounts)
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([date, count]) => ({ date, count }));
-          setEnrollmentsPerDay(sorted);
-        });
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError("Email not found in token");
+      toast.error("Email not found in token");
       setLoading(false);
       return;
     }
@@ -44,27 +31,26 @@ export const AdminDashboard = () => {
       .then(adminData => {
         setAdmin(adminData);
         return Promise.all([
-          getStudents(),
-          getLecturers(),
-          api.get("/modules").then(res => res.data),
-          api.get("/departments").then(res => res.data)
+          getStudentCount(),
+          getLecturerCount(),
+          getModuleCount(),
+          getDepartmentCount()
         ]);
       })
       .then(([students, lecturers, modules, departments]) => {
-        setStudentCount(students.length);
-        setLecturerCount(lecturers.length);
-        setModuleCount(modules.length);
-        setDepartmentCount(departments.length);
+        setStudentCount(students);
+        setLecturerCount(lecturers);
+        setModuleCount(modules);
+        setDepartmentCount(departments);
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch dashboard data");
+        toast.error("Failed to fetch dashboard data");
         setLoading(false);
       });
   }, []);
 
   if (loading) return <Spinner className="p-8" />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!admin) return null;
 
   return (
@@ -133,26 +119,60 @@ export const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-  
-          <div className="bg-white rounded-xl shadow p-6">
-           <Calendar />
-          </div>
-       
-          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center">
-            <div className="font-semibold text-lg text-stone-700  mt-5 mb-12">Enrollments Per Day</div>
-            <div style={{ width: '100%', height: 200 }}>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={enrollmentsPerDay} margin={{ top: 10, right: 20, left: 0, bottom: 30 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" interval={0} height={50} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#68646eff" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
+          <div className="lg:col-span-1 flex flex-col">
+            <div className="bg-white rounded-xl shadow p-6 ">
+              <h2 className="text-lg font-semibold mb-6 text-gray-700">Quick actions</h2>
+              <div className="grid grid-cols-1 gap-4">
+                  <button
+                    className="flex items-center justify-between w-full p-4 rounded-xl bg-gray-50 hover:bg-gray-100 shadow border border-gray-100 transition group mb-5"
+                    onClick={() => window.location.href = '/admin/create-student'}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center justify-center w-14 h-14 rounded-full bg-stone-100 text-stone-500 text-xl font-bold">
+                        <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v6M22 13h-6M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804" />
+                        </svg>
+                      </span>
+                      <div className="text-left">
+                        <div className="font-semibold text-gray-700 text-base">Add Student</div>
+                        <div className="text-xs text-gray-400">Create a new student</div>
+                      </div>
+                    </div>
+                    <span className="text-stone-400 group-hover:translate-x-1 transition-transform">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
+                  <button
+                    className="flex items-center justify-between w-full p-4 rounded-xl bg-gray-50 hover:bg-gray-100 shadow border border-gray-100 transition group mb-8"
+                    onClick={() => window.location.href = '/admin/create-lecturer'}
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="flex items-center justify-center w-14 h-14 rounded-full bg-stone-100 text-stone-500 text-xl font-bold">
+                         <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 10v6M22 13h-6M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804" />
+                        </svg>
+                      </span>
+                      <div className="text-left">
+                        <div className="font-semibold text-gray-700 text-base">Add Lecturer</div>
+                        <div className="text-xs text-gray-400">Create a new lecturer</div>
+                      </div>
+                    </div>
+                    <span className="text-stone-400 group-hover:translate-x-1 transition-transform">
+                      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </button>
+              </div>
             </div>
-            <div className="mt-5 text-stone-500 text-sm">Last {enrollmentsPerDay.length} days</div>
+          </div>
+          <div className="lg:col-span-2 bg-white rounded-xl shadow p-6">
+            <Calendar />
           </div>
         </div>
        

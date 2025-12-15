@@ -29,11 +29,14 @@ import AdminCreateStudentPage from './pages/AdminCreateStudentPage';
 import AdminCreateLecturerPage from "./pages/AdminCreateLecturerPage";
 import ProtectedRoute from './ProtectedRoute';
 import ForbiddenPage from "./pages/ForbiddenPage";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App() {
   return (
     <Router>
       <AuthRedirect />
+      <ToastContainer />
       <Routes>
         <Route path="/logout" element={<LogoutPage />} />
         <Route path="*" element={<NotFoundPage />} />

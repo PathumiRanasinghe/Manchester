@@ -1,11 +1,15 @@
 package com.university.service;
 
-import java.util.List;
-import com.university.entity.Department;
+import jakarta.ws.rs.core.Response;
+import com.university.dto.PaginatedResponse;
+import com.university.dto.DepartmentDto;
 
 public interface DepartmentService {
-    public List<Department> getAllDepartments();
-    public Department getDepartmentById(Long id);
-    public Department createDepartment(Department department);
-    public Department updateDepartment(Long id, Department updatedDepartment);	
+    PaginatedResponse<DepartmentDto> getAllDepartments(Integer page, Integer pageSize);
+
+    public Response getDepartmentById(Long id);
+
+    public Response createDepartment(DepartmentDto departmentDto);
+
+    public Response updateDepartment(Long id, DepartmentDto updatedDepartmentDto);
 }

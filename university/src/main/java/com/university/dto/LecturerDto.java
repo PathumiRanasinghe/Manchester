@@ -1,22 +1,24 @@
 package com.university.dto;
 
 
- public class LecturerDto {
+public class LecturerDto {
 
     private Long lecturerId;
     private String firstName;
     private String lastName;
     private String email;
     private DepartmentDto department;
+    private String password;
 
     public LecturerDto() {}
-      
-    public LecturerDto(Long lecturerId, String firstName, String lastName, String email, DepartmentDto department) {
+
+    public LecturerDto(Long lecturerId, String firstName, String lastName, String email, DepartmentDto department, String password) {
         this.lecturerId = lecturerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.department = department;
+        this.password = password;
     }
 
     public Long getLecturerId() {
@@ -57,6 +59,14 @@ package com.university.dto;
 
     public void setDepartment(DepartmentDto department) {
         this.department = department;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
    

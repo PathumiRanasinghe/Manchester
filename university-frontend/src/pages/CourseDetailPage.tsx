@@ -7,6 +7,7 @@ import { Department } from '../types/Department';
 import { getLecturerById } from '../services/lecturerService';
 import { getDepartmentById} from '../services/departmentService';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 const CourseDetailPage: React.FC = () => {
   const { moduleId } = useParams<{ moduleId: string }>();
@@ -14,7 +15,6 @@ const CourseDetailPage: React.FC = () => {
   const [lecturer, setLecturer] = useState<Lecturer | null>(null);
   const [department, setDepartment] = useState<Department | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
       getModuleById(Number(moduleId))
@@ -29,7 +29,7 @@ const CourseDetailPage: React.FC = () => {
               setDepartment(departmentData);
               setLoading(false);
             }).catch(() => {
-              setError('Failed to fetch lecturer or department');
+              toast.error('Failed to fetch lecturer or department');
               setLoading(false);
             });
           } else {
@@ -37,13 +37,13 @@ const CourseDetailPage: React.FC = () => {
           }
         })
         .catch(() => {
-          setError('Failed to fetch module');
+          toast.error('Failed to fetch module');
           setLoading(false);
         });
     }, [moduleId]);
 
   if (loading) return <Spinner className="p-8" />;
-  if (error || !module) return <div className="p-8 text-red-500">{error || 'Module not found'}</div>;
+  if (!module) return <div className="p-8 text-red-500">Module not found</div>;
 
   return (
       <div className="min-h-screen  flex flex-col items-center py-10">

@@ -2,13 +2,11 @@
 package com.university.controller;
 
 import java.util.List;
+import jakarta.ws.rs.QueryParam;
 import com.university.entity.Module;
-import com.university.entity.Lecturer;
-import com.university.service.LecturerService;
 import com.university.service.ModuleService;
 import com.university.dto.ModuleDto;
-import com.university.dto.LecturerDto;
-import com.university.dto.DepartmentDto;
+import com.university.dto.PaginatedResponse;
 import com.university.mapper.ModuleMapper;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -31,44 +29,19 @@ public class ModuleController {
     @Inject
     private ModuleService moduleService;
 
-    @Inject
-    private LecturerService lecturerService;
-
     @GET
     @RolesAllowed({"admin"})
     @Path("/modules")
-    public List<ModuleDto> getAllModules() {
-        List<Module> modules = moduleService.getAllModules();
-        return modules.stream().map(ModuleMapper::toDto).toList();
+    public Response getAllModules(@QueryParam("page") Integer page,@QueryParam("pageSize") Integer pageSize) {
+        PaginatedResponse<ModuleDto> response = moduleService.getAllModules(page, pageSize);
+        return Response.ok(response).build();
     }
 
     @POST
     @RolesAllowed("lecturer")
     @Path("/modules")
     public Response createModule(ModuleDto moduleDto) {
-        LecturerDto lecturerDto = moduleDto.getLecturer();
-        DepartmentDto departmentDto = moduleDto.getDepartment();
-        Long lecturerId = lecturerDto != null ? lecturerDto.getLecturerId() : null;
-        Long departmentId = departmentDto != null ? departmentDto.getDepartmentId() : null;
-        if (lecturerId == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Lecturer ID is required").build();
-        }
-        Lecturer lecturer = lecturerService.getLecturerById(lecturerId);
-        if (lecturer == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Lecturer not found").build();
-        }
-        if (departmentId == null && lecturer.getDepartment() != null) {
-            departmentId = lecturer.getDepartment().getDepartmentId();
-            departmentDto = null; // Use lecturer's department
-        }
-        if (departmentId == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Department ID is required").build();
-        }
-        Module module = ModuleMapper.toEntity(moduleDto);
-        module.setLecturer(lecturer);
-        module.setDepartment(lecturer.getDepartment());
-        Module created = moduleService.createModule(module);
-        return Response.status(Response.Status.CREATED).entity(ModuleMapper.toDto(created)).build();
+        return moduleService.createModuleResponse(moduleDto);
     }
 
     @GET
@@ -99,54 +72,27 @@ public class ModuleController {
     @RolesAllowed({"admin", "lecturer", "student"})
     @Path("/modules/{id}")
     public Response getModuleById(@PathParam("id") Long id) {
-        Module module = moduleService.getModuleById(id);
-        if (module == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Module not found").build();
-        }
-        return Response.ok(ModuleMapper.toDto(module)).build();
+        return moduleService.getModuleByIdResponse(id);
     }
-    
-    // @POST
-    // @RolesAllowed("lecturer")
-    // @Path("/modules")
-    // public Response createModule(ModuleDto moduleDto) {
-    //     Lecturer lecturer = lecturerService.getLecturerById(moduleDto.getLecturerId());
-    //     Department department = lecturer != null ? lecturer.getDepartment() : null;
-    //     Module module = ModuleMapper.toEntity(moduleDto, lecturer, department);
-    //     Module created = moduleService.createModule(module);
-    //     return Response.status(Response.Status.CREATED).entity(ModuleMapper.toDto(created)).build();
-    // }
-
+ 
     @PUT
     @RolesAllowed("admin")
     @Path("/modules/{id}")
-    public Response updateModule(@PathParam("id") Long id, jakarta.json.JsonObject json) {
-        Module updatedModule = new Module();
-        if (json.containsKey("moduleName") && !json.isNull("moduleName")) {
-            updatedModule.setModuleName(json.getString("moduleName"));
-        }
-        if (json.containsKey("description") && !json.isNull("description")) {
-            updatedModule.setDescription(json.getString("description"));
-        }
-        if (json.containsKey("credits") && !json.isNull("credits")) {
-            updatedModule.setCredits(json.getInt("credits"));
-        }
-        if (json.containsKey("lecturerId") && !json.isNull("lecturerId")) {
-            Lecturer lecturer = lecturerService.getLecturerById((long)json.getInt("lecturerId"));
-            updatedModule.setLecturer(lecturer);
-        }
-        Module module = moduleService.updateModule(id, updatedModule);
-        if (module == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-        return Response.ok(module).build();
+    public Response updateModule(@PathParam("id") Long id, ModuleDto moduleDto) {
+        return moduleService.updateModuleResponse(id, moduleDto);
     }
 
     @DELETE
     @RolesAllowed("admin")
     @Path("/modules/{id}")
     public Response deleteModule(@PathParam("id") Long id) {
-        boolean deleted = moduleService.deleteModule(id);
-        return deleted? Response.noContent().build() : Response.status(Response.Status.NOT_FOUND).build();
+        return moduleService.deleteModuleResponse(id);
+    }
+    @GET
+    @RolesAllowed({"admin"})
+    @Path("/modules/count")
+    public Response getModuleCount() {
+        long count = moduleService.getAllModules(1, 1).getTotal();
+        return Response.ok(count).build();
     }
 }

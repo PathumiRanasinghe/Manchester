@@ -3,17 +3,17 @@ import { getAdminByEmail } from '../services/AdminService';
 import { getKeycloak } from '../keycloak';
 import { Admin } from '../types/Admin';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 export default function AdminProfilePage() {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const kc = getKeycloak();
     const email = kc.tokenParsed?.email;
     if (!email) {
-      setError('Email not found in token');
+      toast.error('Email not found in token');
       setLoading(false);
       return;
     }
@@ -23,13 +23,12 @@ export default function AdminProfilePage() {
         setLoading(false);
       })
       .catch(() => {
-        setError('Failed to fetch admin details');
+        toast.error('Failed to fetch admin details');
         setLoading(false);
       });
   }, []);
 
   if (loading) return <Spinner className="p-8" />;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
   if (!admin) return null;
 
   return (

@@ -1,14 +1,18 @@
 package com.university.service;
 
-import java.util.List;
-import com.university.entity.Enrollment;
+import jakarta.ws.rs.core.Response;
+import com.university.dto.EnrollmentDto;
+import com.university.dto.PaginatedResponse;
 
 public interface EnrollmentService {
-    public List<Enrollment> getAllEnrollments();
 
-	public Enrollment getEnrollmentById(Long id);
+	PaginatedResponse<EnrollmentDto> getEnrollmentsPagedDto(Integer page, Integer pageSize);
 
-	public Enrollment createEnrollment(Enrollment enrollment);
+	PaginatedResponse<EnrollmentDto> getEnrollmentsByStudentId(Long studentId);
 
-	public boolean deleteEnrollment(Long id);
+	public Response getEnrollmentByIdResponse(Long id);
+
+	public Response createEnrollmentResponse(EnrollmentDto enrollmentDto);
+
+	public Response deleteEnrollmentResponse(Long id);
 }

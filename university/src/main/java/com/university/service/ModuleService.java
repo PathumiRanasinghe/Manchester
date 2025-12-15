@@ -1,12 +1,13 @@
 package com.university.service;
 
+import jakarta.ws.rs.core.Response;
 import java.util.List;
+import com.university.dto.ModuleDto;
+import com.university.dto.PaginatedResponse;
 import com.university.entity.Module;
 
 public interface ModuleService {
-    public List<Module> getAllModules();
-
-    public Module getModuleById(Long id);
+    public PaginatedResponse<ModuleDto> getAllModules(Integer page, Integer pageSize);
 
     public List<Module> getModulesByStudentId(Long studentId);
 
@@ -14,9 +15,11 @@ public interface ModuleService {
 
     public List<Module> getModulesByDepartmentId(Integer departmentId);
 
-    public Module createModule(Module module);
+    public Response getModuleByIdResponse(Long id);
 
-    public Module updateModule(Long id, Module updatedModule);
+    public Response createModuleResponse(ModuleDto moduleDto);
 
-    public boolean deleteModule(Long id);
+    public Response updateModuleResponse(Long id, ModuleDto moduleDto);
+
+    public Response deleteModuleResponse(Long id);
 }

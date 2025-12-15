@@ -1,11 +1,15 @@
 package com.university.service;
 
-import java.util.List;
-import com.university.entity.Announcement;
+import jakarta.ws.rs.core.Response;
+import com.university.dto.AnnouncementDto;
 
 public interface AnnouncementService {
-    public void postAnnouncement(Announcement announcement);
-    public void deleteAnnouncement(Long id);
-    public List<Announcement> getAnnouncementsByLecturerId(Long lecturerId);
-    public List<Announcement> getAnnouncementsByDepartmentId(Long departmentId);
+
+    public Response getAnnouncementsByLecturerIdResponse(Long lecturerId);
+
+    public Response getAnnouncementsByDepartmentIdResponse(Long departmentId);
+
+    public Response postAnnouncementResponse(AnnouncementDto announcementDto);
+
+    public Response deleteAnnouncementResponse(Long id);
 }

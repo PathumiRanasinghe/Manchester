@@ -1,7 +1,5 @@
 package com.university.controller;
 
-import com.university.mapper.AdminMapper;
-import com.university.entity.Admin;
 import com.university.service.AdminService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -25,24 +23,13 @@ public class AdminController {
     @GET
     @Path("/{id}")
     public Response getAdminById(Long id) {
-        Admin admin = adminService.getAdminById(id);
-        if (admin == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Admin not found").build();
-        }
-        return Response.ok(AdminMapper.toDto(admin)).build();
+        return adminService.getAdminById(id);
     }
 
     @GET
     @Path("/by-email")
     public Response getAdminByEmail(@QueryParam("email") String email) {
-        Admin admin = adminService.getAdminByEmail(email);
-        if (admin == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("Admin not found").build();
-        }
-        return Response.ok(AdminMapper.toDto(admin)).build();
+       return adminService.getAdminByEmail(email);
     }
-
-   
-
    
 }

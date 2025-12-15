@@ -1,8 +1,8 @@
 package com.university.service;
 
-import com.university.entity.Admin;
+import jakarta.ws.rs.core.Response;
 
 public interface AdminService {
-    public Admin getAdminByEmail(String email);
-    public Admin getAdminById(Long id);
+    public Response getAdminByEmail(String email);
+    public Response getAdminById(Long id);
 }

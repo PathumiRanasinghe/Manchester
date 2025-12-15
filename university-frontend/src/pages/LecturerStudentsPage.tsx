@@ -5,6 +5,7 @@ import { getStudentsByModuleId } from '../services/studentService';
 import { getKeycloak } from '../keycloak';
 import { Module } from '../types/Module';
 import { Student } from '../types/Student';
+import Spinner from '../components/Spinner';
 
 export default function LecturerStudentsPage() {
   const [lecturerId, setLecturerId] = useState<number | null>(null);
@@ -66,7 +67,7 @@ export default function LecturerStudentsPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold text-blue-600 mb-4">Students for Module</h2>
             {loading ? (
-              <div>Loading...</div>
+              <Spinner  className="p-8" />
             ) : (
               <table className="min-w-full text-sm">
                 <thead>

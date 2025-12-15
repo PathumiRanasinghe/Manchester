@@ -5,6 +5,8 @@ import { getModulesByLecturerId } from "../services/moduleService";
 import { Module } from "../types/Module";
 import Spinner from "../components/Spinner";
 import { TrashIcon } from '@heroicons/react/24/outline';
+import Pagination from "../components/Pagination";
+import { toast } from "react-toastify";
 
 interface LecturerDeleteModalProps {
   lecturer: Lecturer;
@@ -16,7 +18,6 @@ interface LecturerDeleteModalProps {
 const LecturerDeleteModal: React.FC<LecturerDeleteModalProps> = ({ lecturer, onCancel, onConfirm, deletingId }) => {
   const [modules, setModules] = useState<Module[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -26,7 +27,7 @@ const LecturerDeleteModal: React.FC<LecturerDeleteModalProps> = ({ lecturer, onC
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch modules.");
+        toast.error("Failed to fetch modules.");
         setLoading(false);
       });
   }, [lecturer.lecturerId]);
@@ -51,7 +52,6 @@ const LecturerDeleteModal: React.FC<LecturerDeleteModalProps> = ({ lecturer, onC
           </div>
         ) : null}
         <div className="mb-6 text-gray-700">This action cannot be undone.</div>
-        {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
         <div className="flex gap-4">
           <button
             className={`px-4 py-2 rounded font-semibold ${hasModules ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-red-500 text-white hover:bg-red-600'}`}
@@ -79,10 +79,13 @@ export const AdminLecturerPage = () => {
   const [departmentFilter, setDepartmentFilter] = useState<string>("All");
   const [lecturers, setLecturers] = useState<Lecturer[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedLecturer, setSelectedLecturer] = useState<Lecturer | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [error] = useState<string | null>(null);
   
   const handleConfirmDelete = async () => {
     if (selectedLecturer) {
@@ -92,11 +95,12 @@ export const AdminLecturerPage = () => {
         setLecturers(lecturers.filter(l => l.lecturerId !== selectedLecturer.lecturerId));
         setShowConfirm(false);
         setSelectedLecturer(null);
+        toast.success('Lecturer deleted successfully!');
       } catch (err: any) {
         if (err?.response?.status === 409 && err?.response?.data) {
-          setError(err.response.data);
+          toast.error(err.response.data);
         } else {
-          setError('Failed to delete lecturer');
+          toast.error('Failed to delete lecturer');
         }
       }
       setDeletingId(null);
@@ -109,16 +113,18 @@ export const AdminLecturerPage = () => {
   };
 
   useEffect(() => {
-    getLecturers()
+    setLoading(true);
+    getLecturers(page, pageSize)
       .then(data => {
-        setLecturers(data);
+        setLecturers(data.items);
+        setTotal(data.total);
         setLoading(false);
       })
       .catch(() => {
-        setError("Failed to fetch lecturers");
+        toast.error("Failed to fetch lecturers");
         setLoading(false);
       });
-  }, []);
+  }, [page, pageSize]);
 
   const departmentOptions = ["All", ...Array.from(new Set(lecturers.map(l => l.department.departmentName)))];
   const filteredLecturers = lecturers.filter(l => {
@@ -133,22 +139,9 @@ export const AdminLecturerPage = () => {
 
   if (loading) return <Spinner className="p-8" />;
   if (error && error.includes('reassign')) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-        <div className="bg-white rounded-xl shadow-lg p-8 w-96 flex flex-col items-center">
-          <div className="font-bold text-lg mb-4 text-red-600">Cannot Delete Lecturer</div>
-          <div className="mb-6 text-gray-700">{error}</div>
-          <button
-            className="px-4 py-2 rounded bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400"
-            onClick={() => setError(null)}
-          >
-            OK
-          </button>
-        </div>
-      </div>
-    );
+    toast.error(error);
+    return null;
   }
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
       <div className="bg-gradient-to-r from-stone-100 to-stone-300 h-32 flex items-end px-8 pb-6">
@@ -213,6 +206,13 @@ export const AdminLecturerPage = () => {
               ))}
             </tbody>
           </table>
+      <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onPageChange={setPage}
+                    onPageSizeChange={size => { setPageSize(size); setPage(1); }}
+                  />
         </div>
       </div>
       {showConfirm && selectedLecturer && (

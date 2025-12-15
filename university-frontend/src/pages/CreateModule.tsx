@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import { createModule } from "../services/moduleService";
 import { getLecturerByEmail } from '../services/lecturerService';
 import { getKeycloak } from '../keycloak';
+import { toast } from "react-toastify";
 
 const CreateModule = () => {
   const [moduleName, setModuleName] = useState("");
   const [description, setDescription] = useState("");
   const [credits, setCredits] = useState<number>();
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
   const [lecturer, setLecturer] = useState<any | null>(null);
 
   useEffect(() => {
@@ -25,8 +24,6 @@ const CreateModule = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSuccess("");
-    setError("");
       try {
         await createModule({
           moduleName,
@@ -49,21 +46,23 @@ const CreateModule = () => {
             description: lecturer.department.description
           }
         } as any);
-        setSuccess("Module created successfully.");
+        toast.success("Module created successfully.");
         setModuleName("");
         setDescription("");
         setCredits(undefined);
       } catch {
-        setError("Failed to create module.");
+        toast.error("Failed to create module.");
       }
   };
   return (
-      <div className="px-8 pt-6 pb-10">
+     <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg mt-10 p-0 overflow-hidden">
+        <div className="bg-gradient-to-r from-sky-100 to-sky-300 h-32 flex items-end px-8 pb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Create Module</h2>
+      </div>
+       <div className="px-8 pt-6 pb-10">
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">Fill in the details and press create. This will add a new module to the system.</p>
         </div>
-        {success && <div className="mb-2 text-green-600">{success}</div>}
-        {error && <div className="mb-2 text-red-600">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
@@ -102,6 +101,7 @@ const CreateModule = () => {
          
           <button type="submit" className="bg-sky-400 hover:bg-sky-500 text-white px-8 py-2 rounded font-semibold float-right mb-10">Create</button>
         </form>
+      </div>
       </div>
   )
 };
