@@ -1,14 +1,17 @@
-
 package com.university.service.impl;
-
+import jakarta.ws.rs.core.Response;
+import com.university.dto.ModuleDto;
+import com.university.mapper.DepartmentMapper;
+import com.university.mapper.LecturerMapper;
+import com.university.mapper.ModuleMapper;
+import com.university.dto.DepartmentDto;
+import com.university.dto.LecturerDto;
 import com.university.entity.Enrollment;
 import com.university.entity.Module;
 import com.university.repository.EnrollmentRepository;
 import com.university.repository.ModuleRepository;
 import com.university.service.ModuleService;
 import com.university.dto.PaginatedResponse;
-import com.university.dto.ModuleDto;
-import com.university.mapper.ModuleMapper;
 import jakarta.inject.Inject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -32,10 +35,6 @@ public class ModuleServiceImpl implements ModuleService {
 		return new PaginatedResponse<>(dtos, total, pageNum, size);
 	}
 
-	public Module getModuleById(Long id) {
-		return moduleRepository.findById(id);
-	}
-
 	public List<Module> getModulesByStudentId(Long studentId) {
 		List<Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
 		List<Module> modules = new java.util.ArrayList<>();
@@ -56,39 +55,72 @@ public class ModuleServiceImpl implements ModuleService {
 		return moduleRepository.find("department.departmentId", departmentId).list();
 	}
 
-	@Transactional
-	public Module createModule(Module module) {
-		moduleRepository.persist(module);
-		return module;
-	}
-
-	@Transactional
-	public Module updateModule(Long id, Module updatedModule) {
+	 public Response getModuleByIdResponse(Long id) {
 		Module module = moduleRepository.findById(id);
-		if (module != null) {
-			if (updatedModule.getModuleName() != null) {
-				module.setModuleName(updatedModule.getModuleName());
-			}
-			if (updatedModule.getCredits() != null) {
-				module.setCredits(updatedModule.getCredits());
-			}
-			if (updatedModule.getLecturer() != null) {
-				module.setLecturer(updatedModule.getLecturer());
-			}
-			if (updatedModule.getDepartment() != null) {
-				module.setDepartment(updatedModule.getDepartment());
-			}
-			if (updatedModule.getDescription() != null) {
-				module.setDescription(updatedModule.getDescription());
-			}
-			moduleRepository.persist(module);
-		}
-		return module;
+		if (module == null) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Module not found").build();
+		}	
+		return Response.ok(ModuleMapper.toDto(module)).build();
 	}
 
 	@Transactional
-	public boolean deleteModule(Long id) {
-		return moduleRepository.deleteById(id);
+	public Response createModuleResponse(ModuleDto moduleDto) {
+		LecturerDto lecturerDto = moduleDto.getLecturer();
+		DepartmentDto departmentDto = moduleDto.getDepartment();
+		Long lecturerId = lecturerDto != null ? lecturerDto.getLecturerId() : null;
+		Long departmentId = departmentDto != null ? departmentDto.getDepartmentId() : null;
+		if (lecturerId == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Lecturer ID is required").build();
+		}
+		if (lecturerDto == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Lecturer not found").build();
+		}
+		if (departmentId == null && lecturerDto.getDepartment() != null) {
+			departmentId = lecturerDto.getDepartment().getDepartmentId();
+			departmentDto = null;
+		}
+		if (departmentId == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Department ID is required").build();
+		}
+		Module module = ModuleMapper.toEntity(moduleDto);
+		module.setLecturer(LecturerMapper.toEntity(lecturerDto));
+		module.setDepartment(DepartmentMapper.toEntity(departmentDto));
+		moduleRepository.persist(module);
+		return Response.status(Response.Status.CREATED).entity(ModuleMapper.toDto(module)).build();
 	}
+
+	@Transactional
+	public Response updateModuleResponse(Long id, ModuleDto moduleDto) {
+		Module module = moduleRepository.findById(id);
+		if (module == null) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		if (moduleDto.getModuleName() != null) {
+			module.setModuleName(moduleDto.getModuleName());
+		}
+		if (moduleDto.getDescription() != null) {
+			module.setDescription(moduleDto.getDescription());
+		}
+		if (moduleDto.getCredits() != null) {
+			module.setCredits(moduleDto.getCredits());
+		}
+		if (moduleDto.getLecturer() != null && moduleDto.getLecturer().getLecturerId() != null) {
+			LecturerDto lecturer = moduleDto.getLecturer();
+			module.setLecturer(LecturerMapper.toEntity(lecturer));
+		}
+		moduleRepository.persist(module);
+		return Response.ok(ModuleMapper.toDto(module)).build();
+	}
+
+	@Transactional
+	public Response deleteModuleResponse(Long id) {
+		boolean deleted = moduleRepository.deleteById(id);
+		if (deleted) {
+			return Response.noContent().build();
+		} else {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+
 
 }

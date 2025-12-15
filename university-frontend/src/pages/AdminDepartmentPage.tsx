@@ -165,8 +165,11 @@ export const AdminDepartmentPage = () => {
                   setDeptName("");
                   setDeptDesc("");
                   setShowCreate(false);
-                  getDepartments()
-                    .then(data => setDepartments(data))
+                  getDepartments(page, pageSize)
+                    .then(data => {
+                      setDepartments(Array.isArray(data.items) ? data.items : []);
+                      setTotal(data.total || 0);
+                    })
                     .catch(() => {});
                 } catch (err) {
                   setCreateError("Failed to create department.");
@@ -201,8 +204,11 @@ export const AdminDepartmentPage = () => {
                   }
                   const updated = await updateDepartment(deptId, { departmentName: editName, description: editDesc });
                   setEditSuccess(`Department '${updated.departmentName}' updated successfully!`);
-                  getDepartments()
-                    .then(data => setDepartments(data))
+                  getDepartments(page, pageSize)
+                    .then(data => {
+                      setDepartments(Array.isArray(data.items) ? data.items : []);
+                      setTotal(data.total || 0);
+                    })
                     .catch(() => {});
                   setEditDept(null);
                 } catch (err) {

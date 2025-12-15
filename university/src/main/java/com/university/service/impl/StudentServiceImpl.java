@@ -1,18 +1,16 @@
 package com.university.service.impl;
 
+import jakarta.ws.rs.core.Response;
+import com.university.mapper.StudentMapper;
 import com.university.dto.PaginatedResponse;
 import com.university.dto.StudentDto;
 import com.university.entity.Enrollment;
 import com.university.entity.Student;
-import com.university.entity.Module;
 import com.university.repository.EnrollmentRepository;
 import com.university.repository.StudentRepository;
 import com.university.service.KeycloakAdminClient;
 import com.university.service.StudentService;
-import com.university.exception.DuplicateEmailException;
 import com.university.exception.UserNotFoundException;
-import com.university.mapper.StudentMapper;
-
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -38,55 +36,7 @@ public class StudentServiceImpl implements StudentService {
 		return new PaginatedResponse<>(dtos, total, pageNum, size);
 	}
 
-	public Student getStudentById(Long id) {
-		Student student = studentRepository.findById(id);
-		if (student == null) {
-			throw new UserNotFoundException("Student with id " + id + " not found");
-		}
-		return student;
-	}
-
-	public Student getStudentByEmail(String email) {
-		Student student = studentRepository.findByEmail(email);
-		if (student == null) {
-			throw new UserNotFoundException("Student with email " + email + " not found");
-		}
-		return student;
-	}
-
-	@Transactional
-	public Student createStudent(Student student) {
-		if (studentRepository.findByEmail(student.getEmail()) != null) {
-			   throw new DuplicateEmailException("A student with this email already exists.");
-		}
-		try {
-			keycloakAdminClient.createUserAndAssignRole(student.getFirstName(), student.getLastName(), student.getEmail(), student.getPassword(), "student");
-		} catch (Exception e) {
-			throw new RuntimeException("Keycloak user creation failed: " + e.getMessage());
-		}
-		if (student.getDepartment() == null) {
-			throw new RuntimeException("Department must be specified for student creation.");
-		}
-		studentRepository.persist(student);
-		return student;
-	}
-
-	@Transactional
-	public boolean deleteStudent(Long id) {
-		try {
-			keycloakAdminClient.deleteUserByUsername(studentRepository.findById(id).getEmail());
-		} catch (Exception e) {
-			throw new RuntimeException("Keycloak user deletion failed: " + e.getMessage());
-		}
-		Student student = studentRepository.findById(id);
-		if (student != null) {
-			studentRepository.delete(student);
-			return true;
-		}
-		return false;
-	}
-
-	public List<Student> getStudentsByModuleId(Integer moduleId) {
+	public Response getStudentsByModuleIdResponse(Integer moduleId) {
 		List<Enrollment> enrollments = enrollmentRepository.find("module.moduleId", moduleId).list();
 		List<Student> students = new java.util.ArrayList<>();
 		for (Enrollment enrollment : enrollments) {
@@ -95,18 +45,64 @@ public class StudentServiceImpl implements StudentService {
 				students.add(student);
 			}
 		}
-		return students;
+		if (students.isEmpty()) {
+			return Response.status(Response.Status.NOT_FOUND).entity("No students found for this module").build();
+		}
+		List<StudentDto> dtos = students.stream().map(StudentMapper::toDto).toList();
+		return Response.ok(dtos).build();
 	}
 
-	public List<Module> getModulesByStudentId(Long studentId) {
-		List<Enrollment> enrollments = enrollmentRepository.find("student.studentId", studentId).list();
-		List<Module> modules = new java.util.ArrayList<>();
-		for (Enrollment enrollment : enrollments) {
-			if (enrollment.getModule() != null) {
-				modules.add(enrollment.getModule());
-			}
+	public Response getStudentByIdResponse(Long id) {
+		Student student;
+		try {
+			student = studentRepository.findById(id);
+		} catch (UserNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Student not found").build();
 		}
-		return modules;
+		return Response.ok(StudentMapper.toDto(student)).build();
+	}
+
+	public Response getStudentByEmailResponse(String email) {
+		Student student;
+		try {
+			student = studentRepository.findByEmail(email);
+		} catch (UserNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Student not found").build();
+		}
+		return Response.ok(StudentMapper.toDto(student)).build();
+	}
+
+	@Transactional
+	public Response createStudentResponse(StudentDto studentDto) {
+		Student student = StudentMapper.toEntity(studentDto);
+		if (studentRepository.findByEmail(student.getEmail()) != null) {
+			return Response.status(Response.Status.CONFLICT).entity("A student with this email already exists.").build();
+		}
+		try {
+			keycloakAdminClient.createUserAndAssignRole(student.getFirstName(), student.getLastName(), student.getEmail(), student.getPassword(), "student");
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Keycloak user creation failed: " + e.getMessage()).build();
+		}
+		if (student.getDepartment() == null) {
+			return Response.status(Response.Status.BAD_REQUEST).entity("Department must be specified for student creation.").build();
+		}
+		studentRepository.persist(student);
+		return Response.status(Response.Status.CREATED).entity(StudentMapper.toDto(student)).build();
+	}
+
+	@Transactional
+	public Response deleteStudentResponse(Long id) {
+		Student student = studentRepository.findById(id);
+		if (student == null) {
+			return Response.status(Response.Status.NOT_FOUND).entity("Student not found").build();
+		}
+		try {
+			keycloakAdminClient.deleteUserByUsername(student.getEmail());
+		} catch (Exception e) {
+			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Keycloak user deletion failed: " + e.getMessage()).build();
+		}
+		studentRepository.delete(student);
+		return Response.noContent().build();
 	}
 
 }

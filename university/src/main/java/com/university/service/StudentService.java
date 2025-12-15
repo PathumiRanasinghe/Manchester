@@ -1,22 +1,19 @@
 package com.university.service;
 
-import java.util.List;
-import com.university.entity.Student;
+import jakarta.ws.rs.core.Response;
 import com.university.dto.PaginatedResponse;
 import com.university.dto.StudentDto;
 
 public interface StudentService {
     PaginatedResponse<StudentDto> getAllStudents(Integer page, Integer pageSize);
 
-    public Student getStudentById(Long id);
+    public Response getStudentsByModuleIdResponse(Integer moduleId);
 
-    public Student getStudentByEmail(String email);
+    public Response getStudentByIdResponse(Long id);
 
-    public Student createStudent(Student student);
+    public Response getStudentByEmailResponse(String email);
 
-    public boolean deleteStudent(Long id);
+    public Response createStudentResponse(StudentDto studentDto);
 
-    public List<Student> getStudentsByModuleId(Integer moduleId);
-
-    public List<com.university.entity.Module> getModulesByStudentId(Long studentId);
+    public Response deleteStudentResponse(Long id);
 }

@@ -79,7 +79,7 @@ const DepartmentModulesPage: React.FC = () => {
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-6">Department Modules</h1>
       {modules.length === 0 ? (
-        <div className="flex min-h-screen items-center justify-center w-full">
+        <div className="flex items-center justify-center w-full">
           <NoDataFound message="No modules found for your department." />
         </div>
       ) : (

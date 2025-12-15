@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { EyeIcon, EyeSlashIcon } from '../components/PasswordEyeIcons';
 import { getDepartments } from '../services/departmentService';
 import { Department } from '../types/Department';
 import { createStudent } from '../services/studentService';
@@ -10,6 +11,7 @@ export default function AdminCreateStudentPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [departmentId, setDepartmentId] = useState<string>('');
   const [departments, setDepartments] = useState<Department[]>([]);
   const [passwordError, setPasswordError] = useState(false);
@@ -111,13 +113,19 @@ export default function AdminCreateStudentPage() {
             </div>
             <div className="relative">
               <label className="block text-gray-700 font-medium mb-2">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => { setPassword(e.target.value); setPasswordError(false); }}
-                placeholder="Password" className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={e => { setPassword(e.target.value); setPasswordError(false); }}
+                  placeholder="Password"
+                  className="w-full border border-gray-200 bg-stone-50 p-2 rounded focus:outline-none focus:ring-2 focus:ring-stone-400 pr-10"
+                  required
+                />
+                <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1} onClick={() => setShowPassword(v => !v)}>
+                  {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                </button>
+              </div>
               {passwordError && (
                 <div className="absolute left-0 mt-2 flex items-center z-10">
                   <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded flex items-center shadow border border-orange-300 text-sm">
