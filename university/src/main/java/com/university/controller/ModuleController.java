@@ -10,6 +10,7 @@ import com.university.dto.PaginatedResponse;
 import com.university.mapper.ModuleMapper;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -40,7 +41,7 @@ public class ModuleController {
     @POST
     @RolesAllowed("lecturer")
     @Path("/modules")
-    public Response createModule(ModuleDto moduleDto) {
+    public Response createModule(@Valid ModuleDto moduleDto) {
         return moduleService.createModuleResponse(moduleDto);
     }
 
@@ -78,7 +79,7 @@ public class ModuleController {
     @PUT
     @RolesAllowed("admin")
     @Path("/modules/{id}")
-    public Response updateModule(@PathParam("id") Long id, ModuleDto moduleDto) {
+    public Response updateModule(@PathParam("id") Long id,@Valid ModuleDto moduleDto) {
         return moduleService.updateModuleResponse(id, moduleDto);
     }
 

@@ -13,6 +13,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 
 @Path("/api")
 @Produces(MediaType.APPLICATION_JSON)
@@ -31,7 +32,7 @@ public class AnnouncementController {
 	@POST
 	@RolesAllowed("lecturer")
 	@Path("/announcements")
-	public Response postAnnouncement(AnnouncementDto announcementDto) {
+	public Response postAnnouncement(@Valid AnnouncementDto announcementDto) {
 		return announcementService.postAnnouncementResponse(announcementDto);
 	}
 

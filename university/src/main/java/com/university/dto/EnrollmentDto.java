@@ -2,12 +2,16 @@ package com.university.dto;
 
 import java.time.LocalDateTime;
 
+import jakarta.validation.constraints.NotBlank;
 
 public class EnrollmentDto {
-
+    @NotBlank
     private Long enrollmentId;
+    @NotBlank
     private StudentDto student;
+    @NotBlank
     private ModuleDto module;
+    @NotBlank
     private LocalDateTime enrollmentDate;
     
     public EnrollmentDto(Long enrollmentId, StudentDto student, ModuleDto module, LocalDateTime enrollmentDate) {

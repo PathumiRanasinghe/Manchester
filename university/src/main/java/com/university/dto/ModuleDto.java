@@ -1,11 +1,19 @@
 package com.university.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class ModuleDto {
+    @NotBlank
     private Long moduleId;
+    @NotBlank
     private String moduleName;
+    @NotBlank
     private Integer credits;
+    @NotBlank
     private LecturerDto lecturer;
+    @NotBlank
     private DepartmentDto department;
+    @NotBlank
     private String description;
     
     public ModuleDto() {}

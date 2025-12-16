@@ -1,13 +1,20 @@
 package com.university.dto;
 
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
 
 public class AnnouncementDto {
+    @NotBlank
     private Long id;
+    @NotBlank
     private String title;
+    @NotBlank
     private String content;
+    @NotBlank
     private Long lecturerId;
+    @NotBlank
     private Long departmentId;
+    @NotBlank
     private LocalDateTime postedAt;
 
     public AnnouncementDto() {

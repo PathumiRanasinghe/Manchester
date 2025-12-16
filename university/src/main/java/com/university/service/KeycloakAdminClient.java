@@ -13,18 +13,39 @@ import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import jakarta.annotation.PostConstruct;
+
 
 @ApplicationScoped
 public class KeycloakAdminClient {
 
-        private final Keycloak keycloak = KeycloakBuilder.builder()
+    @Inject
+    @ConfigProperty(name= "keycloak.admin.username")
+    String adminUsername;
+
+    @Inject
+    @ConfigProperty(name= "keycloak.admin.password")
+    String adminPassword;
+
+    @Inject
+    @ConfigProperty(name= "keycloak.admin.clientSecret")
+    String clientSecret;
+
+    private Keycloak keycloak;
+
+    @PostConstruct
+    void init() {
+        keycloak = KeycloakBuilder.builder()
             .serverUrl("http://localhost:8080")
             .realm("university")
             .clientId("university-backend")
-            .clientSecret("ONDaFcND5Z3CwHwc9zo7XSddMRWnyuu7")
-            .username("admin")
-            .password("123")
+            .clientSecret(clientSecret)
+            .username(adminUsername)
+            .password(adminPassword)
             .build();
+    }
 
     public void createUserAndAssignRole(String fName, String lName,String email, String password, String roleName) {
         RealmResource realmResource = keycloak.realm("university");

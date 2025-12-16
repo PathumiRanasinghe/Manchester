@@ -1,11 +1,21 @@
 package com.university.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class AdminDto {
+    @NotBlank
     private Long id;
+
+    @NotBlank
     private String username;
+
+    @NotBlank
+    @Email
     private String email;
 
-    public AdminDto() {}
+    public AdminDto() {
+    }
 
     public AdminDto(Long id, String username, String email) {
         this.id = id;
@@ -37,5 +47,4 @@ public class AdminDto {
         this.email = email;
     }
 
-    
 }

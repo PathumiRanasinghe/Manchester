@@ -1,8 +1,13 @@
 package com.university.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class DepartmentDto {
+    @NotBlank
     private Long departmentId;
+    @NotBlank
     private String departmentName;
+    @NotBlank
     private String description;
 
     public DepartmentDto() {

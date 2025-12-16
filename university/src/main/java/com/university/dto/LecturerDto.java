@@ -1,18 +1,32 @@
 package com.university.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public class LecturerDto {
-
+    @NotBlank
     private Long lecturerId;
+
+    @NotBlank
     private String firstName;
+
+    @NotBlank
     private String lastName;
+
+    @NotBlank
+    @Email
     private String email;
+
+    @NotBlank
     private DepartmentDto department;
+    
     private String password;
 
-    public LecturerDto() {}
+    public LecturerDto() {
+    }
 
-    public LecturerDto(Long lecturerId, String firstName, String lastName, String email, DepartmentDto department, String password) {
+    public LecturerDto(Long lecturerId, String firstName, String lastName, String email, DepartmentDto department,
+            String password) {
         this.lecturerId = lecturerId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -68,7 +82,5 @@ public class LecturerDto {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-   
-    
+
 }

@@ -5,6 +5,7 @@ import com.university.dto.PaginatedResponse;
 import com.university.service.DepartmentService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -41,14 +42,14 @@ public class DepartmentController {
     @POST
     @RolesAllowed("admin")
     @Path("/departments")
-    public Response createDepartment(DepartmentDto departmentDto) {
+    public Response createDepartment(@Valid DepartmentDto departmentDto) {
         return departmentService.createDepartment(departmentDto);
     }
 
     @PUT
     @RolesAllowed("admin")
     @Path("/departments/{id}")
-    public Response updateDepartment(@PathParam("id") Long id, DepartmentDto updatedDepartmentDto) {
+    public Response updateDepartment(@PathParam("id") Long id,@Valid DepartmentDto updatedDepartmentDto) {
         return departmentService.updateDepartment(id, updatedDepartmentDto);
     }
     @GET

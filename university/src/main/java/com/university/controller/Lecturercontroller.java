@@ -5,6 +5,7 @@ import com.university.dto.PaginatedResponse;
 import com.university.service.LecturerService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -71,7 +72,7 @@ public class Lecturercontroller {
     @Path("/lecturers")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLecturer(LecturerDto lecturerDto) {
+    public Response createLecturer(@Valid LecturerDto lecturerDto) {
         return lecturerService.createLecturerResponse(lecturerDto);
     }
 

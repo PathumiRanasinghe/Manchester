@@ -6,6 +6,7 @@ import com.university.dto.PaginatedResponse;
 import com.university.service.EnrollmentService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -50,7 +51,7 @@ public class EnrollmenController {
     @POST
     @RolesAllowed({ "student" })
     @Path("/enrollments")
-    public Response createEnrollment(EnrollmentDto enrollmentDto) {
+    public Response createEnrollment(@Valid EnrollmentDto enrollmentDto) {
         return enrollmentService.createEnrollmentResponse(enrollmentDto);
     }
 

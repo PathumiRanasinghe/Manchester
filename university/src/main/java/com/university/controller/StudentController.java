@@ -5,6 +5,7 @@ import com.university.dto.StudentDto;
 import com.university.service.StudentService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -42,7 +43,7 @@ public class StudentController {
     @POST
     @Path("/students")
     @RolesAllowed({ "admin" })
-    public Response createStudent(StudentDto studentDto) {
+    public Response createStudent(@Valid StudentDto studentDto) {
         return studentService.createStudentResponse(studentDto);
     }
 
